@@ -1,23 +1,23 @@
 print "Starting maya loading and fbx conversion \n";
 	
-if (`file -q -exists "/Users/Matthew/Documents/Project ROB/Assets/Characters/Rob/rob_animated12.mb"`)
+if (`file -q -exists "/Users/Matthew/Documents/Project-ROB/Assets/Characters/Rob/rob_animated12.mb"`)
 {		
-	file -o "/Users/Matthew/Documents/Project ROB/Assets/Characters/Rob/rob_animated12.mb";
+	file -o "/Users/Matthew/Documents/Project-ROB/Assets/Characters/Rob/rob_animated12.mb";
 	FBXExportEmbeddedTextures -v false;
 	// FBXExportHardEdges -v true;
 	FBXExportApplyConstantKeyReducer -v false;
 	FBXExportShowUI -v false;
 
 	print "Before fbx export\n";
-	FBXExport -f "/Users/Matthew/Documents/Project ROB/Temp/ExportedFBXFile.fbx";
+	FBXExport -f "/Users/Matthew/Documents/Project-ROB/Temp/ExportedFBXFile.fbx";
 	print "after fbx export\n";
 }
 else
 	print "Could not open Maya file.";
 
 
-system ("rm \"/Users/Matthew/Documents/Project ROB/Temp/CommandPipe\"");
+system ("rm \"/Users/Matthew/Documents/Project-ROB/Temp/CommandPipe\"");
 
-$donepipeKill = `fopen "/Users/Matthew/Documents/Project ROB/Temp/SyncPipeKill" "w"`;
+$donepipeKill = `fopen "/Users/Matthew/Documents/Project-ROB/Temp/SyncPipeKill" "w"`;
 fwrite $donepipeKill "Done";
 fclose $donepipeKill;
