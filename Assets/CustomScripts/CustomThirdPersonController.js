@@ -430,7 +430,7 @@ function ApplyGravity ()
 					verticalSpeed -= gravity * Time.deltaTime;
 					_characterState = customCharacterState.Jumping_After_Apex;
 					temp = moveDirection.normalized.magnitude;
-					moveDirection = DirectionOnWall();
+					moveDirection = DirectionOnWall(moveDirection);
 					moveSpeed *= (moveDirection.magnitude/temp);
 				}
 				else
@@ -464,7 +464,7 @@ function ApplyGravity ()
 				if (collisionFlags == 0) {
 					//Debug.Log("climbing false");
 					hanging = false;
-					//hangContact = false;
+					hangContact = false;
 					/*verticalSpeed -= gravity * Time.deltaTime;
 					_characterState = customCharacterState.Jumping_After_Apex;
 					temp = moveDirection.normalized.magnitude;
@@ -491,68 +491,20 @@ function ApplyGravity ()
 	}
 }
 
-/*function SurfaceNormalContactAngleDiff()
-{
-	/*Debug.Log("wall facing: " + wallFacing);
-	Debug.Log("move direction before: " + moveDirection);
-	
-	var returnDiff = Mathf.Abs(Mathf.Abs(moveDirection.x) - Mathf.Abs(wallFacing.x));
-	returnDiff += Mathf.Abs(Mathf.Abs(moveDirection.z) - Mathf.Abs(wallFacing.z));
-	Debug.Log("difference: " + returnDiff);
-	
-	return returnDiff;
-}*/
-
-/*function temp(one:Vector3, two:Vector3)
-{
-	/*Debug.Log("wall facing: " + wallFacing);
-	Debug.Log("move direction before: " + moveDirection);
-	var returnAngle : Vector3 = Vector3.zero;
-	returnAngle.x = Mathf.Abs(Mathf.Abs(one.x) - Mathf.Abs(two.x));
-	returnAngle.z = Mathf.Abs(Mathf.Abs(one.z) - Mathf.Abs(two.z));
-	Debug.Log("difference: " + returnAngle);
-	
-	return returnAngle;
-}*/
-
-function DirectionOnWall()
+// Determine the direction of the player against the surface (for climbing side to side and wallsliding)
+function DirectionOnWall(dir)
 {
 	var returnAngle : Vector3 = Vector3.zero;
 	
-	if (moveDirection.x <= -0.1)
+	if (dir.x <= -0.1)
 		returnAngle.x = -(1.0 - Mathf.Abs(wallFacing.x));
-	else if (moveDirection.x >= 0.1)
+	else if (dir.x >= 0.1)
 		returnAngle.x = 1.0 - Mathf.Abs(wallFacing.x);
 		
-	if (moveDirection.z <= -0.1)
+	if (dir.z <= -0.1)
 		returnAngle.z = -(1.0 - Mathf.Abs(wallFacing.z));
-	else if (moveDirection.z >= 0.1)
+	else if (dir.z >= 0.1)
 		returnAngle.z = 1.0 - Mathf.Abs(wallFacing.z);
-	
-	returnAngle = returnAngle.normalized;
-	
-	return returnAngle;
-}
-
-
-function NormalRight()
-{
-	var returnAngle : Vector3 = Vector3.zero;
-	
-	if (wallFacing.x <= -0.1)
-		returnAngle.z = -1.0 + Mathf.Abs(wallFacing.z);
-	else if (wallFacing.x >= 0.1)
-		returnAngle.z = 1.0 - Mathf.Abs(wallFacing.z);
-	
-	if (wallFacing.z <= -0.1)
-		returnAngle.x = 1.0 - Mathf.Abs(wallFacing.x);
-	else if (wallFacing.z >= 0.1)
-		returnAngle.x = -1.0 + Mathf.Abs(wallFacing.x);
-	
-	/*if (wallFacing.x < 0.0)
-		returnAngle.z -= 1.0;
-	if (wallFacing.z < 0.0)
-		returnAngle.x -= 1.0;*/
 	
 	returnAngle = returnAngle.normalized;
 	
@@ -566,6 +518,7 @@ function CalculateJumpVerticalSpeed (targetJumpHeight : float)
 	return Mathf.Sqrt(2 * targetJumpHeight * gravity);
 }
 
+// Handle the jump/double-jump actions
 function DidJump ()
 {
 	if(IsJumping()) {
@@ -586,12 +539,12 @@ function DidJump ()
 // Update the current state of the game
 function Update() {
 	
-	if (!isControllable) {		// Kill all inputs if not controllable (here by default, may be able to remove)
+	if (!isControllable) {		// Kill all inputs if not controllable (here by default, may be useful for in-game cutscenes?)
 		Input.ResetInputAxes();
 	}
 	
 	if ((Input.GetKeyDown (KeyCode.LeftShift) || Input.GetKeyDown (KeyCode.RightShift)) 
-		&& (moveSpeed > 1.0)) {		// Handle sprinting (not a thing right now, may be implemented in the future)
+		&& (moveSpeed > 1.0)) {								// Handle sprinting (not a thing right now, may be implemented in the future)
 		if ((Time.time - sprintTime) <= sprintTimeout) {		// If two shift presses fall within the timeout, sprinting
 			sprint = true;
 		}
@@ -605,55 +558,58 @@ function Update() {
 		lastJumpButtonTime = Time.time;
 	}
 	
-	else if (Input.GetButtonDown ("Fly")) {		// Otherwise, if fly button pressed, apply flying values to appropriate variables
+	else if (Input.GetButtonDown ("Fly")) {		// If fly button pressed, apply flying values to appropriate variables (doesn't matter too much; just for fast testing)
 		flying = !flying;
 		verticalSpeed = 0.0;
-		if (wallSliding) {
-			moveDirection = DirectionOnWall();
+		moveSpeed = 0.0;
+		if (wallSliding) {							// If fly button pressed while wall sliding
+			moveDirection = DirectionOnWall(moveDirection);
 			transform.rotation = Quaternion.LookRotation(moveDirection);
 			wallSliding = false;
 			wasWallSliding = false;
+		}	
+		else if (climbing) {						// If fly button pressed while climbing
+			moveDirection = wallFacing;
+			moveSpeed = 1.0;
+			climbing = false;
+			jumping = true;
 		}
 		else {
 			moveDirection = Vector3(moveDirection.x, 0.0, moveDirection.z);
 			moveDirection = moveDirection.normalized;
 			transform.rotation = Quaternion.LookRotation(moveDirection);
 		}
-		moveSpeed = 0.0;
 		inAirVelocity = Vector3(0.0, 0.0, 0.0);
 		jumping = false;
 		doubleJumping = false;
 	}
 	
-	else if (Input.GetButton ("Interact"))
+	else if (Input.GetButton ("Interact"))		// If the interact butten is pressed,
 	{
-		if (climbing) {
+		if (climbing) {								// and player is climbing, release from wall and apply slight pushoff (to prevent instantly regrabbing the wall)
 			moveDirection = wallFacing;
 			moveSpeed = 1.0;
 			climbing = false;
 			jumping = true;
-			wasWallSliding = true;
 		}
-		else if (hanging) {
+		else if (hanging) {							// and player is hanging, release from ceiling
 			hanging = false;
 		}
 	}
 	
+	// If the player is climbing
 	if (climbing) {
-		if (Input.GetButton ("Vertical"))
-		{
+		if (Input.GetButton ("Vertical")) {			// If one of the up/down buttons is pressed
 			_characterState = customCharacterState.Climbing_Vertical;
 			verticalSpeed = 2.0 * Input.GetAxis("Vertical");
-			if (verticalSpeed < 0.0)
+			if (verticalSpeed < 0.0)				// If moving down
 				decending = true;
-			else {
-				//Debug.Log("climbing up");
+			else
 				decending = false;
-			}
-			if (Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift))
+			if (Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift))		// Climb faster
 				verticalSpeed *= 2;
 		}
-		 
+		// If one of the up/down buttons is released
 		if (Input.GetButtonUp ("Vertical"))
 		{
 			_characterState = customCharacterState.Climbing_Idle;
@@ -661,24 +617,19 @@ function Update() {
 			moveDirection = -wallFacing;
 			moveSpeed = 0.1;
 		}
-		 
+		// If one of the left/right buttons is pressed
 		if (Input.GetButton ("Horizontal"))
 		{
 			if (_characterState == customCharacterState.Climbing_Idle)
 				_characterState = customCharacterState.Climbing_Horizontal;
 			moveSpeed = 2.0;
-			moveDirection += Vector3(wallRight.x * Input.GetAxis("Horizontal"), wallRight.y * Input.GetAxis("Horizontal"), wallRight.z * Input.GetAxis("Horizontal"));
-			//Debug.Log("wallFacing: " + wallFacing);
-			//Debug.Log("WallRight: " + wallRight);
-					/*if (transform.rotation.x < 0.0)
-				moveDirection.z *= -1.0;
-			if (transform.rotation.z < 0.0)
-				moveDirection.x *= -1.0;*/
+			moveDirection += Vector3(wallRight.x * Input.GetAxis("Horizontal"), wallRight.y * 
+							 Input.GetAxis("Horizontal"), wallRight.z * Input.GetAxis("Horizontal"));
 			moveDirection = moveDirection.normalized;
 			if (Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift))
 				moveSpeed *= 2;
 		}
-		 
+		// If one of the left/right buttons is released
 		if (Input.GetButtonUp ("Horizontal"))
 		{
 			if (_characterState == customCharacterState.Climbing_Horizontal)
@@ -689,25 +640,22 @@ function Update() {
 		}
 	}
 
+	// Smooth the player movement
 	UpdateSmoothedMovementDirection();
 	
-	// Apply gravity
-	// - extra power jump modifies gravity
-	// - controlledDescent mode modifies gravity
-	if (!flying)
-	{ApplyGravity ();
+	// If player isn't flying
+	if (!flying){
+		ApplyGravity ();		// Apply gravity
+		ApplyJumping ();		// Apply jumping logic
+	}
+	
+	var movement = moveDirection * moveSpeed + Vector3 (0, verticalSpeed, 0) + inAirVelocity;		// Calculate actual motion
+	movement *= Time.deltaTime;			// Base degree of applied movement on time since last frame
 
-	// Apply jumping logic
-	ApplyJumping ();}
-	
-	// Calculate actual motion
-	var movement = moveDirection * moveSpeed + Vector3 (0, verticalSpeed, 0) + inAirVelocity;
-	movement *= Time.deltaTime;
-	
-	// Handle rolling
+	// If rolling (and time since rolling began is less than rolling timeout)
 	if (rolling && ((Time.time - rollingTime) < rollingTimeout)) {
 		_characterState = customCharacterState.Rolling;
-		if (moveSpeed < 5.0)
+		if (moveSpeed < 5.0)							// If player speed is below minimum for roll, make minimum roll speed
 			moveSpeed = 5.0;
 	}
 	else {
@@ -733,9 +681,10 @@ function Update() {
 	if(_animation) {
 		switch(_characterState)
 		{
+			// Player is jumping; play jumping animation
 			case customCharacterState.Jumping:
-				_animation[jumpPoseAnimation.name].speed = jumpAnimationSpeed;
-				_animation[jumpPoseAnimation.name].wrapMode = WrapMode.Loop;
+				_animation[jumpPoseAnimation.name].speed = jumpAnimationSpeed;		// Animation speed = jump animation speed
+				_animation[jumpPoseAnimation.name].wrapMode = WrapMode.Loop;		// Loop the jump animation
 				_animation.CrossFade(jumpPoseAnimation.name);
 			break;
 			case customCharacterState.Double_Jumping:
@@ -744,7 +693,7 @@ function Update() {
 				_animation.CrossFade(doubleJumpAnimation.name);
 			break;
 			case customCharacterState.Jumping_After_Apex:
-				_animation[jumpPoseAfterApexAnimation.name].speed = jumpAfterApexAnimationSpeed;//-landAnimationSpeed;
+				_animation[jumpPoseAfterApexAnimation.name].speed = jumpAfterApexAnimationSpeed;
 				_animation[jumpPoseAfterApexAnimation.name].wrapMode = WrapMode.Loop;
 				_animation.CrossFade(jumpPoseAfterApexAnimation.name);	
 			break;
@@ -830,6 +779,19 @@ function Update() {
 		if (moveDirection == Vector3.zero) 
 			moveDirection = wallFacing;
 		transform.rotation = Quaternion.LookRotation(moveDirection);
+		
+		inAirVelocity = Vector3.zero;
+		if (climbing && decending) {		// If just reached ground from climbing downward
+			climbing = false;
+			decending = false;
+			transform.position.x += (wallFacing.x * 0.1);		// Move the player away
+			transform.position.z += (wallFacing.z * 0.1);		// from the climb surface
+		}
+		if (IsJumping()) {					// If just landed from jump
+			jumping = false;
+			doubleJumping = false;
+			SendMessage("DidLand", SendMessageOptions.DontRequireReceiver);
+		}
 			
 	}	
 	else
@@ -838,32 +800,12 @@ function Update() {
 			transform.rotation = Quaternion.LookRotation(wallFacing);
 		else 
 			transform.rotation = Quaternion.LookRotation(moveDirection);
-	}	
-	
-	// We are in jump mode but just became grounded
-	if (IsGrounded())
-	{
-		inAirVelocity = Vector3.zero;
-		if (climbing && decending) {
-			climbing = false;
-			decending = false;
-			transform.position.x += (wallFacing.x * 0.1);
-			transform.position.z += (wallFacing.z * 0.1);
-		}
-		if (IsJumping())
-		{
-			jumping = false;
-			doubleJumping = false;
-			SendMessage("DidLand", SendMessageOptions.DontRequireReceiver);
-		}
 	}
 }
 
 // Player has come in contact with a surface
 function OnControllerColliderHit (hit : ControllerColliderHit )
 {
-	Debug.DrawRay(hit.point, hit.normal, Color.red, 20, true);
-	
 	if (Mathf.Abs(hit.normal.y) > 0.3) {					// If surface of contact is relatively horizontal
 		if (hangContact && (hit.normal.y < -0.1)) {				// If surface is above and player is within hang triggerBox
 			if (!hanging) {											// If player isn't already hanging, set necessary variables
@@ -892,7 +834,7 @@ function OnControllerColliderHit (hit : ControllerColliderHit )
 		wallContact = true;
 		if (climbContact) {										// If player is within climb triggerBox
 			wallFacing = hit.normal;
-			wallRight = NormalRight();
+			wallRight = DirectionOnWall(wallFacing);
 			moveDirection = -wallFacing;
 			transform.rotation = Quaternion.LookRotation(moveDirection);
 			if (!climbing) {										// If player isn't already climbing, set necessary variables
@@ -924,6 +866,7 @@ function OnControllerColliderHit (hit : ControllerColliderHit )
 	}
 }
 
+// These functions just return the truth value of their implied variables
 function GetSpeed () {
 	return moveSpeed;
 }
