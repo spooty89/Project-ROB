@@ -1,9 +1,12 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/CustomScripts/CustomThirdPersonController.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Platform\movingPlatformBehavior.js">
     <Files>
-      <File FileName="Assets/CustomScripts/CustomCameraController.cs" Line="1" Column="1" />
-      <File FileName="Assets/CustomScripts/CustomThirdPersonController.js" Line="502" Column="49" />
+      <File FileName="Assets\Platform\Platform_Interface.js" Line="26" Column="2" />
+      <File FileName="Assets\Platform\Platform_Class.js" Line="1" Column="1" />
+      <File FileName="Assets\Platform\MovingObject_Interface.js" Line="19" Column="50" />
+      <File FileName="Assets\Platform\MovingPlatform_Class.js" Line="62" Column="4" />
+      <File FileName="Assets\Platform\movingPlatformBehavior.js" Line="11" Column="42" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
