@@ -98,9 +98,6 @@ private var rollingTime = 0.0;
 private var sprintTimeout = 0.4;
 private var sprintTime = 0.0;
 
-// The camera doesnt start following the target immediately but waits for a split second to avoid too much waving around.
-private var lockCameraTimer = 0.0;
-
 // The current move direction in x-z
 private var moveDirection = Vector3.zero;
 // The current vertical speed
@@ -234,8 +231,6 @@ function UpdateSmoothedMovementDirection ()
 	// Grounded controls
 	if ((grounded || flying || hanging) && !climbing)
 	{
-		// Lock camera for short period when transitioning moving & standing still
-		lockCameraTimer += Time.deltaTime;
 		if (isMoving != wasMoving)
 			lockCameraTimer = 0.0;
 
@@ -999,11 +994,6 @@ function IsMovingBackwards () {
 	return movingBack;
 }
 
-function GetLockCameraTimer () 
-{
-	return lockCameraTimer;
-}
-
 function IsMoving ()  : boolean
 {
 	return Mathf.Abs(Input.GetAxisRaw("Vertical")) + Mathf.Abs(Input.GetAxisRaw("Horizontal")) > 0.5;
@@ -1018,14 +1008,6 @@ function Reset ()
 {
 	gameObject.tag = "Player";
 }
-
-/*function OnCollisionEnter(collision : Collision)
-{
-	for (var contact : ContactPoint in collision.contacts) {
-		Debug.Log(collision.gameObject.name);
-		Debug.DrawRay(contact.point, contact.normal, Color.white);
-	}
-}*/
 
 function OnTriggerEnter(other:Collider)
 {
