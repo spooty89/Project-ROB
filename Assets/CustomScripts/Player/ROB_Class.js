@@ -58,6 +58,7 @@ public class ROB{
 	public var decending = false;
 	public var heavyLanding = false;
 	public var rolling = false;
+	public var bouncing = false;
 	
 	// Is the user pressing any keys?
 	public var isMoving = false;
@@ -158,22 +159,20 @@ public class ROB{
 			_characterState = customCharacterState.Idle;
 			
 			// Pick speed modifier
-			if (Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift))
+			if (Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift) && !bouncing)
 			{
 				targetSpeed *= runSpeed;
 				_characterState = customCharacterState.Running;
 			}
-			else if (Time.time - trotAfterSeconds > walkTimeStart)
+			else if (Time.time - trotAfterSeconds > walkTimeStart && !bouncing)
 			{
 				targetSpeed *= trotSpeed;
 				_characterState = customCharacterState.Trotting;
 			}
-			else
-			{
+			else if (!bouncing){
 				targetSpeed *= walkSpeed;
 				_characterState = customCharacterState.Walking;
-			}
-			
+			}			
 			if (hanging) {
 				if (targetSpeed > 0.0) {
 					_characterState = customCharacterState.Hanging_Move;
@@ -284,8 +283,9 @@ public class ROB{
 				wallContact = false;
 				hangContact = false;
 				jumpingReachedApex = false;
-				if (!climbing)
+				if (!climbing && !bouncing)
 					verticalSpeed = 0.0;
+				bouncing = false;	
 				
 				if ((previousVerticalSpeed < -10.0) && (moveSpeed >= runSpeed/1.5)) {
 					rolling = true;
@@ -459,9 +459,11 @@ public class ROB{
 				
 			transform.rotation = Quaternion.LookRotation(moveDirection);
 			inAirVelocity = Vector3.zero;
-			jumping = false;
-			doubleJumping = false;
-			
+			if(IsJumping() && !bouncing){
+				jumping = false;
+				doubleJumping = false;
+			}
+						
 			if (climbing && decending) {		// If just reached ground from climbing downward
 				climbing = false;
 				decending = false;

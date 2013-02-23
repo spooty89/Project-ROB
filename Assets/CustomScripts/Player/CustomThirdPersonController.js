@@ -92,7 +92,15 @@ function Update() {
 // Player has come in contact with a surface
 function OnControllerColliderHit (hit : ControllerColliderHit )
 {
-	if (Mathf.Abs(hit.normal.y) > 0.3) {					// If surface of contact is relatively horizontal
+	if (Mathf.Abs(hit.normal.y) > 0.3) {
+		if(hit.gameObject.CompareTag("Bouncy") && (rob.verticalSpeed <= 0)){    
+			rob.bouncing = true;
+			rob.jumping=true;
+			rob.doubleJumping = false;
+			rob.collisionFlags=0;
+			_characterState = customCharacterState.Jumping;	
+		    rob.verticalSpeed=20.0;
+		}					// If surface of contact is relatively horizontal
 		if (rob.hangContact && (hit.normal.y < -0.1)) {				// If surface is above and player is within hang triggerBox
 			if (!rob.hanging) {											// If player isn't already hanging, set necessary variables
 				rob.hanging = true;
