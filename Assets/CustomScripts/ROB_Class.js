@@ -1,39 +1,39 @@
 @script RequireComponent(CharacterController)
 
 public class ROB{
-	var walkSpeed = 3.0;	// The speed when walking
-	var trotSpeed = 5.0;	// After trotAfterSeconds of walking we trot with trotSpeed
-	var runSpeed = 8.0;		// When pressing Shift button we start running
+	private var walkSpeed : float = 3.0;	// The speed when walking
+	private var trotSpeed : float = 5.0;	// After trotAfterSeconds of walking we trot with trotSpeed
+	private var runSpeed : float = 8.0;		// When pressing Shift button we start running
 	
-	var jumpAcceleration = 2.0;			// Acceleration from jumping
-	var doubleJumpAcceleration = 1.0;	// from double jumping
+	private var jumpAcceleration : float = 2.0;			// Acceleration from jumping
+	private var doubleJumpAcceleration : float = 1.0;	// from double jumping
 	
-	var jumpHeight = 1.5;			// How high we jump when pressing jump and letting go immediately
-	var doubleJumpHeight = 0.75;	// How high we jump when we double jump
+	private var jumpHeight : float = 1.5;			// How high we jump when pressing jump and letting go immediately
+	private var doubleJumpHeight : float = 0.75;	// How high we jump when we double jump
 	
-	var gravity = 17.0;				// The gravity for the character
-	var wallSlidingGravity = 3.2;	// Wall sliding reduces gravity's effect on character
-	var speedSmoothing = 10.0;
-	var rotateSpeed = 900.0;
-	var inAirRotateSpeed = 450.0;
-	var trotAfterSeconds = 1.0;
-	var timeAfterJumpLimitRotate = 0.9;
-	var canJump = true;
-	var rollingTimeout = 0.7;
+	private var gravity : float = 17.0;				// The gravity for the character
+	private var wallSlidingGravity : float = 3.2;	// Wall sliding reduces gravity's effect on character
+	private var speedSmoothing : float = 10.0;
+	private var rotateSpeed : float = 900.0;
+	private var inAirRotateSpeed : float = 450.0;
+	private var trotAfterSeconds : float = 1.0;
+	private var timeAfterJumpLimitRotate : float = 0.9;
+	public var canJump = true;
+	private var rollingTimeout : float = 0.7;
 	
-	public var jumpRepeatTime = 0.05;
-	public var jumpTimeout = 0.15;
-	public var heavyLandingTimeout = 0.75;
-	public var heavyLandingTime = 0.0;
-	public var rollingTime = 0.0;
+	private var jumpRepeatTime : float = 0.05;
+	private var jumpTimeout : float = 0.15;
+	private var heavyLandingTimeout : float = 0.75;
+	private var heavyLandingTime : float = 0.0;
+	private var rollingTime : float = 0.0;
 	
 	// The current move direction in x-z
 	public var moveDirection : Vector3 = Vector3.zero;
 	// The current vertical speed
 	public var verticalSpeed : float = 0.0;
-	public var previousVerticalSpeed = 0.0;
+	private var previousVerticalSpeed : float = 0.0;
 	// The current x-z move speed
-	public var moveSpeed = 0.0;
+	public var moveSpeed : float = 0.0;
 	
 	// The last collision flags returned from controller.Move
 	public var collisionFlags : CollisionFlags; 
@@ -47,8 +47,8 @@ public class ROB{
 	public var wallSliding = false;
 	public var wallContact = false;
 	public var hangContact = false;
-	public var numClimbContacts = 0;
-	public var numHangContacts = 0;
+	public var numClimbContacts : int = 0;
+	public var numHangContacts : int = 0;
 	public var wasWallSliding = false;
 	public var isFreeFalling = false;
 	public var climbing = false;
@@ -62,19 +62,17 @@ public class ROB{
 	// Is the user pressing any keys?
 	public var isMoving = false;
 	// When did the user start walking (Used for going into trot after a while)
-	public var walkTimeStart = 0.0;
-	// Last time the jump button was clicked down
-	public var lastJumpButtonTime = -10.0;
+	public var walkTimeStart : float = 0.0;
 	// Last time we performed a jump
-	public var lastJumpTime = -1.0;
+	public var lastJumpTime : float = -1.0;
 	// The height we jumped from (Used to determine for how long to apply extra jump power after jumping.)
-	public var lastJumpStartHeight = 0.0;
+	public var lastJumpStartHeight : float = 0.0;
 	
 	// Direction to face when wall sliding and jumping from wall
-	public var wallFacing = Vector3.zero;
-	public var wallRight = Vector3.zero;
+	public var wallFacing : Vector3 = Vector3.zero;
+	public var wallRight : Vector3 = Vector3.zero;
 	
-	public var inAirVelocity = Vector3.zero;
+	public var inAirVelocity : Vector3 = Vector3.zero;
 	
 	public var hookShotHit : RaycastHit;
 	
@@ -99,9 +97,9 @@ public class ROB{
 	
 	public var _characterState : customCharacterState;
 	public var isControllable = true;
-	public var transform:Transform;
+	public var transform : Transform;
 	
-	function ROB(trans:Transform){
+	function ROB(trans : Transform){
 		this.transform = trans;
 	}
 
@@ -126,8 +124,7 @@ public class ROB{
 
 	function UpdateSmoothedMovementDirection ()
 	{
-		var cameraTransform = Camera.main.transform;
-		var grounded = IsGrounded();
+		var cameraTransform : Transform = Camera.main.transform;
 		
 		// Forward vector relative to the camera along the x-z plane	
 		var forward = cameraTransform.TransformDirection(Vector3.forward);
@@ -149,7 +146,7 @@ public class ROB{
 			targetDirection = h * right + v * forward;
 		
 		// Grounded controls
-		if ((grounded || hanging) && !climbing)
+		if ((IsGrounded() || hanging) && !climbing)
 		{
 	
 			// We store speed and direction seperately,
@@ -247,7 +244,6 @@ public class ROB{
 		jumpingReachedApex = false;
 		lastJumpTime = Time.time;
 		lastJumpStartHeight = transform.position.y;
-		lastJumpButtonTime = -10.0;
 	}
 	
 	function ApplyJumping ()
@@ -255,17 +251,16 @@ public class ROB{
 		// Prevent jumping too fast after each other
 		if ((lastJumpTime + jumpRepeatTime > Time.time) && !IsDoubleJumping())
 			return;
-	
+		
 		if (IsGrounded() || !IsDoubleJumping() || wallSliding){
 			// Jump
 			// - Only when pressing the button down
 			// - With a timeout so you can press the button slightly before landing		
-			if (canJump && (!IsJumping || !IsDoubleJumping())){//Time.time < lastJumpButtonTime + jumpTimeout) {
+			if (canJump && (!IsJumping() || !IsDoubleJumping())){
 				if (!IsDoubleJumping())
 					verticalSpeed = CalculateJumpVerticalSpeed (jumpHeight);
 				else
 					verticalSpeed = CalculateJumpVerticalSpeed (doubleJumpHeight);
-				//transform.SendMessage("DidJump", SendMessageOptions.DontRequireReceiver);
 				DidJump();
 				
 				if(wallSliding || climbing){
@@ -277,9 +272,7 @@ public class ROB{
 					moveSpeed = 8.0;
 					wallSliding = false;
 	        		wallContact = false;
-	        		//Debug.Log("jumping?");
 	        		climbing = false;
-	        		//climbContact = false;
 				}
 			}
 		}
@@ -290,14 +283,11 @@ public class ROB{
 	{
 		if (isControllable)	// don't move player at all if not controllable.
 		{
-			// Apply gravity
-			//var jumpButton = Input.GetButton("Jump");
 			var temp;
 			
 			// When we reach the apex of the jump we send out a message
 			if ((IsJumping() || IsDoubleJumping()) && !jumpingReachedApex && verticalSpeed <= 0.0 && !climbing)
 			{
-				//Debug.Log("here");
 				jumpingReachedApex = true;
 				_characterState = customCharacterState.Jumping_After_Apex;
 			}
@@ -312,12 +302,10 @@ public class ROB{
 				
 				if ((previousVerticalSpeed < -10.0) && (moveSpeed >= runSpeed/1.5)) {
 					rolling = true;
-					//Debug.Log("Previous Vertical Speed : " + previousVerticalSpeed);
 					rollingTime = Time.time;
 					_characterState = customCharacterState.Rolling;
 				}
 				else if (previousVerticalSpeed <= -25.0) {
-					//Debug.Log("heavy landing : " + previousVerticalSpeed);
 					heavyLanding = true;
 					heavyLandingTime = Time.time;
 					_characterState = customCharacterState.Heavy_Landing;
@@ -325,8 +313,6 @@ public class ROB{
 			}
 			else {
 				if (wallSliding) {
-					Debug.Log("in wallsliding");
-					Debug.Log(verticalSpeed);
 					if (collisionFlags == 0) {
 						wallSliding = false;
 						wallContact = false;
@@ -342,26 +328,17 @@ public class ROB{
 				}
 				else if (climbing) {
 					if (collisionFlags == 0) {
-						//Debug.Log("climbing false");
 						climbing = false;
-				transform.position.x += (wallFacing.x * 0.1);
-				transform.position.z += (wallFacing.z * 0.1);
-						//climbContact = false;
-						/*verticalSpeed -= gravity * Time.deltaTime;
-						_characterState = customCharacterState.Jumping_After_Apex;
-						temp = moveDirection.normalized.magnitude;
-						moveDirection = DirectionOnWall();
-						moveSpeed *= (moveDirection.magnitude/temp);*/
+						transform.position.x += (wallFacing.x * 0.1);
+						transform.position.z += (wallFacing.z * 0.1);
 					}
 					else {
 						if (verticalSpeed < -0.5)
 							verticalSpeed += gravity * Time.deltaTime;
 						else if (verticalSpeed > 0.5)
 							verticalSpeed -= gravity * Time.deltaTime;
-						if (Mathf.Abs(verticalSpeed) <= 0.5) {
-							//Debug.Log("not moving");
+						if (Mathf.Abs(verticalSpeed) <= 0.5)
 							verticalSpeed = 0.0;
-							}
 					}
 				}
 				else if (hanging) {
@@ -369,17 +346,18 @@ public class ROB{
 						hanging = false;
 						hangContact = false;
 					}
-					else {
+					else
 						verticalSpeed = 1.0;
-					}
 				}
 				else if (!IsGrounded()) {
-					if (verticalSpeed < -1.0)
+					if (verticalSpeed <= -1.0)
 						_characterState = customCharacterState.Jumping_After_Apex;
-					if (verticalSpeed > -40.0)
+					if (verticalSpeed > -15.0)
 						verticalSpeed -= gravity * Time.deltaTime;
-					if (verticalSpeed < -15.0)
+					if (verticalSpeed <= -15.0){
+						verticalSpeed = -15.0;
 						_characterState = customCharacterState.Free_Falling;
+					}
 				}
 			}
 			previousVerticalSpeed = verticalSpeed;
@@ -400,19 +378,14 @@ public class ROB{
 			returnAngle.x = -1.0 + Mathf.Abs(wallFacing.x);
 		
 		returnAngle = returnAngle.normalized;
-		Debug.Log("dir: " + dir);
-		Debug.Log("wallFacing: " + wallFacing);
-		Debug.Log("returnAngle: " + returnAngle);
 		
 		return returnAngle;
 	}
 	
 	// Handle secondary input functions
 	function InputHandler() {
-		if (Input.GetButtonDown ("Jump")){// && (IsGrounded() || !IsDoubleJumping())) {	// If jump button pressed, get time of jump
-			lastJumpButtonTime = Time.time;
+		if (Input.GetButtonDown ("Jump"))	// If jump button pressed
 			ApplyJumping ();		// Apply jumping logic
-		}
 		
 		else if (Input.GetButton ("Interact"))		// If the interact butten is pressed,
 		{
@@ -422,9 +395,8 @@ public class ROB{
 				climbing = false;
 				jumping = true;
 			}
-			else if (hanging) {							// and player is hanging, release from ceiling
+			else if (hanging)							// and player is hanging, release from ceiling
 				hanging = false;
-			}
 		}
 		
 		// If the player is climbing
@@ -485,7 +457,6 @@ public class ROB{
 		// Handle heavy landing (big fall w/o enough forward movement to be roll)
 		if (heavyLanding && ((Time.time - heavyLandingTime) < heavyLandingTimeout)) {
 			_characterState = customCharacterState.Heavy_Landing;
-			//movement = Vector3.zero;
 			verticalSpeed = 0.0;
 			previousVerticalSpeed = 0.0;
 			rolling = false;
@@ -498,19 +469,18 @@ public class ROB{
 		{
 			if (moveDirection == Vector3.zero) 
 				moveDirection = wallFacing;
+				
 			transform.rotation = Quaternion.LookRotation(moveDirection);
-			
 			inAirVelocity = Vector3.zero;
+			jumping = false;
+			doubleJumping = false;
+			
 			if (climbing && decending) {		// If just reached ground from climbing downward
 				climbing = false;
 				decending = false;
 				transform.position.x += (wallFacing.x * 0.1);		// Move the player away
 				transform.position.z += (wallFacing.z * 0.1);		// from the climb surface
 			}
-			//if (IsJumping()) {					// If just landed from jump
-				jumping = false;
-				doubleJumping = false;
-			//}
 				
 		}	
 		else

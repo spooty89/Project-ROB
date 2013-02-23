@@ -1,6 +1,5 @@
 
 // Require a character controller to be attached to the same game object
-//@script RequireComponent(CharacterController)
 
 var rob:ROB;
 
@@ -84,10 +83,10 @@ function Update() {
 	if (!rob.isControllable) {		// Kill all inputs if not controllable (here by default, may be useful for in-game cutscenes?)
 		Input.ResetInputAxes();
 	}
-	rob.InputHandler();		// Handle user input
 	rob.UpdateSmoothedMovementDirection();	// Smooth the player movement
 	rob.ApplyGravity ();	// Apply gravity
 	rob.MovementHandler();	// Handle movement
+	rob.InputHandler();		// Handle user input (comes after movement, else jumping from ground is irregular)
 	AnimationHandler();		// Handle animations
 }
 
@@ -139,14 +138,11 @@ function OnControllerColliderHit (hit : ControllerColliderHit )
 				rob.doubleJumping = false;
 			}
     	}
-    	else {													// Else, if player is against non-climb wall surface
-    		//Debug.Log("in the else");
+    	else {								// Else, if player is against non-climb wall surface
 	    	rob.climbing = false;
 			rob.wallFacing = hit.normal;
-			if (rob.verticalSpeed < 0.0) {	// If player has reached their jump apex or is simply falling	
-				Debug.Log("in the wallslide");
-				if (!rob.wallSliding){										// If player is not already wallSliding, set necessary variables
-					Debug.Log("making wallslide");
+			if (rob.verticalSpeed < 0.0) {		// If player has reached their jump apex or is simply falling	
+				if (!rob.wallSliding){				// If player is not already wallSliding, set necessary variables
 					rob.wallSliding = true;
 	    			rob._characterState = rob.customCharacterState.Wall_Sliding;
 	    			rob.jumping = false;
@@ -169,7 +165,6 @@ function AnimationHandler() {
 		{
 			// Player is jumping; play jumping animation
 			case rob.customCharacterState.Jumping:
-				//Debug.Log("here");
 				_animation[jumpPoseAnimation.name].speed = jumpAnimationSpeed;		// Animation speed = jump animation speed
 				_animation[jumpPoseAnimation.name].wrapMode = WrapMode.Loop;		// Loop the jump animation
 				_animation.CrossFade(jumpPoseAnimation.name);

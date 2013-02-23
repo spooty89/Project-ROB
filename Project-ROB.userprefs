@@ -2,8 +2,10 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets/CustomScripts/ROB_Class.js">
     <Files>
-      <File FileName="Assets/CustomScripts/CustomThirdPersonController.js" Line="91" Column="43" />
-      <File FileName="Assets/CustomScripts/ROB_Class.js" Line="105" Column="26" />
+      <File FileName="Assets/CustomScripts/CustomThirdPersonController.js" Line="264" Column="13" />
+      <File FileName="Assets/CustomScripts/ROB_Class.js" Line="51" Column="8" />
+      <File FileName="Assets/Standard Assets/Character Controllers/Sources/Scripts/CustomThirdPersonController.js" Line="857" Column="13" />
+      <File FileName="../../Desktop/example_code.cs" Line="37" Column="32" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
