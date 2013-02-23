@@ -102,18 +102,6 @@ public class ROB{
 	function ROB(trans : Transform){
 		this.transform = trans;
 	}
-
-	function IsJumping () {
-		return jumping;
-	}
-	
-	function IsDoubleJumping () {
-		return doubleJumping;
-	}
-	
-	function IsGrounded () {
-		return (collisionFlags & CollisionFlags.CollidedBelow) != 0;
-	}
 	
 	function CalculateJumpVerticalSpeed (targetJumpHeight : float) : float
 	{
@@ -229,23 +217,6 @@ public class ROB{
 		}	
 	}
 	
-	// Handle the jump/double-jump actions
-	function DidJump ()
-	{
-		if(IsJumping()) {
-			doubleJumping = true;
-			_characterState = customCharacterState.Double_Jumping;
-		}
-		else {
-			jumping = true;
-			_characterState = customCharacterState.Jumping;
-		}
-		
-		jumpingReachedApex = false;
-		lastJumpTime = Time.time;
-		lastJumpStartHeight = transform.position.y;
-	}
-	
 	function ApplyJumping ()
 	{
 		// Prevent jumping too fast after each other
@@ -278,7 +249,23 @@ public class ROB{
 		}
 	}
 	
-
+	// Handle the jump/double-jump actions
+	function DidJump ()
+	{
+		if(IsJumping()) {
+			doubleJumping = true;
+			_characterState = customCharacterState.Double_Jumping;
+		}
+		else {
+			jumping = true;
+			_characterState = customCharacterState.Jumping;
+		}
+		
+		jumpingReachedApex = false;
+		lastJumpTime = Time.time;
+		lastJumpStartHeight = transform.position.y;
+	}
+	
 	function ApplyGravity ()
 	{
 		if (isControllable)	// don't move player at all if not controllable.
@@ -490,5 +477,18 @@ public class ROB{
 			else 
 				transform.rotation = Quaternion.LookRotation(moveDirection);
 		}
+	}
+
+
+	function IsJumping () {
+		return jumping;
+	}
+	
+	function IsDoubleJumping () {
+		return doubleJumping;
+	}
+	
+	function IsGrounded () {
+		return (collisionFlags & CollisionFlags.CollidedBelow) != 0;
 	}
 }

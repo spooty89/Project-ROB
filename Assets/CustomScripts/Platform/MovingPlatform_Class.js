@@ -11,13 +11,13 @@ function Update () {
 
 public class MovingPlatform extends Platform implements MovingObjectInterface{
 	private var speed:float;
-	private var wayPoints:List.<Vector3>;
+	private var wayPoints:List.<GameObject>;
 	private var wayPointIndex:int = 0;
 	
-	function MovingPlatform(transform:Transform, speed:float){
+	function MovingPlatform(transform:Transform, speed:float, wayPoints){
 		super(transform);
 		this.speed = speed;
-		this.wayPoints = new List.<Vector3>();
+		this.wayPoints = wayPoints;
 	}
 	function getSpeed():float{
 		return this.speed;
@@ -27,23 +27,23 @@ public class MovingPlatform extends Platform implements MovingObjectInterface{
 		this.speed = speed;
 	}
 	
-	function addWayPoint(wayPoint:Vector3):void{
+	/*function addWayPoint(wayPoint:Vector3):void{
 		this.wayPoints.Add(wayPoint);
-	}
+	}*/
 	
-	function popWayPoint():Vector3{
+	/*function popWayPoint():Vector3{
 		var lastIndex:int = wayPoints.Count - 1;
 		if (lastIndex < 0){
 			throw System.Exception("No way points to pop");
 		}
-		var wayPoint:Vector3 = this.wayPoints[lastIndex];
+		var wayPoint :Vector3 = this.wayPoints[lastIndex];
 		this.wayPoints.RemoveAt(lastIndex);
 		return wayPoint;
-	}
+	}*/
 
 	function getCurrentWayPoint():Vector3{
 		if (wayPoints.Count > 0)
-			return wayPoints[this.wayPointIndex];
+			return wayPoints[this.wayPointIndex].transform.position;
 		return this.transform.position;
 	}
 	
@@ -51,15 +51,17 @@ public class MovingPlatform extends Platform implements MovingObjectInterface{
 		return this.wayPoints.Count;
 	}
 	
-	function move():void{
+	function move():void{	
 		if (this.numWayPoints() == 0)
 			return;
-		if (this.wayPoints[this.wayPointIndex] == this.transform.position){
+		//Debug.Log("waypoint " + this.wayPoints[this.wayPointIndex].transform.position);
+		//Debug.Log("position " + this.transform.position);
+		if (this.wayPoints[this.wayPointIndex].transform.position == this.transform.position){
 			if(this.wayPointIndex == this.numWayPoints()-1)
 				this.wayPointIndex = 0; //start from first way point if last at last waypoint
 			else
 				this.wayPointIndex++; 
 		}
-		this.transform.position = Vector3.MoveTowards(this.transform.position, this.wayPoints[wayPointIndex],  Time.deltaTime * this.speed);
+		this.transform.position = Vector3.MoveTowards(this.transform.position, this.wayPoints[wayPointIndex].transform.position,  Time.deltaTime * this.speed);
 	}
 }

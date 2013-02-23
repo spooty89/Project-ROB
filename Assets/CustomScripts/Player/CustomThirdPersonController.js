@@ -1,8 +1,6 @@
-
-// Require a character controller to be attached to the same game object
-
 var rob:ROB;
 
+// Animations to be played
 public var idleAnimation : AnimationClip;
 public var walkAnimation : AnimationClip;
 public var runAnimation : AnimationClip;
@@ -19,6 +17,7 @@ public var hangMoveAnimation : AnimationClip;
 public var freefallPoseAnimation : AnimationClip;
 public var heavyLandPoseAnimation : AnimationClip;
 
+// Speed at which each animation will be played
 public var idleAnimationSpeed : float = 1.0;
 public var walkMaxAnimationSpeed : float = 1.0;
 public var trotMaxAnimationSpeed : float = 0.7;
@@ -45,7 +44,7 @@ function Awake ()
 	if(!_animation)
 		Debug.Log("The character you would like to control doesn't have animations. Moving her might look weird.");
 	
-	// Check for various animations
+	// Check for all animations
 	if(!idleAnimation) {
 		_animation = null;
 		Debug.Log("No idle animation found. Turning off animations.");
@@ -153,109 +152,6 @@ function OnControllerColliderHit (hit : ControllerColliderHit )
 	}
 }
 
-function AnimationHandler() {
-	var movement = rob.moveDirection * rob.moveSpeed + Vector3 (0, rob.verticalSpeed, 0) + rob.inAirVelocity;		// Calculate actual motion
-	movement *= Time.deltaTime;			// Base degree of applied movement on time since last frame
-	var controller : CharacterController = transform.GetComponent(CharacterController);		// Move the controller
-	rob.collisionFlags = controller.Move(movement);
-	
-	// ANIMATION sector
-	if(_animation) {
-		switch(rob._characterState)
-		{
-			// Player is jumping; play jumping animation
-			case rob.customCharacterState.Jumping:
-				_animation[jumpPoseAnimation.name].speed = jumpAnimationSpeed;		// Animation speed = jump animation speed
-				_animation[jumpPoseAnimation.name].wrapMode = WrapMode.Loop;		// Loop the jump animation
-				_animation.CrossFade(jumpPoseAnimation.name);
-			break;
-			case rob.customCharacterState.Double_Jumping:
-				_animation[doubleJumpAnimation.name].speed = doubleJumpAnimationSpeed;
-				_animation[doubleJumpAnimation.name].wrapMode = WrapMode.ClampForever;
-				_animation.CrossFade(doubleJumpAnimation.name);
-			break;
-			case rob.customCharacterState.Jumping_After_Apex:
-				_animation[jumpPoseAfterApexAnimation.name].speed = jumpAfterApexAnimationSpeed;
-				_animation[jumpPoseAfterApexAnimation.name].wrapMode = WrapMode.Loop;
-				_animation.CrossFade(jumpPoseAfterApexAnimation.name);	
-			break;
-			case rob.customCharacterState.Wall_Sliding:
-				_animation[wallSlideAnimation.name].speed = wallSlideAnimationSpeed;
-				_animation[wallSlideAnimation.name].wrapMode = WrapMode.Loop;
-				_animation.CrossFade(wallSlideAnimation.name);	
-			break;
-			case rob.customCharacterState.Climbing_Idle:
-				_animation[climbIdlePoseAnimation.name].speed = -climbIdleAnimationSpeed;
-				_animation[climbIdlePoseAnimation.name].wrapMode = WrapMode.ClampForever;
-				_animation.CrossFade(climbIdlePoseAnimation.name);
-			break;
-			case rob.customCharacterState.Climbing_Vertical:
-				_animation[climbVerticalAnimation.name].speed = rob.verticalSpeed/2;
-				_animation[climbVerticalAnimation.name].wrapMode = WrapMode.Loop;
-				_animation.CrossFade(climbVerticalAnimation.name);
-			break;
-			case rob.customCharacterState.Climbing_Horizontal:
-				_animation[climbHorizontalAnimation.name].speed = climbHorizontalAnimationSpeed;
-				_animation[climbHorizontalAnimation.name].wrapMode = WrapMode.Loop;
-				_animation.CrossFade(climbHorizontalAnimation.name);
-			break;
-			case rob.customCharacterState.Hanging_Idle:
-				_animation[hangIdlePoseAnimation.name].speed = -hangIdleAnimationSpeed;
-				_animation[hangIdlePoseAnimation.name].wrapMode = WrapMode.ClampForever;
-				_animation.CrossFade(hangIdlePoseAnimation.name);
-			break;
-			case rob.customCharacterState.Hanging_Move:
-				_animation[hangMoveAnimation.name].speed = Mathf.Clamp(rob.moveSpeed, 0.0, hangMoveAnimationSpeed);
-				_animation[hangMoveAnimation.name].wrapMode = WrapMode.Loop;
-				_animation.CrossFade(hangMoveAnimation.name);
-			break;
-			case rob.customCharacterState.Free_Falling:
-				_animation[freefallPoseAnimation.name].speed = freefallAnimationSpeed;
-				_animation[freefallPoseAnimation.name].wrapMode = WrapMode.ClampForever;
-				_animation.CrossFade(freefallPoseAnimation.name);
-			break;
-			case rob.customCharacterState.Heavy_Landing:
-				_animation[heavyLandPoseAnimation.name].speed = heavyLandAnimationSpeed;
-				_animation[heavyLandPoseAnimation.name].wrapMode = WrapMode.ClampForever;
-				_animation.CrossFade(heavyLandPoseAnimation.name);
-			break;
-			case rob.customCharacterState.Rolling:
-				_animation[rollAnimation.name].speed = rollAnimationSpeed;
-				_animation[rollAnimation.name].wrapMode = WrapMode.ClampForever;
-				_animation.CrossFade(rollAnimation.name);
-			break;
-			default:
-				if(controller.velocity.sqrMagnitude < 0.1) {
-					_animation[idleAnimation.name].speed = -idleAnimationSpeed;
-					_animation[idleAnimation.name].wrapMode = WrapMode.ClampForever;
-					_animation.CrossFade(idleAnimation.name);
-				}
-				else 
-				{
-					switch(rob._characterState)
-					{
-						case rob.customCharacterState.Running:
-							_animation[runAnimation.name].speed = Mathf.Clamp(controller.velocity.magnitude, 0.0, runMaxAnimationSpeed);
-							_animation.CrossFade(runAnimation.name);	
-						break;
-						case rob.customCharacterState.Trotting:
-							_animation[runAnimation.name].speed = Mathf.Clamp(controller.velocity.magnitude, 0.0, trotMaxAnimationSpeed);
-							_animation.CrossFade(runAnimation.name);	
-						break;
-						case rob.customCharacterState.Walking:
-							_animation[walkAnimation.name].speed = Mathf.Clamp(controller.velocity.magnitude, 0.0, walkMaxAnimationSpeed);
-							_animation.CrossFade(walkAnimation.name);	
-						break;
-						default:
-						break;
-					}
-				}
-			break;
-		}
-	}
-	// ANIMATION sector
-}
-
 // If the player enters a triggerBox
 function OnTriggerEnter(other:Collider)
 {
@@ -286,4 +182,122 @@ function OnTriggerExit(other:Collider)
 			rob.hanging = false;
 		}
 	}
+}
+
+// Handle animation states
+function AnimationHandler() {
+	var movement = rob.moveDirection * rob.moveSpeed + Vector3 (0, rob.verticalSpeed, 0) + rob.inAirVelocity;		// Calculate actual motion
+	movement *= Time.deltaTime;			// Base degree of applied movement on time since last frame
+	var controller : CharacterController = transform.GetComponent(CharacterController);		// Move the controller
+	rob.collisionFlags = controller.Move(movement);
+	
+	// ANIMATION sector
+	if(_animation) {
+		switch(rob._characterState)
+		{
+			// Player is jumping; play jumping animation
+			case rob.customCharacterState.Jumping:
+				_animation[jumpPoseAnimation.name].speed = jumpAnimationSpeed;		// Animation speed = jump animation speed
+				_animation[jumpPoseAnimation.name].wrapMode = WrapMode.Loop;		// Loop the jump animation
+				_animation.CrossFade(jumpPoseAnimation.name);
+			break;
+			// Player is double jumping; play double jumping animation
+			case rob.customCharacterState.Double_Jumping:
+				_animation[doubleJumpAnimation.name].speed = doubleJumpAnimationSpeed;
+				_animation[doubleJumpAnimation.name].wrapMode = WrapMode.ClampForever;
+				_animation.CrossFade(doubleJumpAnimation.name);
+			break;
+			// Player is decending in jump; play jump after apex animation
+			case rob.customCharacterState.Jumping_After_Apex:
+				_animation[jumpPoseAfterApexAnimation.name].speed = jumpAfterApexAnimationSpeed;
+				_animation[jumpPoseAfterApexAnimation.name].wrapMode = WrapMode.Loop;
+				_animation.CrossFade(jumpPoseAfterApexAnimation.name);	
+			break;
+			// Player is wallsliding; play wallsliding animation
+			case rob.customCharacterState.Wall_Sliding:
+				_animation[wallSlideAnimation.name].speed = wallSlideAnimationSpeed;
+				_animation[wallSlideAnimation.name].wrapMode = WrapMode.Loop;
+				_animation.CrossFade(wallSlideAnimation.name);	
+			break;
+			// Player is idle while climbing; play climbing idle animation
+			case rob.customCharacterState.Climbing_Idle:
+				_animation[climbIdlePoseAnimation.name].speed = -climbIdleAnimationSpeed;
+				_animation[climbIdlePoseAnimation.name].wrapMode = WrapMode.ClampForever;
+				_animation.CrossFade(climbIdlePoseAnimation.name);
+			break;
+			// Player is climbing vertically; play climbing vertical animation
+			case rob.customCharacterState.Climbing_Vertical:
+				_animation[climbVerticalAnimation.name].speed = rob.verticalSpeed/2;
+				_animation[climbVerticalAnimation.name].wrapMode = WrapMode.Loop;
+				_animation.CrossFade(climbVerticalAnimation.name);
+			break;
+			// Player is climbing horizontally; play climbing horizontal animation
+			case rob.customCharacterState.Climbing_Horizontal:
+				_animation[climbHorizontalAnimation.name].speed = climbHorizontalAnimationSpeed;
+				_animation[climbHorizontalAnimation.name].wrapMode = WrapMode.Loop;
+				_animation.CrossFade(climbHorizontalAnimation.name);
+			break;
+			// Player is idle while hanging; play hanging idle animation
+			case rob.customCharacterState.Hanging_Idle:
+				_animation[hangIdlePoseAnimation.name].speed = -hangIdleAnimationSpeed;
+				_animation[hangIdlePoseAnimation.name].wrapMode = WrapMode.ClampForever;
+				_animation.CrossFade(hangIdlePoseAnimation.name);
+			break;
+			// Player is moving while hanging; play hanging move animation
+			case rob.customCharacterState.Hanging_Move:
+				_animation[hangMoveAnimation.name].speed = Mathf.Clamp(rob.moveSpeed, 0.0, hangMoveAnimationSpeed);
+				_animation[hangMoveAnimation.name].wrapMode = WrapMode.Loop;
+				_animation.CrossFade(hangMoveAnimation.name);
+			break;
+			// Player is falling fast; play free falling animation
+			case rob.customCharacterState.Free_Falling:
+				_animation[freefallPoseAnimation.name].speed = freefallAnimationSpeed;
+				_animation[freefallPoseAnimation.name].wrapMode = WrapMode.ClampForever;
+				_animation.CrossFade(freefallPoseAnimation.name);
+			break;
+			// Player landed hard; play heavy landing animation
+			case rob.customCharacterState.Heavy_Landing:
+				_animation[heavyLandPoseAnimation.name].speed = heavyLandAnimationSpeed;
+				_animation[heavyLandPoseAnimation.name].wrapMode = WrapMode.ClampForever;
+				_animation.CrossFade(heavyLandPoseAnimation.name);
+			break;
+			// Player is rolling; play rolling animation
+			case rob.customCharacterState.Rolling:
+				_animation[rollAnimation.name].speed = rollAnimationSpeed;
+				_animation[rollAnimation.name].wrapMode = WrapMode.ClampForever;
+				_animation.CrossFade(rollAnimation.name);
+			break;
+			default:
+				// If player is standing idle, play idle animation
+				if(controller.velocity.sqrMagnitude < 0.1) {
+					_animation[idleAnimation.name].speed = -idleAnimationSpeed;
+					_animation[idleAnimation.name].wrapMode = WrapMode.ClampForever;
+					_animation.CrossFade(idleAnimation.name);
+				}
+				// Else, player is moving
+				else 
+				{
+					switch(rob._characterState)
+					{
+						// Player is running; play running animation
+						case rob.customCharacterState.Running:
+							_animation[runAnimation.name].speed = Mathf.Clamp(controller.velocity.magnitude, 0.0, runMaxAnimationSpeed);
+							_animation.CrossFade(runAnimation.name);	
+						break;
+						// Player is trotting; play trotting animation
+						case rob.customCharacterState.Trotting:
+							_animation[runAnimation.name].speed = Mathf.Clamp(controller.velocity.magnitude, 0.0, trotMaxAnimationSpeed);
+							_animation.CrossFade(runAnimation.name);	
+						break;
+						// Player is walking; play walking animation
+						default:
+							_animation[walkAnimation.name].speed = Mathf.Clamp(controller.velocity.magnitude, 0.0, walkMaxAnimationSpeed);
+							_animation.CrossFade(walkAnimation.name);
+						break;
+					}
+				}
+			break;
+		}
+	}
+	// ANIMATION sector
 }

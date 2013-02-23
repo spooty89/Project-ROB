@@ -44,14 +44,14 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\CustomScripts\CustomThirdPersonController.js" />
-     <Compile Include="Assets\CustomScripts\ROB_Class.js" />
-     <Compile Include="Assets\CustomScripts\ROB_Interface.js" />
-     <Compile Include="Assets\Platform\MovingObject_Interface.js" />
-     <Compile Include="Assets\Platform\MovingPlatform_Class.js" />
-     <Compile Include="Assets\Platform\Platform_Class.js" />
-     <Compile Include="Assets\Platform\Platform_Interface.js" />
-     <Compile Include="Assets\Platform\movingPlatformBehavior.js" />
+     <Compile Include="Assets\CustomScripts\Platform\MovingObject_Interface.js" />
+     <Compile Include="Assets\CustomScripts\Platform\MovingPlatform_Class.js" />
+     <Compile Include="Assets\CustomScripts\Platform\Platform_Class.js" />
+     <Compile Include="Assets\CustomScripts\Platform\Platform_Interface.js" />
+     <Compile Include="Assets\CustomScripts\Platform\movingPlatformBehavior.js" />
+     <Compile Include="Assets\CustomScripts\Player\CustomThirdPersonController.js" />
+     <Compile Include="Assets\CustomScripts\Player\ROB_Class.js" />
+     <Compile Include="Assets\CustomScripts\Player\ROB_Interface.js" />
      <None Include="Assets\Standard Assets\Water (Basic)\Sources\Shaders\FX-Water Simple.shader" />
  <Reference Include="Library\ScriptAssemblies\Assembly-UnityScript-firstpass">
  <HintPath>Library\ScriptAssemblies\Assembly-UnityScript-firstpass.dll</HintPath>

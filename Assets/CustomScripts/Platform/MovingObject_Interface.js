@@ -18,10 +18,10 @@ public interface MovingObjectInterface{
 	/*adds a way point for the moving object to move to. A moving object will move to
 	 *way points in the sequence that they are added
 	 */
-	function addWayPoint(wayPoint:Vector3):void;
+	//function addWayPoint(wayPoint:Vector3):void;
 	
 	//removes the last added waypoint, returns null if no waypoints were added
-	function popWayPoint():Vector3;
+	//function popWayPoint():Vector3;
 	
 	/*returns the current way point that the platform will move to.
 	 *will return the current position if no waypoint is added
