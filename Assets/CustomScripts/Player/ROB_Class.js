@@ -491,4 +491,8 @@ public class ROB{
 	function IsGrounded () {
 		return (collisionFlags & CollisionFlags.CollidedBelow) != 0;
 	}
+	
+	function ChangePosition(position:Vector3) {
+		transform.position += position;
+	}
 }

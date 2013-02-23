@@ -54,8 +54,6 @@ public class MovingPlatform extends Platform implements MovingObjectInterface{
 	function move():void{	
 		if (this.numWayPoints() == 0)
 			return;
-		//Debug.Log("waypoint " + this.wayPoints[this.wayPointIndex].transform.position);
-		//Debug.Log("position " + this.transform.position);
 		if (this.wayPoints[this.wayPointIndex].transform.position == this.transform.position){
 			if(this.wayPointIndex == this.numWayPoints()-1)
 				this.wayPointIndex = 0; //start from first way point if last at last waypoint
