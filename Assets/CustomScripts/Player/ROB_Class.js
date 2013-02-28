@@ -1,7 +1,7 @@
 @script RequireComponent(CharacterController)
 
 public class ROB{
-	private var walkSpeed : float = 3.0;	// The speed when walking
+	private var walkSpeed : float = 4.0;	// The speed when walking
 	private var trotSpeed : float = 5.0;	// After trotAfterSeconds of walking we trot with trotSpeed
 	private var runSpeed : float = 8.0;		// When pressing Shift button we start running
 	
@@ -99,6 +99,7 @@ public class ROB{
 	public var _characterState : customCharacterState;
 	public var isControllable = true;
 	public var transform : Transform;
+	public var movingPlatformContact : System.Boolean = false;
 	
 	function ROB(trans : Transform){
 		this.transform = trans;

@@ -36,6 +36,7 @@ public var hangMoveAnimationSpeed : float = 1.5;
 public var freefallAnimationSpeed : float = 1.0;
 public var heavyLandAnimationSpeed : float = 1.0;
 private var _animation : Animation;
+private var movingPlatform : GameObject;
 
 function Awake ()
 {
@@ -82,6 +83,12 @@ function Update() {
 	if (!rob.isControllable) {		// Kill all inputs if not controllable (here by default, may be useful for in-game cutscenes?)
 		Input.ResetInputAxes();
 	}
+	if (rob.movingPlatformContact){
+		if (rob.collisionFlags == 0) {
+		movingPlatform.SendMessage("noContact", SendMessageOptions.DontRequireReceiver);
+		rob.movingPlatformContact = false;
+		}
+	}
 	rob.UpdateSmoothedMovementDirection();	// Smooth the player movement
 	rob.ApplyGravity ();	// Apply gravity
 	rob.MovementHandler();	// Handle movement
@@ -92,13 +99,18 @@ function Update() {
 // Player has come in contact with a surface
 function OnControllerColliderHit (hit : ControllerColliderHit )
 {
-	if (Mathf.Abs(hit.normal.y) > 0.3) {
+	if (Mathf.Abs(hit.normal.y) > 0.5) {
+		if ((hit.gameObject.CompareTag("movingPlatform")) && (hit.normal.y > 0.1)) {
+			rob.movingPlatformContact = true;
+			movingPlatform = hit.gameObject;
+			hit.gameObject.SendMessage("transferSpeed", rob.transform, SendMessageOptions.DontRequireReceiver);
+		}
 		if(hit.gameObject.CompareTag("Bouncy") && (rob.verticalSpeed <= 0)){    
 			rob.bouncing = true;
 			rob.jumping=true;
 			rob.doubleJumping = false;
 			rob.collisionFlags=0;
-			_characterState = customCharacterState.Jumping;	
+			rob._characterState = rob.customCharacterState.Jumping;	
 		    rob.verticalSpeed=20.0;
 		}					// If surface of contact is relatively horizontal
 		if (rob.hangContact && (hit.normal.y < -0.1)) {				// If surface is above and player is within hang triggerBox
@@ -281,6 +293,10 @@ function AnimationHandler() {
 					_animation[idleAnimation.name].speed = -idleAnimationSpeed;
 					_animation[idleAnimation.name].wrapMode = WrapMode.ClampForever;
 					_animation.CrossFade(idleAnimation.name);
+					/*if (rob.movingPlatformContact) {
+						rob.moveDirection *= Vector3.Angle(movingPlatform.transform.localEulerAngles, movingPlatform.gameObject.SendMessage("noContact", SendMessageOptions.DontRequireReceiver).retPrevRot);
+						rob.transform.rotation = Quaternion.LookRotation(rob.moveDirection);
+					}*/
 				}
 				// Else, player is moving
 				else 
@@ -298,9 +314,15 @@ function AnimationHandler() {
 							_animation.CrossFade(runAnimation.name);	
 						break;
 						// Player is walking; play walking animation
-						default:
+						case rob.customCharacterState.Walking:
 							_animation[walkAnimation.name].speed = Mathf.Clamp(controller.velocity.magnitude, 0.0, walkMaxAnimationSpeed);
 							_animation.CrossFade(walkAnimation.name);
+						break;
+						default:
+							// If player is standing idle, play idle animation
+							_animation[idleAnimation.name].speed = -idleAnimationSpeed;
+							_animation[idleAnimation.name].wrapMode = WrapMode.ClampForever;
+							_animation.CrossFade(idleAnimation.name);
 						break;
 					}
 				}

@@ -13,10 +13,16 @@ public class MovingPlatform extends Platform implements MovingObjectInterface{
 	private var speed:float;
 	private var wayPoints:List.<GameObject>;
 	private var wayPointIndex:int = 0;
+	private var prevPos : Vector3;
+	private var prevForward : Vector3;
+	private var prevTime : float;
+	private var rotationSpeed : float;
+	public var playerContact : System.Boolean = false;
 	
-	function MovingPlatform(transform:Transform, speed:float, wayPoints){
+	function MovingPlatform(transform:Transform, speed:float, rotationSpeed:float, wayPoints){
 		super(transform);
 		this.speed = speed;
+		this.rotationSpeed = rotationSpeed;
 		this.wayPoints = wayPoints;
 	}
 	function getSpeed():float{
@@ -26,20 +32,6 @@ public class MovingPlatform extends Platform implements MovingObjectInterface{
 	function setSpeed(speed:float):void{
 		this.speed = speed;
 	}
-	
-	/*function addWayPoint(wayPoint:Vector3):void{
-		this.wayPoints.Add(wayPoint);
-	}*/
-	
-	/*function popWayPoint():Vector3{
-		var lastIndex:int = wayPoints.Count - 1;
-		if (lastIndex < 0){
-			throw System.Exception("No way points to pop");
-		}
-		var wayPoint :Vector3 = this.wayPoints[lastIndex];
-		this.wayPoints.RemoveAt(lastIndex);
-		return wayPoint;
-	}*/
 
 	function getCurrentWayPoint():Vector3{
 		if (wayPoints.Count > 0)
@@ -60,6 +52,25 @@ public class MovingPlatform extends Platform implements MovingObjectInterface{
 			else
 				this.wayPointIndex++; 
 		}
+		this.prevPos = this.transform.position;
 		this.transform.position = Vector3.MoveTowards(this.transform.position, this.wayPoints[wayPointIndex].transform.position,  Time.deltaTime * this.speed);
+	}
+	
+	function rotate():void{
+		this.prevForward = this.transform.forward;
+		this.transform.Rotate(Vector3.up * Time.deltaTime * this.rotationSpeed);
+	}
+	
+	function rotateOnPlatform(player : Transform, controller : CharacterController) {
+		player.RotateAround(this.transform.position, this.transform.up, Time.deltaTime * this.rotationSpeed);
+		if (controller.velocity.sqrMagnitude < 0.1)
+			player.forward = this.transform.forward;
+		
+	}
+	
+	function getDeltaPos() : Vector3 {
+		var returnVector : Vector3 = Vector3.zero;
+		returnVector = this.transform.position - this.prevPos;
+		return returnVector;
 	}
 }

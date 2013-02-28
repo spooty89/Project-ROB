@@ -35,4 +35,6 @@ public interface MovingObjectInterface{
 	//if no waypoint is defined the object will not move
 	function move():void;
 	
+	/* returns the difference between the current position and the previous position */
+	function getDeltaPos() : Vector3;
 }
