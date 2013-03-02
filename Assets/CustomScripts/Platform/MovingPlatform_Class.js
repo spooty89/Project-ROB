@@ -14,7 +14,7 @@ public class MovingPlatform extends Platform implements MovingObjectInterface{
 	private var wayPoints:List.<GameObject>;
 	private var wayPointIndex:int = 0;
 	private var prevPos : Vector3;
-	private var prevForward : Vector3;
+	private var forwardDiff : Vector3;
 	private var prevTime : float;
 	private var rotationSpeed : float;
 	public var playerContact : System.Boolean = false;
@@ -57,15 +57,14 @@ public class MovingPlatform extends Platform implements MovingObjectInterface{
 	}
 	
 	function rotate():void{
-		this.prevForward = this.transform.forward;
 		this.transform.Rotate(Vector3.up * Time.deltaTime * this.rotationSpeed);
+		this.forwardDiff = this.transform.forward;
 	}
 	
 	function rotateOnPlatform(player : Transform, controller : CharacterController) {
 		player.RotateAround(this.transform.position, this.transform.up, Time.deltaTime * this.rotationSpeed);
 		if (controller.velocity.sqrMagnitude < 0.1)
-			player.forward = this.transform.forward;
-		
+			player.forward = this.transform.forward + this.forwardDiff;
 	}
 	
 	function getDeltaPos() : Vector3 {
