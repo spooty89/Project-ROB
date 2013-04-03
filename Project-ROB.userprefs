@@ -1,12 +1,12 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/CustomScripts/Platform/MovingPlatform_Class.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/CustomScripts/Player/CustomThirdPersonController.js">
     <Files>
       <File FileName="Assets/Standard Assets/Character Controllers/Sources/Scripts/CharacterMotor.js" Line="1" Column="1" />
-      <File FileName="Assets/CustomScripts/Player/CustomThirdPersonController.js" Line="292" Column="46" />
+      <File FileName="Assets/CustomScripts/Player/CustomThirdPersonController.js" Line="102" Column="4" />
       <File FileName="Assets/CustomScripts/Player/ROB_Class.js" Line="1" Column="1" />
-      <File FileName="Assets/CustomScripts/Platform/movingPlatformBehavior.js" Line="1" Column="1" />
-      <File FileName="Assets/CustomScripts/Platform/MovingPlatform_Class.js" Line="61" Column="3" />
+      <File FileName="Assets/CustomScripts/Platform/movingPlatformBehavior.js" Line="6" Column="25" />
+      <File FileName="Assets/CustomScripts/Platform/MovingPlatform_Class.js" Line="1" Column="1" />
       <File FileName="Assets/CustomScripts/Platform/MovingObject_Interface.js" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>

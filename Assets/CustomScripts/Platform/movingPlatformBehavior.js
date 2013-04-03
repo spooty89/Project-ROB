@@ -3,7 +3,7 @@
 var movingPlatform : MovingPlatform;
 public var wayPoints:List.<GameObject>;
 private var player : Transform;
-public var speed : int = 3;
+public var speed : float = 3;
 public var rotationSpeed : int = 45;
 private var controller : CharacterController;
 
