@@ -44,7 +44,18 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\CustomScripts\GUI\ROBgui.cs" />
+     <Compile Include="Assets\CustomScripts\Game\Barrier.cs" />
+     <Compile Include="Assets\CustomScripts\Game\UpdateMessage.cs" />
+     <Compile Include="Assets\CustomScripts\MovingPlatform\MovingObject_Interface.cs" />
+     <Compile Include="Assets\CustomScripts\MovingPlatform\MovingPlatform_Class.cs" />
+     <Compile Include="Assets\CustomScripts\MovingPlatform\Platform_Class.cs" />
+     <Compile Include="Assets\CustomScripts\MovingPlatform\Platform_Interface.cs" />
+     <Compile Include="Assets\CustomScripts\MovingPlatform\movingPlatformBehavior.cs" />
      <Compile Include="Assets\CustomScripts\Player\CustomCameraController.cs" />
+     <Compile Include="Assets\CustomScripts\Player\CustomThirdPersonController.cs" />
+     <Compile Include="Assets\CustomScripts\Player\ROB_Class.cs" />
+     <Compile Include="Assets\CustomScripts\Player\ROB_Interface.cs" />
      <None Include="Assets\Standard Assets\Water (Basic)\Sources\Shaders\FX-Water Simple.shader" />
   </ItemGroup>
   <ItemGroup>
