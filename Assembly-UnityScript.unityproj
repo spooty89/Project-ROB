@@ -52,6 +52,24 @@
      <Compile Include="Assets\CustomScripts\Player\CustomThirdPersonController.js" />
      <Compile Include="Assets\CustomScripts\Player\ROB_Class.js" />
      <Compile Include="Assets\CustomScripts\Player\ROB_Interface.js" />
+     <Compile Include="Assets\CustomScripts\Weapon\Abstract_Ammo.js" />
+     <Compile Include="Assets\CustomScripts\Weapon\Abstract_AmmoStorage.js" />
+     <Compile Include="Assets\CustomScripts\Weapon\Abstract_Projectile.js" />
+     <Compile Include="Assets\CustomScripts\Weapon\Abstract_Weapon.js" />
+     <Compile Include="Assets\CustomScripts\Weapon\AmmoPouch_Class.js" />
+     <Compile Include="Assets\CustomScripts\Weapon\AmmoStorage_Interface.js" />
+     <Compile Include="Assets\CustomScripts\Weapon\Ammo_Interface.js" />
+     <Compile Include="Assets\CustomScripts\Weapon\EnergyBolt_Class.js" />
+     <Compile Include="Assets\CustomScripts\Weapon\EnergyProjectile_Class.js" />
+     <Compile Include="Assets\CustomScripts\Weapon\HandShot_Class.js" />
+     <Compile Include="Assets\CustomScripts\Weapon\PlasmaBolt_Class.js" />
+     <Compile Include="Assets\CustomScripts\Weapon\PlasmaProjectile_Class.js" />
+     <Compile Include="Assets\CustomScripts\Weapon\Projectile_Interface.js" />
+     <Compile Include="Assets\CustomScripts\Weapon\Tests\Assert_Class.js" />
+     <Compile Include="Assets\CustomScripts\Weapon\Tests\TestAmmo.js" />
+     <Compile Include="Assets\CustomScripts\Weapon\Tests\TestAmmoStorage.js" />
+     <Compile Include="Assets\CustomScripts\Weapon\Weapon_Interface.js" />
+     <Compile Include="Assets\CustomScripts\Weapon\shoot.js" />
      <None Include="Assets\Standard Assets\Water (Basic)\Sources\Shaders\FX-Water Simple.shader" />
   </ItemGroup>
   <ItemGroup>

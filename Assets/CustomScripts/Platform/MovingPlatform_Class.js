@@ -14,14 +14,12 @@ public class MovingPlatform extends Platform implements MovingObjectInterface{
 	private var wayPoints:List.<GameObject>;
 	private var wayPointIndex:int = 0;
 	private var prevPos : Vector3;
-	private var forwardDiff : float;
-	private var lastForward : Vector3;
+	private var forwardDiff : Vector3;
 	private var prevTime : float;
 	private var rotationSpeed : float;
-	private var rotatePlayer :System.Boolean = false;
 	public var playerContact : System.Boolean = false;
 	
-	function MovingPlatform(transform:Transform, speed:float, rotationSpeed:float, wayPoints:List.<GameObject>){
+	function MovingPlatform(transform:Transform, speed:float, rotationSpeed:float, wayPoints){
 		super(transform);
 		this.speed = speed;
 		this.rotationSpeed = rotationSpeed;
@@ -60,47 +58,13 @@ public class MovingPlatform extends Platform implements MovingObjectInterface{
 	
 	function rotate():void{
 		this.transform.Rotate(Vector3.up * Time.deltaTime * this.rotationSpeed);
+		this.forwardDiff = this.transform.forward;
 	}
 	
 	function rotateOnPlatform(player : Transform, controller : CharacterController) {
-		var tempForward : Vector3;
-		var tempTrans : Transform;
-		var tempAngle : float;
 		player.RotateAround(this.transform.position, this.transform.up, Time.deltaTime * this.rotationSpeed);
 		if (controller.velocity.sqrMagnitude < 0.1)
-		{
-			if (!this.rotatePlayer){
-				this.lastForward = this.transform.forward;
-				this.rotatePlayer = true;
-				tempAngle = Quaternion.Angle(this.transform.rotation, player.rotation);
-				Debug.Log("Angle: " + tempAngle);
-			}
-			else {
-				//this.forwardDiff = Vector3.Angle(this.transform.forward, this.lastForward);
-				//if (this.forwardDiff > 1.0f){
-					//this.lastForward = this.transform.forward;
-					tempTrans = player;
-					tempTrans.RotateAround(tempTrans.position, tempTrans.up, Time.deltaTime * this.rotationSpeed);
-					//tempTrans = player;
-					//Debug.Log("1: " + tempTrans.forward);
-					//this.transform.forward = player.forward;
-					//rotate();
-					//tempTrans.Rotate(tempTrans.up * Time.deltaTime * this.rotationSpeed);
-					//tempTrans.Rotate(Vector3.up, tempAngle * Mathf.Deg2Rad);
-					//Debug.Log("2: " + tempTrans.forward);
-					//Debug.Log("1: " + player.forward);
-					player.forward = tempTrans.forward;
-					//this.transform.forward = tempForward;
-					//Debug.Log("3: " + this.transform.forward);
-					//Debug.Log("2: " + player.forward);
-					/*Debug.Log("Angle: " + Vector3.Angle(this.transform.eulerAngles, this.lastForward));
-					Debug.Log("OForward: " + this.transform.eulerAngles);*/
-					//Debug.Log("PForward: " + player.eulerAngles);
-				//}
-			}
-		}
-		else
-			this.rotatePlayer = false;
+			player.forward = this.transform.forward + this.forwardDiff;
 	}
 	
 	function getDeltaPos() : Vector3 {

@@ -99,11 +99,11 @@ function Update() {
 // Player has come in contact with a surface
 function OnControllerColliderHit (hit : ControllerColliderHit )
 {
+	if (Mathf.Abs(hit.normal.y) > 0.5) {
+		if ((hit.gameObject.CompareTag("movingPlatform")) && (hit.normal.y > 0.1)) {
 			rob.movingPlatformContact = true;
 			movingPlatform = hit.gameObject;
 			hit.gameObject.SendMessage("transferSpeed", rob.transform, SendMessageOptions.DontRequireReceiver);
-	if (Mathf.Abs(hit.normal.y) > 0.5) {
-		if ((hit.gameObject.CompareTag("movingPlatform")) && (hit.normal.y > 0.1)) {
 		}
 		if(hit.gameObject.CompareTag("Bouncy") && (rob.verticalSpeed <= 0)){    
 			rob.bouncing = true;
