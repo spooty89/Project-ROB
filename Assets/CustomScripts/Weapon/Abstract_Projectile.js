@@ -13,7 +13,7 @@ function Update () {
  * class is abstract. user isn't expected to instantiated the class as an object.
  * If the user does so, behaviour is undefined.
  */
-public class Projectile implements ProjectileInterface{
+public class Projectile implements ProjectileInterface {
 
 	private var bulletPref : GameObject;
 	private var target : Vector3;
@@ -45,6 +45,11 @@ public class Projectile implements ProjectileInterface{
 	
 	function move(){
 		this.bulletPref.transform.position = Vector3.MoveTowards(this.bulletPref.transform.position, this.target,  Time.deltaTime * this.speed);
+	}
+	
+	function OnCollisionEnter(hit : Collision) {
+			Debug.Log("flip switch");
+			hit.gameObject.SendMessage("flipSwitch", SendMessageOptions.DontRequireReceiver);
 	}
 	
 }

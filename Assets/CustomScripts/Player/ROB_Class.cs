@@ -59,6 +59,7 @@ namespace AssemblyCSharp
 		public bool heavyLanding = false;
 		public bool rolling = false;
 		public bool bouncing = false;
+		public bool aim = false;
 		
 		// Is the user pressing any keys?
 		public bool isMoving = false;
@@ -97,6 +98,9 @@ namespace AssemblyCSharp
 		public customCharacterState _characterState;
 		public bool isControllable = true;
 		public Transform transform;
+		
+		public Transform upDownAim;
+		public Transform hand;
 		
 		public ROB(Transform trans){
 			this.transform = trans;
@@ -372,6 +376,20 @@ namespace AssemblyCSharp
 		
 		// Handle secondary input functions
 		public void InputHandler() {
+			/*if (Input.GetButtonDown("Fire2")){
+				if (aim) {
+					moveDirection = transform.forward;
+				}
+				else {
+					climbing = false;
+					climbContact = false;
+					hanging = false;
+					hangContact = false;
+					wallSliding = false;
+				}
+				aim = !aim;
+			}*/
+				
 			if (Input.GetButtonDown ("Jump"))	// If jump button pressed
 				ApplyJumping ();		// Apply jumping logic
 			
@@ -463,8 +481,12 @@ namespace AssemblyCSharp
 			{
 				if (moveDirection == Vector3.zero) 
 					moveDirection = wallFacing;
-					
-				transform.rotation = Quaternion.LookRotation(moveDirection);
+				
+				if (aim) {
+					transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
+				}
+				else
+					transform.rotation = Quaternion.LookRotation(moveDirection);
 				inAirVelocity = Vector3.zero;
 				if(IsJumping() && !bouncing){
 					jumping = false;
@@ -482,8 +504,13 @@ namespace AssemblyCSharp
 			{
 				if (wallSliding)
 					transform.rotation = Quaternion.LookRotation(wallFacing);
-				else 
-					transform.rotation = Quaternion.LookRotation(moveDirection);
+				else {
+					if (aim) {
+						transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
+					}
+					else
+						transform.rotation = Quaternion.LookRotation(moveDirection);
+				}
 			}
 		}
 	

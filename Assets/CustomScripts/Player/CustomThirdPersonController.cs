@@ -23,6 +23,8 @@ namespace AssemblyCSharp
 		public AnimationClip hangMoveAnimation;
 		public AnimationClip freefallPoseAnimation;
 		public AnimationClip heavyLandPoseAnimation;
+		public AnimationClip aimAnimation;
+		public AnimationClip shootAnimation;
 		
 		// Speed at which each animation will be played
 		public float idleAnimationSpeed = (float)1.0;
@@ -42,13 +44,17 @@ namespace AssemblyCSharp
 		public float hangMoveAnimationSpeed = (float)1.5;
 		public float freefallAnimationSpeed = (float)1.0;
 		public float heavyLandAnimationSpeed = (float)1.0;
+		public float aimAnimationSpeed = (float)1.0;
+		public float shootAnimationSpeed = (float)1.0;
 		private Animation _animation;
 		private GameObject contactObject;
+		private CharacterController controller;
 		
 		private void Awake ()
 		{
 			rob = new ROB(transform);
 			_animation = GetComponent<Animation>();		// Get the character's animations
+			controller = GetComponent<CharacterController>();
 			
 			// If there are no animations for the character
 			if(!_animation)
@@ -62,7 +68,7 @@ namespace AssemblyCSharp
 				_animation = null;
 				Debug.Log("Animation missing. Turning off animations.");
 			}
-			
+
 			rob.moveDirection = rob.transform.forward;	// Initialize player's move direction to the direction rob is initially facing
 		}
 		
@@ -76,6 +82,11 @@ namespace AssemblyCSharp
 					contactObject.SendMessage("noContact", SendMessageOptions.DontRequireReceiver);
 				}catch (Exception E){};
 			}
+			
+			if (Input.GetButtonDown("Fire2")){
+				rob.aim = !rob.aim;
+			}
+			
 			rob.UpdateSmoothedMovementDirection();	// Smooth the player movement
 			rob.ApplyGravity ();	// Apply gravity
 			rob.MovementHandler();	// Handle movement
@@ -106,7 +117,7 @@ namespace AssemblyCSharp
 						rob._characterState = AssemblyCSharp.ROB.customCharacterState.Jumping;	
 					    rob.verticalSpeed = (float)20.0;
 					}					// If surface of contact is relatively horizontal
-					if (rob.hangContact && (hit.normal.y < -0.1)) {				// If surface is above and player is within hang triggerBox
+					if (rob.hangContact && (hit.normal.y < -0.1) && !rob.aim) {				// If surface is above and player is within hang triggerBox
 						if (!rob.hanging) {											// If player isn't already hanging, set necessary variables
 							rob.hanging = true;
 							rob.wallSliding = false;
@@ -130,34 +141,38 @@ namespace AssemblyCSharp
 				}
 				else {													// If surface of contact is relatively vertical
 					rob.wallContact = true;
-					if (rob.climbContact) {										// If player is within climb triggerBox
-						rob.wallFacing = hit.normal;
-						rob.wallRight = rob.DirectionOnWall();
-						rob.moveDirection = -rob.wallFacing;
-						rob.transform.rotation = Quaternion.LookRotation(rob.moveDirection);
-						if (!rob.climbing) {										// If player isn't already climbing, set necessary variables
-							rob.climbing = true;
-							rob.hanging = false;
-							rob._characterState = AssemblyCSharp.ROB.customCharacterState.Climbing_Idle;
-							if (rob.IsGrounded())										// If player walks into climb surface (rather than jumping)
-								rob.verticalSpeed = (float)1.0;									// need to get them off ground (otherwise, rapid switch between climb and grounded states)
-							rob.wallSliding = false;
-							rob.wasWallSliding = false;
-							rob.moveSpeed = (float)1.0;
-							rob.inAirVelocity = Vector3.zero;
-							rob.jumping = false;
-							rob.doubleJumping = false;
-						}
-			    	}
-			    	else {								// Else, if player is against non-climb wall surface
-				    	rob.climbing = false;
-						rob.wallFacing = hit.normal;
-						if (rob.verticalSpeed < -0.3) {		// If player has reached their jump apex or is simply falling	
-							if (!rob.wallSliding){				// If player is not already wallSliding, set necessary variables
-								rob.wallSliding = true;
-				    			rob._characterState = AssemblyCSharp.ROB.customCharacterState.Wall_Sliding;
-				    			rob.jumping = true;
-				    			rob.doubleJumping = false;
+					if (!rob.aim) {
+						if (rob.climbContact) {										// If player is within climb triggerBox
+							rob.wallFacing = hit.normal;
+							//rob.wallRight = rob.transform.right;
+							rob.wallRight = rob.DirectionOnWall();
+							Debug.Log(rob.wallRight);
+							rob.moveDirection = -rob.wallFacing;
+							rob.transform.rotation = Quaternion.LookRotation(rob.moveDirection);
+							if (!rob.climbing) {										// If player isn't already climbing, set necessary variables
+								rob.climbing = true;
+								rob.hanging = false;
+								rob._characterState = AssemblyCSharp.ROB.customCharacterState.Climbing_Idle;
+								if (rob.IsGrounded())										// If player walks into climb surface (rather than jumping)
+									rob.verticalSpeed = (float)1.0;									// need to get them off ground (otherwise, rapid switch between climb and grounded states)
+								rob.wallSliding = false;
+								rob.wasWallSliding = false;
+								rob.moveSpeed = (float)1.0;
+								rob.inAirVelocity = Vector3.zero;
+								rob.jumping = false;
+								rob.doubleJumping = false;
+							}
+				    	}
+				    	else {								// Else, if player is against non-climb wall surface
+					    	rob.climbing = false;
+							rob.wallFacing = hit.normal;
+							if (rob.verticalSpeed < -0.3) {		// If player has reached their jump apex or is simply falling	
+								if (!rob.wallSliding){				// If player is not already wallSliding, set necessary variables
+									rob.wallSliding = true;
+					    			rob._characterState = AssemblyCSharp.ROB.customCharacterState.Wall_Sliding;
+					    			rob.jumping = true;
+					    			rob.doubleJumping = false;
+								}
 							}
 						}
 					}
@@ -191,7 +206,7 @@ namespace AssemblyCSharp
 				other.gameObject.GetComponent<CapsuleCollider>().enabled = false;
 				Camera.main.GetComponent<CustomCameraController>().enabled = false;
 				Camera.main.transform.position = GameObject.FindGameObjectWithTag("FinalCamera").transform.position;
-				Camera.main.transform.LookAt(other.gameObject.transform);
+				Camera.main.transform.LookAt(other.gameObject.transform.position);
 				GetComponent<ROBgui>().gameFinished = true;
 				rob.isControllable = false;
 			}
@@ -237,125 +252,131 @@ namespace AssemblyCSharp
 		private void AnimationHandler() {
 			Vector3 movement = rob.moveDirection * rob.moveSpeed + new Vector3 (0, rob.verticalSpeed, 0) + rob.inAirVelocity;		// Calculate actual motion
 			movement *= Time.deltaTime;			// Base degree of applied movement on time since last frame
-			CharacterController controller = GetComponent<CharacterController>();		// Move the controller
 			rob.collisionFlags = controller.Move(movement);
 			
 			// ANIMATION sector
 			if(_animation) {
-				switch(rob._characterState)
-				{
-					// Player is jumping; play jumping animation
-					case AssemblyCSharp.ROB.customCharacterState.Jumping:
-						_animation[jumpPoseAnimation.name].speed = jumpAnimationSpeed;		// Animation speed = jump animation speed
-						_animation[jumpPoseAnimation.name].wrapMode = WrapMode.Loop;		// Loop the jump animation
-						_animation.CrossFade(jumpPoseAnimation.name);
-					break;
-					// Player is double jumping; play double jumping animation
-					case AssemblyCSharp.ROB.customCharacterState.Double_Jumping:
-						_animation[doubleJumpAnimation.name].speed = doubleJumpAnimationSpeed;
-						_animation[doubleJumpAnimation.name].wrapMode = WrapMode.ClampForever;
-						_animation.CrossFade(doubleJumpAnimation.name);
-					break;
-					// Player is decending in jump; play jump after apex animation
-					case AssemblyCSharp.ROB.customCharacterState.Jumping_After_Apex:
-						_animation[jumpPoseAfterApexAnimation.name].speed = jumpAfterApexAnimationSpeed;
-						_animation[jumpPoseAfterApexAnimation.name].wrapMode = WrapMode.Loop;
-						_animation.CrossFade(jumpPoseAfterApexAnimation.name);	
-					break;
-					// Player is wallsliding; play wallsliding animation
-					case AssemblyCSharp.ROB.customCharacterState.Wall_Sliding:
-						_animation[wallSlideAnimation.name].speed = wallSlideAnimationSpeed;
-						_animation[wallSlideAnimation.name].wrapMode = WrapMode.Loop;
-						_animation.CrossFade(wallSlideAnimation.name);	
-					break;
-					// Player is idle while climbing; play climbing idle animation
-					case AssemblyCSharp.ROB.customCharacterState.Climbing_Idle:
-						_animation[climbIdlePoseAnimation.name].speed = -climbIdleAnimationSpeed;
-						_animation[climbIdlePoseAnimation.name].wrapMode = WrapMode.ClampForever;
-						_animation.CrossFade(climbIdlePoseAnimation.name);
-					break;
-					// Player is climbing vertically; play climbing vertical animation
-					case AssemblyCSharp.ROB.customCharacterState.Climbing_Vertical:
-						_animation[climbVerticalAnimation.name].speed = rob.verticalSpeed/2;
-						_animation[climbVerticalAnimation.name].wrapMode = WrapMode.Loop;
-						_animation.CrossFade(climbVerticalAnimation.name);
-					break;
-					// Player is climbing horizontally; play climbing horizontal animation
-					case AssemblyCSharp.ROB.customCharacterState.Climbing_Horizontal:
-						_animation[climbHorizontalAnimation.name].speed = climbHorizontalAnimationSpeed;
-						_animation[climbHorizontalAnimation.name].wrapMode = WrapMode.Loop;
-						_animation.CrossFade(climbHorizontalAnimation.name);
-					break;
-					// Player is idle while hanging; play hanging idle animation
-					case AssemblyCSharp.ROB.customCharacterState.Hanging_Idle:
-						_animation[hangIdlePoseAnimation.name].speed = -hangIdleAnimationSpeed;
-						_animation[hangIdlePoseAnimation.name].wrapMode = WrapMode.ClampForever;
-						_animation.CrossFade(hangIdlePoseAnimation.name);
-					break;
-					// Player is moving while hanging; play hanging move animation
-					case AssemblyCSharp.ROB.customCharacterState.Hanging_Move:
-						_animation[hangMoveAnimation.name].speed = Mathf.Clamp(rob.moveSpeed, (float)0.0, hangMoveAnimationSpeed);
-						_animation[hangMoveAnimation.name].wrapMode = WrapMode.Loop;
-						_animation.CrossFade(hangMoveAnimation.name);
-					break;
-					// Player is falling fast; play free falling animation
-					case AssemblyCSharp.ROB.customCharacterState.Free_Falling:
-						_animation[freefallPoseAnimation.name].speed = freefallAnimationSpeed;
-						_animation[freefallPoseAnimation.name].wrapMode = WrapMode.ClampForever;
-						_animation.CrossFade(freefallPoseAnimation.name);
-					break;
-					// Player landed hard; play heavy landing animation
-					case AssemblyCSharp.ROB.customCharacterState.Heavy_Landing:
-						_animation[heavyLandPoseAnimation.name].speed = heavyLandAnimationSpeed;
-						_animation[heavyLandPoseAnimation.name].wrapMode = WrapMode.ClampForever;
-						_animation.CrossFade(heavyLandPoseAnimation.name);
-					break;
-					// Player is rolling; play rolling animation
-					case AssemblyCSharp.ROB.customCharacterState.Rolling:
-						_animation[rollAnimation.name].speed = rollAnimationSpeed;
-						_animation[rollAnimation.name].wrapMode = WrapMode.ClampForever;
-						_animation.CrossFade(rollAnimation.name);
-					break;
-					default:
-						// If player is standing idle, play idle animation
-						if(controller.velocity.sqrMagnitude < 0.1) {
-							_animation[idleAnimation.name].speed = -idleAnimationSpeed;
-							_animation[idleAnimation.name].wrapMode = WrapMode.ClampForever;
-							_animation.CrossFade(idleAnimation.name);
-							/*if (rob.movingPlatformContact) {
-								rob.moveDirection *= Vector3.Angle(movingPlatform.transform.localEulerAngles, movingPlatform.gameObject.SendMessage("noContact", SendMessageOptions.DontRequireReceiver).retPrevRot);
-								rob.transform.rotation = Quaternion.LookRotation(rob.moveDirection);
-							}*/
-						}
-						// Else, player is moving
-						else 
-						{
-							switch(rob._characterState)
-							{
-								// Player is running; play running animation
-								case AssemblyCSharp.ROB.customCharacterState.Running:
-									_animation[runAnimation.name].speed = Mathf.Clamp(controller.velocity.magnitude, (float)0.0, runMaxAnimationSpeed);
-									_animation.CrossFade(runAnimation.name);	
-								break;
-								// Player is trotting; play trotting animation
-								case AssemblyCSharp.ROB.customCharacterState.Trotting:
-									_animation[runAnimation.name].speed = Mathf.Clamp(controller.velocity.magnitude, (float)0.0, trotMaxAnimationSpeed);
-									_animation.CrossFade(runAnimation.name);	
-								break;
-								// Player is walking; play walking animation
-								case AssemblyCSharp.ROB.customCharacterState.Walking:
-									_animation[walkAnimation.name].speed = Mathf.Clamp(controller.velocity.magnitude, (float)0.0, walkMaxAnimationSpeed);
-									_animation.CrossFade(walkAnimation.name);
-								break;
-								default:
-									// If player is standing idle, play idle animation
-									_animation[idleAnimation.name].speed = -idleAnimationSpeed;
-									_animation[idleAnimation.name].wrapMode = WrapMode.ClampForever;
-									_animation.CrossFade(idleAnimation.name);
-								break;
+				if (rob.aim) {
+					_animation[aimAnimation.name].speed = aimAnimationSpeed;		// Animation speed = jump animation speed
+					_animation[aimAnimation.name].wrapMode = WrapMode.Loop;		// Loop the jump animation
+					_animation.CrossFade(aimAnimation.name);
+				}
+				else {
+					switch(rob._characterState)
+					{
+						// Player is jumping; play jumping animation
+						case AssemblyCSharp.ROB.customCharacterState.Jumping:
+							_animation[jumpPoseAnimation.name].speed = jumpAnimationSpeed;		// Animation speed = jump animation speed
+							_animation[jumpPoseAnimation.name].wrapMode = WrapMode.Loop;		// Loop the jump animation
+							_animation.CrossFade(jumpPoseAnimation.name);
+						break;
+						// Player is double jumping; play double jumping animation
+						case AssemblyCSharp.ROB.customCharacterState.Double_Jumping:
+							_animation[doubleJumpAnimation.name].speed = doubleJumpAnimationSpeed;
+							_animation[doubleJumpAnimation.name].wrapMode = WrapMode.ClampForever;
+							_animation.CrossFade(doubleJumpAnimation.name);
+						break;
+						// Player is decending in jump; play jump after apex animation
+						case AssemblyCSharp.ROB.customCharacterState.Jumping_After_Apex:
+							_animation[jumpPoseAfterApexAnimation.name].speed = jumpAfterApexAnimationSpeed;
+							_animation[jumpPoseAfterApexAnimation.name].wrapMode = WrapMode.Loop;
+							_animation.CrossFade(jumpPoseAfterApexAnimation.name);	
+						break;
+						// Player is wallsliding; play wallsliding animation
+						case AssemblyCSharp.ROB.customCharacterState.Wall_Sliding:
+							_animation[wallSlideAnimation.name].speed = wallSlideAnimationSpeed;
+							_animation[wallSlideAnimation.name].wrapMode = WrapMode.Loop;
+							_animation.CrossFade(wallSlideAnimation.name);	
+						break;
+						// Player is idle while climbing; play climbing idle animation
+						case AssemblyCSharp.ROB.customCharacterState.Climbing_Idle:
+							_animation[climbIdlePoseAnimation.name].speed = -climbIdleAnimationSpeed;
+							_animation[climbIdlePoseAnimation.name].wrapMode = WrapMode.ClampForever;
+							_animation.CrossFade(climbIdlePoseAnimation.name);
+						break;
+						// Player is climbing vertically; play climbing vertical animation
+						case AssemblyCSharp.ROB.customCharacterState.Climbing_Vertical:
+							_animation[climbVerticalAnimation.name].speed = rob.verticalSpeed/2;
+							_animation[climbVerticalAnimation.name].wrapMode = WrapMode.Loop;
+							_animation.CrossFade(climbVerticalAnimation.name);
+						break;
+						// Player is climbing horizontally; play climbing horizontal animation
+						case AssemblyCSharp.ROB.customCharacterState.Climbing_Horizontal:
+							_animation[climbHorizontalAnimation.name].speed = climbHorizontalAnimationSpeed;
+							_animation[climbHorizontalAnimation.name].wrapMode = WrapMode.Loop;
+							_animation.CrossFade(climbHorizontalAnimation.name);
+						break;
+						// Player is idle while hanging; play hanging idle animation
+						case AssemblyCSharp.ROB.customCharacterState.Hanging_Idle:
+							_animation[hangIdlePoseAnimation.name].speed = hangIdleAnimationSpeed;
+							_animation[hangIdlePoseAnimation.name].wrapMode = WrapMode.Loop;
+							_animation.CrossFade(hangIdlePoseAnimation.name);
+						break;
+						// Player is moving while hanging; play hanging move animation
+						case AssemblyCSharp.ROB.customCharacterState.Hanging_Move:
+							_animation[hangMoveAnimation.name].speed = Mathf.Clamp(rob.moveSpeed, (float)0.0, hangMoveAnimationSpeed);
+							_animation[hangMoveAnimation.name].wrapMode = WrapMode.Loop;
+							_animation.CrossFade(hangMoveAnimation.name);
+						break;
+						// Player is falling fast; play free falling animation
+						case AssemblyCSharp.ROB.customCharacterState.Free_Falling:
+							_animation[freefallPoseAnimation.name].speed = freefallAnimationSpeed;
+							_animation[freefallPoseAnimation.name].wrapMode = WrapMode.Loop;
+							_animation.CrossFade(freefallPoseAnimation.name);
+						break;
+						// Player landed hard; play heavy landing animation
+						case AssemblyCSharp.ROB.customCharacterState.Heavy_Landing:
+							_animation[heavyLandPoseAnimation.name].speed = heavyLandAnimationSpeed;
+							_animation[heavyLandPoseAnimation.name].wrapMode = WrapMode.ClampForever;
+							_animation.CrossFade(heavyLandPoseAnimation.name);
+						break;
+						// Player is rolling; play rolling animation
+						case AssemblyCSharp.ROB.customCharacterState.Rolling:
+							_animation[rollAnimation.name].speed = rollAnimationSpeed;
+							_animation[rollAnimation.name].wrapMode = WrapMode.ClampForever;
+							_animation.CrossFade(rollAnimation.name);
+						break;
+						default:
+							// If player is standing idle, play idle animation
+							if(controller.velocity.sqrMagnitude < 0.1) {
+								_animation[idleAnimation.name].speed = idleAnimationSpeed;
+								_animation[idleAnimation.name].wrapMode = WrapMode.Loop;
+								_animation.CrossFade(idleAnimation.name);
+								/*if (rob.movingPlatformContact) {
+									rob.moveDirection *= Vector3.Angle(movingPlatform.transform.localEulerAngles, movingPlatform.gameObject.SendMessage("noContact", SendMessageOptions.DontRequireReceiver).retPrevRot);
+									rob.transform.rotation = Quaternion.LookRotation(rob.moveDirection);
+								}*/
 							}
-						}
-					break;
+							// Else, player is moving
+							else 
+							{
+								switch(rob._characterState)
+								{
+									// Player is running; play running animation
+									case AssemblyCSharp.ROB.customCharacterState.Running:
+										_animation[runAnimation.name].speed = Mathf.Clamp(controller.velocity.magnitude, (float)0.0, runMaxAnimationSpeed);
+										_animation.CrossFade(runAnimation.name);	
+									break;
+									// Player is trotting; play trotting animation
+									case AssemblyCSharp.ROB.customCharacterState.Trotting:
+										_animation[runAnimation.name].speed = Mathf.Clamp(controller.velocity.magnitude, (float)0.0, trotMaxAnimationSpeed);
+										_animation.CrossFade(runAnimation.name);	
+									break;
+									// Player is walking; play walking animation
+									case AssemblyCSharp.ROB.customCharacterState.Walking:
+										_animation[walkAnimation.name].speed = Mathf.Clamp(controller.velocity.magnitude, (float)0.0, walkMaxAnimationSpeed);
+										_animation.CrossFade(walkAnimation.name);
+									break;
+									default:
+										// If player is standing idle, play idle animation
+										_animation[idleAnimation.name].speed = -idleAnimationSpeed;
+										_animation[idleAnimation.name].wrapMode = WrapMode.ClampForever;
+										_animation.CrossFade(idleAnimation.name);
+									break;
+								}
+							}
+						break;
+					}
 				}
 			}
 			// ANIMATION sector

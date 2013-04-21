@@ -47,6 +47,7 @@
      <Compile Include="Assets\CustomScripts\GUI\ROBgui.cs" />
      <Compile Include="Assets\CustomScripts\Game\Barrier.cs" />
      <Compile Include="Assets\CustomScripts\Game\UpdateMessage.cs" />
+     <Compile Include="Assets\CustomScripts\Game\bulletCollision.cs" />
      <Compile Include="Assets\CustomScripts\MovingPlatform\MovingObject_Interface.cs" />
      <Compile Include="Assets\CustomScripts\MovingPlatform\MovingPlatform_Class.cs" />
      <Compile Include="Assets\CustomScripts\MovingPlatform\Platform_Class.cs" />

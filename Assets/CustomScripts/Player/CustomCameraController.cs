@@ -7,8 +7,22 @@ using System.Collections;
 public class CustomCameraController : MonoBehaviour {  
 
     public GameObject target;                           // Target to follow
+	
+	public GameObject normalTarget;
+	
+	public GameObject aimTarget;
+	
+	private bool aim = false;
+	
+	public float aimDistance = 0.0f;
+	
+	public float normalDistance = 4.5f;
 
-    public float targetHeight = 1.7f;                         // Vertical offset adjustment
+    public float targetHeight = 0.7f;                         // Vertical offset adjustment
+	
+	public float normalHeight = 0.7f;
+	
+	public float aimHeight = 1.7f;
 
     public float distance = 4.5f;                            // Default Distance
 
@@ -111,9 +125,23 @@ public class CustomCameraController : MonoBehaviour {
             Debug.Log("Looking for Player");
 
         }
-
- 
-
+		
+		if (Input.GetButtonDown("Fire2")){
+			aim = !aim;
+			if (aim) {
+				target = aimTarget;
+				targetHeight = aimHeight;
+				currentDistance = aimDistance;
+				desiredDistance = aimDistance;
+			}
+			else {
+				target = normalTarget;
+				targetHeight = normalHeight;
+				desiredDistance = normalDistance;
+				currentDistance = normalHeight;
+			}
+		}
+			
     }
 
           
@@ -215,9 +243,10 @@ public class CustomCameraController : MonoBehaviour {
      
 
         // Calculate the desired distance
-
-        desiredDistance -= Input.GetAxis ("Mouse ScrollWheel") * Time.deltaTime * zoomRate * Mathf.Abs (desiredDistance);
-
+		
+		if (!aim)
+	        desiredDistance -= Input.GetAxis ("Mouse ScrollWheel") * Time.deltaTime * zoomRate * Mathf.Abs (desiredDistance);
+		
         desiredDistance = Mathf.Clamp (desiredDistance, minDistance, maxDistance);
 	
 		//cameraTransform.position = targetCenter;

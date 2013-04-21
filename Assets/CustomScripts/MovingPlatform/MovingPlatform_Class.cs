@@ -60,9 +60,7 @@ namespace AssemblyCSharp
 			player.RotateAround(this.transform.position, this.transform.up, Time.deltaTime * this.rotationSpeed);
 			if (controller.velocity.sqrMagnitude < 0.1)
 			{
-				Debug.Log("1: " + player.eulerAngles);
 				player.Rotate(this.rotationDeg);
-				Debug.Log("2: " + player.eulerAngles);
 			}
 		}
 		
