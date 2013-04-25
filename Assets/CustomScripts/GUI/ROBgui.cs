@@ -9,27 +9,47 @@ namespace AssemblyCSharp
 	{
 		public GUIStyle tokenStyle;
 		public GUIStyle messageStyle;
+		public GUIStyle aimStyle;
 		public GUIStyle congradulationsStyle;
 		public int tokens = 0;
 		public int totalTokens;
-		public String message;
-		public Boolean gameFinished = false;
+		private String message;
+		public bool gameFinished = false;
+		public bool tokenRetrieve = false;
+		public bool messagePresent = true;
+		private bool aiming = false;
 		
 		public void Awake () {
 			totalTokens = GameObject.FindGameObjectsWithTag("Token").Length;
-			message = "W/A/S/D = fwrd/left/bkwrd/right. Move the mouse to rotate the camera.\nCollect all tokens to unlock the prize...";
+			message = "Press W/A/S/D to walk fwrd/left/bkwrd/right. Hold shift to run.\nMove the mouse to rotate the camera.";
 		}
 		
 		public void OnGUI () {
 			if (!gameFinished) {
-				GUI.Label (new Rect ((Screen.width / 60), (Screen.height / 40), (Screen.width / 20), (Screen.height / 10)), 
+				if (tokenRetrieve) {
+					GUI.Label (new Rect ((Screen.width / 60), (Screen.height / 40), (Screen.width / 20), (Screen.height / 10)), 
 							"1-Ups: " + tokens + "/" + totalTokens, tokenStyle);
-				GUI.Label (new Rect (Screen.width/4, (Screen.height - (Screen.height / 10)), Screen.width / 2, (Screen.height / 10)), message, messageStyle);
+				}
+				//if (messagePresent) {
+				//	Debug.Log("here");
+					GUI.Label (new Rect (0, (Screen.height - (Screen.height / 10)), Screen.width, (Screen.height / 10)), message, messageStyle); //(Screen.width/4, (Screen.height - (Screen.height / 10)), Screen.width / 2, (Screen.height / 10)), message, messageStyle);
+				//}
+				if (aiming) {
+					GUI.Label (new Rect (Screen.width/2, Screen.height/2, 3, 3), "+", aimStyle);
+				}
 			}
 			else {
 				GUI.Label (new Rect ((Screen.width / 2), (Screen.height / 2), (Screen.width / 20), (Screen.height / 10)), 
 							"CONGRADULATIONS!\nYOU GOT THE THREE-FOURTHS\n... OF A TRIANGLE", congradulationsStyle);
 			}
+		}
+		
+		public void aimSet (bool aim) {
+			aiming = aim;	
+		}
+		
+		public void messageSet (String words) {
+			message = words;	
 		}
 	}
 }

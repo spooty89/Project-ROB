@@ -97,10 +97,7 @@ namespace AssemblyCSharp
 		// Player has come in contact with a surface
 		private void OnControllerColliderHit (ControllerColliderHit hit)
 		{
-			if(hit.gameObject.CompareTag("Barrier")) {
-				hit.gameObject.GetComponent<UpdateMessage>().message(5);
-			}
-			else {
+			if(!hit.gameObject.CompareTag("Barrier")) {
 				// Apply the motion of the object player is standing/hanging/climbing on to the player
 				if ((hit.normal.y > 0.0) || rob.hanging || rob.climbing)
 				{
@@ -111,9 +108,9 @@ namespace AssemblyCSharp
 				if (Mathf.Abs(hit.normal.y) > 0.5) {
 					if(hit.gameObject.CompareTag("Bouncy") && (rob.verticalSpeed <= 0)){    
 						rob.bouncing = true;
+						rob.collisionFlags=0;
 						rob.jumping=true;
 						rob.doubleJumping = false;
-						rob.collisionFlags=0;
 						rob._characterState = AssemblyCSharp.ROB.customCharacterState.Jumping;	
 					    rob.verticalSpeed = (float)20.0;
 					}					// If surface of contact is relatively horizontal
@@ -125,14 +122,17 @@ namespace AssemblyCSharp
 							rob.climbing = false;
 							rob.jumping = false;
 							rob.doubleJumping = false;
-							rob._characterState = AssemblyCSharp.ROB.customCharacterState.Hanging_Idle;
+							//rob._characterState = AssemblyCSharp.ROB.customCharacterState.Hanging_Idle;
 							rob.inAirVelocity = Vector3.zero;
 						}
 					}
 					else {													// Else, if surface is below and/or player is not within hang triggerBox
 						rob.hanging = false;
-						if (rob.climbing && rob.decending) {							// If player just reached flat ground after climbing downward
-							rob.transform.position.Set(rob.transform.position.x + (rob.wallFacing.x * (float)0.1), rob.transform.position.y, rob.transform.position.z + (rob.wallFacing.z * (float)0.1));
+						if (rob.climbing && rob.decending && hit.normal.y > 0.0) {							// If player just reached flat ground after climbing downward
+							rob.transform.position = new Vector3(rob.transform.position.x + (rob.wallFacing.x * (float)0.2), rob.transform.position.y, rob.transform.position.z + (rob.wallFacing.z * (float)0.2));
+							rob.transform.forward = rob.wallFacing;
+							rob.moveDirection = rob.transform.forward;
+							Debug.Log("here");
 							rob.moveSpeed = (float)0.0;
 							rob.climbing = false;
 							rob.decending = false;
@@ -144,15 +144,15 @@ namespace AssemblyCSharp
 					if (!rob.aim) {
 						if (rob.climbContact) {										// If player is within climb triggerBox
 							rob.wallFacing = hit.normal;
-							//rob.wallRight = rob.transform.right;
-							rob.wallRight = rob.DirectionOnWall();
-							Debug.Log(rob.wallRight);
+							//rob.wallRight = rob.DirectionOnWall();
 							rob.moveDirection = -rob.wallFacing;
 							rob.transform.rotation = Quaternion.LookRotation(rob.moveDirection);
+							rob.wallRight = rob.transform.right;
+							//Debug.Log(rob.wallRight);
 							if (!rob.climbing) {										// If player isn't already climbing, set necessary variables
 								rob.climbing = true;
 								rob.hanging = false;
-								rob._characterState = AssemblyCSharp.ROB.customCharacterState.Climbing_Idle;
+								//rob._characterState = AssemblyCSharp.ROB.customCharacterState.Climbing_Idle;
 								if (rob.IsGrounded())										// If player walks into climb surface (rather than jumping)
 									rob.verticalSpeed = (float)1.0;									// need to get them off ground (otherwise, rapid switch between climb and grounded states)
 								rob.wallSliding = false;
@@ -209,21 +209,6 @@ namespace AssemblyCSharp
 				Camera.main.transform.LookAt(other.gameObject.transform.position);
 				GetComponent<ROBgui>().gameFinished = true;
 				rob.isControllable = false;
-			}
-			if(other.gameObject.CompareTag("JumpMessage")) {
-				other.GetComponent<UpdateMessage>().message(1);
-			}
-			if(other.gameObject.CompareTag("ClimbMessage")) {
-				other.GetComponent<UpdateMessage>().message(2);
-			}
-			if(other.gameObject.CompareTag("ClimbJumpMessage")) {
-				other.GetComponent<UpdateMessage>().message(3);
-			}
-			if(other.gameObject.CompareTag("WallJumpMessage")) {
-				other.GetComponent<UpdateMessage>().message(4);
-			}
-			if(other.gameObject.CompareTag("HangMessage")) {
-				other.GetComponent<UpdateMessage>().message(6);
 			}
 		}
 		

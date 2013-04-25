@@ -1,5 +1,5 @@
 #pragma strict
-import UnityEngine;
+//import UnityEngine;
 
 function Start () {
 
@@ -45,11 +45,6 @@ public class Projectile implements ProjectileInterface {
 	
 	function move(){
 		this.bulletPref.transform.position = Vector3.MoveTowards(this.bulletPref.transform.position, this.target,  Time.deltaTime * this.speed);
-	}
-	
-	function OnCollisionEnter(hit : Collision) {
-			Debug.Log("flip switch");
-			hit.gameObject.SendMessage("flipSwitch", SendMessageOptions.DontRequireReceiver);
 	}
 	
 }

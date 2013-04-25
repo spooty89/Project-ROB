@@ -1,5 +1,6 @@
 #pragma strict
 var prefabBullet : GameObject;
+var player : GameObject;
 var ammoPouch : AmmoPouch = new AmmoPouch();
 var handShot : HandShot = new HandShot(ammoPouch);
 var energyBolt : EnergyBolt = new EnergyBolt(50);
@@ -19,6 +20,7 @@ function Awake () {
 function Update () {
 	if (Input.GetButtonDown("Fire2")){
 		aim = !aim;
+		player.GetComponent("ROBgui").SendMessage("aimSet", aim, SendMessageOptions.DontRequireReceiver); 
 	}
 	
 	if (Input.GetButtonDown("Fire1") && aim){
@@ -48,9 +50,4 @@ function getTarget() : Vector3 {
     var ray : Ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
     Physics.Raycast(ray, hit, handShot.getRange(), collisionLayers);
     return hit.point;
-}
-
-function OnCollisionEnter(hit : Collision) {
-	Debug.Log("flip switch");
-	hit.gameObject.SendMessage("flipSwitch", SendMessageOptions.DontRequireReceiver);
 }

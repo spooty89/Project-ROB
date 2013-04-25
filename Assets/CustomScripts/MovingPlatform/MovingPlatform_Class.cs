@@ -12,6 +12,7 @@ namespace AssemblyCSharp
 		private Vector3 rotationDeg;
 		private float rotationSpeed;
 		public bool playerContact = false;
+		public bool maintainUp = false;
 		
 		public MovingPlatform(Transform transform, float speed, float rotationSpeed, List<GameObject> wayPoints) : base(transform) {
 			this.speed = speed;
@@ -56,8 +57,17 @@ namespace AssemblyCSharp
 			this.rotationDeg = this.transform.eulerAngles - this.rotationDeg;
 		}
 		
+		public void rotateAround(){
+			this.rotationDeg = this.transform.eulerAngles;
+			this.prevPos = this.transform.position;
+			this.transform.RotateAround(this.wayPoints[this.wayPointIndex].transform.position, this.wayPoints[wayPointIndex].transform.up, Time.deltaTime * this.rotationSpeed);
+			if (maintainUp)
+				this.transform.up = Vector3.up;
+			this.rotationDeg = this.transform.eulerAngles - this.rotationDeg;
+		}
+		
 		public void rotateOnPlatform(Transform player, CharacterController controller) {
-			player.RotateAround(this.transform.position, this.transform.up, Time.deltaTime * this.rotationSpeed);
+			//player.RotateAround(this.transform.position, this.transform.up, Time.deltaTime * this.rotationSpeed);
 			if (controller.velocity.sqrMagnitude < 0.1)
 			{
 				player.Rotate(this.rotationDeg);

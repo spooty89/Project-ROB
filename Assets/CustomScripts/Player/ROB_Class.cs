@@ -158,7 +158,8 @@ namespace AssemblyCSharp
 				//* We want to support analog input but make sure you cant walk faster diagonally than just forward or sideways
 				float targetSpeed = Mathf.Min(targetDirection.magnitude, (float)1.0);
 			
-				_characterState = customCharacterState.Idle;
+				if (!bouncing)
+					_characterState = customCharacterState.Idle;
 				
 				// Pick speed modifier
 				if (Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift) && !bouncing)
@@ -407,12 +408,12 @@ namespace AssemblyCSharp
 					hangingContact = false;
 					numHangContacts = 0;
 					verticalSpeed = -1;
-					Debug.Log("let go");
 				}
 			}
 			
 			// If the player is climbing
 			if (climbing) {
+					_characterState = customCharacterState.Climbing_Idle;
 				if (Input.GetButton ("Vertical")) {			// If one of the up/down buttons is pressed
 					_characterState = customCharacterState.Climbing_Vertical;
 					verticalSpeed = (float)2.0 * Input.GetAxis("Vertical");
@@ -426,7 +427,6 @@ namespace AssemblyCSharp
 				// If one of the up/down buttons is released
 				if (Input.GetButtonUp ("Vertical"))
 				{
-					_characterState = customCharacterState.Climbing_Idle;
 					inAirVelocity = Vector3.zero;
 					moveDirection = -wallFacing;
 					moveSpeed = (float)0.1;
@@ -434,8 +434,7 @@ namespace AssemblyCSharp
 				// If one of the left/right buttons is pressed
 				if (Input.GetButton ("Horizontal"))
 				{
-					if (_characterState == customCharacterState.Climbing_Idle)
-						_characterState = customCharacterState.Climbing_Horizontal;
+					_characterState = customCharacterState.Climbing_Horizontal;
 					moveSpeed = (float)2.0;
 					moveDirection += new Vector3(wallRight.x * Input.GetAxis("Horizontal"), wallRight.y * 
 									 Input.GetAxis("Horizontal"), wallRight.z * Input.GetAxis("Horizontal"));
@@ -446,8 +445,6 @@ namespace AssemblyCSharp
 				// If one of the left/right buttons is released
 				if (Input.GetButtonUp ("Horizontal"))
 				{
-					if (_characterState == customCharacterState.Climbing_Horizontal)
-						_characterState = customCharacterState.Climbing_Idle;
 					inAirVelocity = Vector3.zero;
 					moveDirection = -wallFacing;
 					moveSpeed = (float)0.1;

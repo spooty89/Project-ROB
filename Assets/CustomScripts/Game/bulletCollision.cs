@@ -5,8 +5,7 @@ namespace AssemblyCSharp
 {
 	public class bulletCollision : MonoBehaviour
 	{
-		void OnCollisionEnter(Collision hit) {
-			Debug.Log("I'm here");
+		void OnTriggerEnter(Collider hit) {
 			hit.gameObject.SendMessage("activate", SendMessageOptions.DontRequireReceiver);
 		}
 	}
