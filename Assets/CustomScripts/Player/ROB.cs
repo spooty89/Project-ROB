@@ -135,6 +135,10 @@ public class ROB : MonoBehaviour
 				if (hanging) {
 					state = "hang_idle";
 				}
+				else if(climbing)
+				{
+					state = "climb_idle";	
+				}
 				else
 				{
 					state = "idle";
@@ -199,7 +203,6 @@ public class ROB : MonoBehaviour
 			// - Only when pressing the button down
 			// - With a timeout so you can press the button slightly before landing	
 			if (!IsJumping() || !IsDoubleJumping()){
-					Debug.Log("here");	
 				if (!IsDoubleJumping())
 					verticalSpeed = CalculateJumpVerticalSpeed (jumpHeight);
 				else
@@ -389,6 +392,7 @@ public class ROB : MonoBehaviour
 			// If one of the up/down buttons is released
 			if (Input.GetButtonUp ("Vertical"))
 			{
+				state = "climb_idle";
 				inAirVelocity = Vector3.zero;
 				moveDirection = -wallFacing;
 				moveSpeed = (float)0.1;
@@ -407,6 +411,7 @@ public class ROB : MonoBehaviour
 			// If one of the left/right buttons is released
 			if (Input.GetButtonUp ("Horizontal"))
 			{
+				state = "climb_idle";
 				inAirVelocity = Vector3.zero;
 				moveDirection = -wallFacing;
 				moveSpeed = (float)0.1;

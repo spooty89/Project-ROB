@@ -48,10 +48,6 @@ public class AnimationInfoImporter: MonoBehaviour {
 	{
 		LoadXML();
 		myData = (Dictionary<string, AnimationClass>)DeserializeObject(_data);
-		foreach(KeyValuePair<string, AnimationClass> kvp in myData)
-		{
-			Debug.Log(((AnimationClass)kvp.Value).name);
-		}
 		_Player.GetComponent<CustomThirdPersonController>().animations = myData;
 	}
 	

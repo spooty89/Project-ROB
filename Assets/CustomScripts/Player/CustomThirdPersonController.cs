@@ -33,7 +33,6 @@ public class CustomThirdPersonController : MonoBehaviour
 				animations.Add(aState.clip.name, new AnimationClass(aState.clip, 1.0f, aState.wrapMode == WrapMode.Default ? WrapMode.Loop : aState.wrapMode));
 			else
 			{
-				Debug.Log("found it");
 				tempAC.clip = aState.clip;
 			}
 		}
