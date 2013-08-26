@@ -40,6 +40,13 @@ public class AnimationClass
 		speed = s;
 		wrap = w;
 	}
+	
+	public AnimationClass(string n, float s, WrapMode w)
+	{
+		name = n;
+		speed = s;
+		wrap = w;
+	}
 }
 
 

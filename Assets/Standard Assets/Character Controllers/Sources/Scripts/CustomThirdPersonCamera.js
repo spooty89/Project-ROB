@@ -28,7 +28,7 @@ private var centerOffset = Vector3.zero;
 private var heightVelocity = 0.0;
 private var angleVelocity = 0.0;
 private var snap = false;
-private var controller : CustomThirdPersonController;
+private var controller : CustomThirdPersonController_js;
 private var targetHeight = 100000.0; 
 
 function Awake ()
@@ -45,7 +45,7 @@ function Awake ()
 	_target = transform;
 	if (_target)
 	{
-		controller = _target.GetComponent(CustomThirdPersonController);
+		controller = _target.GetComponent(CustomThirdPersonController_js);
 	}
 	
 	if (controller)

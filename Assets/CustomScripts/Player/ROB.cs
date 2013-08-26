@@ -132,7 +132,13 @@ public class ROB : MonoBehaviour
 		
 			if (!isMoving)
 			{
-				state = "idle";
+				if (hanging) {
+					state = "hang_idle";
+				}
+				else
+				{
+					state = "idle";
+				}
 			}
 			else{
 				// Pick speed modifier
@@ -147,11 +153,7 @@ public class ROB : MonoBehaviour
 					state = "walk";
 				}			
 				if (hanging) {
-					if (targetSpeed > 0.0f) {
-						state = "hang_move";
-					}
-					else
-						state = "hang_idle";
+					state = "hang_move";
 				}
 			}
 			
@@ -367,6 +369,8 @@ public class ROB : MonoBehaviour
 			
 		if (Input.GetButtonDown("Fire2")){
 			aim = !aim;
+			if(aim)
+				state = "aim";
 		}
 		
 		// If the player is climbing
