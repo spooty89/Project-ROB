@@ -2,10 +2,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
+public delegate void stateChangeEvent(string state);
+
 public class CustomThirdPersonController : MonoBehaviour
 {
 	public ROB rob;
 	public Dictionary<string, AnimationClass> animations;
+	
+	//public stateEvent state;
 	public string state, lastState;
 	public bool loadAnimationInfo;
 	
@@ -19,10 +23,6 @@ public class CustomThirdPersonController : MonoBehaviour
 	{
 		_animation = GetComponent<Animation>();		// Get the character's animations
 		animations = new Dictionary<string, AnimationClass>();
-		
-		//IEnumerable<AnimationClass> animationsInfo = AnimationInfoImporter.GetAnimationInfo();
-		//XMLValueReader xmlReader = new XMLValueReader();
-		//xmlReader.XMLFile = "animationInfo.xml";
 		
 		if(loadAnimationInfo)
 			AnimationInfoImporter.Load();
@@ -205,7 +205,7 @@ public class CustomThirdPersonController : MonoBehaviour
 		{
 			_animation[animations[rob.state].name].speed = animations[rob.state].speed;
 			_animation[animations[rob.state].name].wrapMode = animations[rob.state].wrap;
-			_animation.CrossFade(animations[rob.state].name);
+			_animation.CrossFade(animations[rob.state].name, 0.5f);
 			lastState = rob.state;
 		}
 	}

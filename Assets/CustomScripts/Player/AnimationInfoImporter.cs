@@ -84,7 +84,7 @@ public class AnimationInfoImporter: MonoBehaviour {
       MemoryStream memoryStream = new MemoryStream(); 
       XmlSerializer xs = new XmlSerializer(typeof(item[]), new XmlRootAttribute() { ElementName = "items" }); 
       XmlTextWriter xmlTextWriter = new XmlTextWriter(memoryStream, Encoding.UTF8); 
-      xs.Serialize(xmlTextWriter, pObject.Select(i => new item(){id = i.Key, name = i.Value.name, speed = i.Value.speed, wrap = i.Value.wrap}).ToArray()); 
+      xs.Serialize(xmlTextWriter, pObject.Select(i => new item(){id = i.Key, name = i.Value.name, speed = i.Value.speed, wrap = i.Value.wrap, cross = i.Value.crossfade}).ToArray()); 
       memoryStream = (MemoryStream)xmlTextWriter.BaseStream; 
       XmlizedString = UTF8ByteArrayToString(memoryStream.ToArray()); 
       return XmlizedString; 
@@ -100,7 +100,7 @@ public class AnimationInfoImporter: MonoBehaviour {
 		Dictionary<string, AnimationClass> tempAC = new Dictionary<string, AnimationClass>();
 		foreach(item i in tempItem)
 		{
-			tempAC.Add(i.id, new AnimationClass(i.name, i.speed, i.wrap));
+			tempAC.Add(i.id, new AnimationClass(i.name, i.speed, i.wrap, i.cross));
 		}
       return tempAC; 
    } 
@@ -144,4 +144,6 @@ public class item
     public float speed;
     [XmlAttribute]
     public WrapMode wrap;
+    [XmlAttribute]
+    public float cross;
 }

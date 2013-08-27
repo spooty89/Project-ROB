@@ -8,44 +8,67 @@ public class AnimationClass
 	public AnimationClip clip;
 	public float speed;
 	public WrapMode wrap;
+	public float crossfade;
 	
-	public AnimationClass()
+	public AnimationClass(AnimationClip animationClip)
 	{
-		name = "";
-		clip = new AnimationClip();
+		name = animationClip.name;
+		clip = animationClip;
 		speed = 1.0f;
 		wrap = WrapMode.Default;
+		crossfade = 0.5f;
 	}
 	
-	public AnimationClass(AnimationClip ac)
+	public AnimationClass(AnimationClip animationClip, float animationSpeed)
 	{
-		name = ac.name;
-		clip = ac;
-		speed = 1.0f;
+		name = animationClip.name;
+		clip = animationClip;
+		speed = animationSpeed;
 		wrap = WrapMode.Default;
+		crossfade = 0.5f;
 	}
 	
-	public AnimationClass(AnimationClip ac, float s)
+	public AnimationClass(AnimationClip animationClip, float animationSpeed, float crossFade)
 	{
-		name = ac.name;
-		clip = ac;
-		speed = s;
+		name = animationClip.name;
+		clip = animationClip;
+		speed = animationSpeed;
 		wrap = WrapMode.Default;
+		crossfade = crossFade;
 	}
 	
-	public AnimationClass(AnimationClip ac, float s, WrapMode w)
+	public AnimationClass(AnimationClip animationClip, float animationSpeed, WrapMode wrapMode)
 	{
-		name = ac.name;
-		clip = ac;
-		speed = s;
-		wrap = w;
+		name = animationClip.name;
+		clip = animationClip;
+		speed = animationSpeed;
+		wrap = wrapMode;
+		crossfade = 0.5f;
 	}
 	
-	public AnimationClass(string n, float s, WrapMode w)
+	public AnimationClass(AnimationClip animationClip, float animationSpeed, WrapMode wrapMode, float crossFade)
 	{
-		name = n;
-		speed = s;
-		wrap = w;
+		name = animationClip.name;
+		clip = animationClip;
+		speed = animationSpeed;
+		wrap = wrapMode;
+		crossfade = crossFade;
+	}
+	
+	public AnimationClass(string animationName, float animationSpeed, WrapMode wrapMode)
+	{
+		name = animationName;
+		speed = animationSpeed;
+		wrap = wrapMode;
+		crossfade = 0.5f;
+	}
+	
+	public AnimationClass(string animationName, float animationSpeed, WrapMode wrapMode, float crossFade)
+	{
+		name = animationName;
+		speed = animationSpeed;
+		wrap = wrapMode;
+		crossfade = crossFade;
 	}
 }
 

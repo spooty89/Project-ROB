@@ -304,7 +304,10 @@ public class ROB : MonoBehaviour
 						else if (verticalSpeed > 0.5)
 							verticalSpeed -= gravity * Time.deltaTime;
 						if (Mathf.Abs(verticalSpeed) <= 0.5)
+						{
 							verticalSpeed = (float)0.0;
+								state = "climb_idle";
+						}
 					}
 				}
 				else if (hanging) {
