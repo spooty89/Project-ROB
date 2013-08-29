@@ -101,7 +101,7 @@ public class ROB : MonoBehaviour
 		float v = Input.GetAxisRaw("Vertical");
 		float h = Input.GetAxisRaw("Horizontal");
 		
-		isMoving = Mathf.Abs (h) > 0.1 || Mathf.Abs (v) > 0.1;
+		isMoving = Mathf.Abs (h) > 0.05f || Mathf.Abs (v) > 0.05f;
 		
 		Vector3 targetDirection = transform.forward;
 		// Target direction relative to the camera

@@ -33,6 +33,7 @@ public class CustomThirdPersonController : MonoBehaviour
 				animations.Add(aState.clip.name, new AnimationClass(aState.clip, 1.0f, aState.wrapMode == WrapMode.Default ? WrapMode.Loop : aState.wrapMode));
 			else
 			{
+				Debug.Log( aState.clip.name );
 				tempAC.clip = aState.clip;
 			}
 		}
@@ -142,7 +143,7 @@ public class CustomThirdPersonController : MonoBehaviour
 						if (rob.verticalSpeed < -0.4) {		// If player has reached their jump apex or is simply falling	
 							if (!rob.wallSliding){				// If player is not already wallSliding, set necessary variables
 								rob.wallSliding = true;
-				    			rob.state = "wall_sliding";
+				    			rob.state = "wall_slide";
 				    			rob.jumping = true;
 				    			rob.doubleJumping = false;
 							}
@@ -203,6 +204,7 @@ public class CustomThirdPersonController : MonoBehaviour
 		rob.collisionFlags = controller.Move(movement);
 		if(!rob.state.Equals(lastState))
 		{
+			Debug.Log( rob.state );
 			_animation[animations[rob.state].name].speed = animations[rob.state].speed;
 			_animation[animations[rob.state].name].wrapMode = animations[rob.state].wrap;
 			_animation.CrossFade(animations[rob.state].name, 0.5f);

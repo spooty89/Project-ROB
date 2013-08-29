@@ -1,4 +1,5 @@
-using UnityEngine; 
+using UnityEngine;
+using UnityEditor;
 using System.Collections; 
 using System.Collections.Generic; 
 using System.Linq;
@@ -43,7 +44,7 @@ public class AnimationInfoImporter: MonoBehaviour {
  
    void Update () {} 
 	
-    [UnityEditor.MenuItem( "Pav/Load Animation Info" )]
+    //[UnityEditor.MenuItem( "Pav/Load Animation Info" )]
 	public static void Load()
 	{
 		LoadXML();
@@ -109,7 +110,7 @@ public class AnimationInfoImporter: MonoBehaviour {
    static void CreateXML() 
    { 
       StreamWriter writer; 
-      FileInfo t = new FileInfo( _FileLocation + "\\" + _FileName ); 
+      FileInfo t = new FileInfo( EditorPrefs.GetString("Pav-AnimationInfoImporter-LastPath") + "\\" + _FileName ); 
       if(!t.Exists) 
       { 
          writer = t.CreateText(); 
@@ -126,7 +127,7 @@ public class AnimationInfoImporter: MonoBehaviour {
  
    static void LoadXML() 
    { 
-      StreamReader r = File.OpenText( _FileLocation + "\\" + _FileName ); 
+      StreamReader r = File.OpenText( EditorPrefs.GetString("Pav-AnimationInfoImporter-LastPath") + "\\" + _FileName ); 
       string _info = r.ReadToEnd(); 
       r.Close(); 
       _data=_info; 
