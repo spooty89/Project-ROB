@@ -6,7 +6,7 @@ public class AnimationInfoPath : EditorWindow
     const string LastPathKey = "Pav-AnimationInfoImporter-LastPath";
 	public static string path;
 	
-    [UnityEditor.MenuItem( "Pav/Import Animation Info" )]
+    [UnityEditor.MenuItem( "Pav/Animation Info Path" )]
     public static void AnimationImport()
     {
         path = Path.GetFullPath( EditorPrefs.GetString( LastPathKey, "Animation Info" ) );

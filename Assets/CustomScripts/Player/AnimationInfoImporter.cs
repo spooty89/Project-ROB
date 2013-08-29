@@ -27,7 +27,7 @@ public class AnimationInfoImporter: MonoBehaviour {
    // so we setup our initial values for our local members 
    void Start () { 
       // Where we want to save and load to and from 
-      _FileLocation="\\";
+      _FileLocation = AnimationInfoPath.path;
       _FileName="AnimationInfo.xml"; 
  
       // for now, lets just set the name to Joe Schmoe 
@@ -109,7 +109,7 @@ public class AnimationInfoImporter: MonoBehaviour {
    static void CreateXML() 
    { 
       StreamWriter writer; 
-      FileInfo t = new FileInfo(_FileName); 
+      FileInfo t = new FileInfo( _FileLocation + "\\" + _FileName ); 
       if(!t.Exists) 
       { 
          writer = t.CreateText(); 
@@ -126,7 +126,7 @@ public class AnimationInfoImporter: MonoBehaviour {
  
    static void LoadXML() 
    { 
-      StreamReader r = File.OpenText(_FileName); 
+      StreamReader r = File.OpenText( _FileLocation + "\\" + _FileName ); 
       string _info = r.ReadToEnd(); 
       r.Close(); 
       _data=_info; 

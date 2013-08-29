@@ -4,7 +4,7 @@ using UnityEngine;
 public class ROB : MonoBehaviour
 {
 	private float walkSpeed = (float)4.0;	// The speed when walking
-	private float trotSpeed = (float)5.0;	// After trotAfterSeconds of walking we trot with trotSpeed
+	//private float trotSpeed = (float)5.0;	// After trotAfterSeconds of walking we trot with trotSpeed
 	private float runSpeed = (float)8.0;	// When pressing Shift button we start running
 	
 	public bool canJump = true;
@@ -20,7 +20,7 @@ public class ROB : MonoBehaviour
 	private float rotateSpeed = (float)900.0;
 	private float inAirRotateSpeed = (float)450.0;
 	
-	private float trotAfterSeconds = (float)1.0;
+	//private float trotAfterSeconds = (float)1.0;
 	private float timeAfterJumpLimitRotate = (float)0.9;
 	private float rollingTimeout = (float)0.7;
 	private float jumpRepeatTime = (float)0.05;
