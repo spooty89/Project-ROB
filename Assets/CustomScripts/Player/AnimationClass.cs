@@ -12,38 +12,22 @@ public class AnimationClass
 	
 	public AnimationClass(AnimationClip animationClip)
 	{
-		name = animationClip.name;
-		clip = animationClip;
-		speed = 1.0f;
-		wrap = WrapMode.Default;
-		crossfade = 0.5f;
+		new AnimationClass( animationClip, 1.0f );
 	}
 	
 	public AnimationClass(AnimationClip animationClip, float animationSpeed)
 	{
-		name = animationClip.name;
-		clip = animationClip;
-		speed = animationSpeed;
-		wrap = WrapMode.Default;
-		crossfade = 0.5f;
+		new AnimationClass( animationClip, animationSpeed, WrapMode.Default, 0.5f );
 	}
 	
 	public AnimationClass(AnimationClip animationClip, float animationSpeed, float crossFade)
 	{
-		name = animationClip.name;
-		clip = animationClip;
-		speed = animationSpeed;
-		wrap = WrapMode.Default;
-		crossfade = crossFade;
+		new AnimationClass( animationClip, animationSpeed, WrapMode.Default, crossFade );
 	}
 	
 	public AnimationClass(AnimationClip animationClip, float animationSpeed, WrapMode wrapMode)
 	{
-		name = animationClip.name;
-		clip = animationClip;
-		speed = animationSpeed;
-		wrap = wrapMode;
-		crossfade = 0.5f;
+		new AnimationClass( animationClip, animationSpeed, wrapMode, 0.5f );
 	}
 	
 	public AnimationClass(AnimationClip animationClip, float animationSpeed, WrapMode wrapMode, float crossFade)
@@ -57,10 +41,7 @@ public class AnimationClass
 	
 	public AnimationClass(string animationName, float animationSpeed, WrapMode wrapMode)
 	{
-		name = animationName;
-		speed = animationSpeed;
-		wrap = wrapMode;
-		crossfade = 0.5f;
+		new AnimationClass( animationName, animationSpeed, wrapMode, 0.5f );
 	}
 	
 	public AnimationClass(string animationName, float animationSpeed, WrapMode wrapMode, float crossFade)

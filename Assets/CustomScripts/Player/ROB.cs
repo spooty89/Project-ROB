@@ -195,7 +195,7 @@ public class ROB : MonoBehaviour
 	public void ApplyJumping ()
 	{
 		// Prevent jumping too fast after each other
-		if ((lastJumpTime + jumpRepeatTime > Time.time) && !IsDoubleJumping())
+		if ((lastJumpTime + jumpRepeatTime > Time.time) && !IsDoubleJumping() || rolling)
 			return;
 		
 		if (IsGrounded() || !IsDoubleJumping() || wallSliding){

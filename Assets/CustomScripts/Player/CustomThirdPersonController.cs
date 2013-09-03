@@ -33,7 +33,6 @@ public class CustomThirdPersonController : MonoBehaviour
 				animations.Add(aState.clip.name, new AnimationClass(aState.clip, 1.0f, aState.wrapMode == WrapMode.Default ? WrapMode.Loop : aState.wrapMode));
 			else
 			{
-				Debug.Log( aState.clip.name );
 				tempAC.clip = aState.clip;
 			}
 		}
@@ -204,10 +203,9 @@ public class CustomThirdPersonController : MonoBehaviour
 		rob.collisionFlags = controller.Move(movement);
 		if(!rob.state.Equals(lastState))
 		{
-			Debug.Log( rob.state );
 			_animation[animations[rob.state].name].speed = animations[rob.state].speed;
 			_animation[animations[rob.state].name].wrapMode = animations[rob.state].wrap;
-			_animation.CrossFade(animations[rob.state].name, 0.5f);
+			_animation.CrossFade(animations[rob.state].name, animations[rob.state].crossfade);
 			lastState = rob.state;
 		}
 	}
