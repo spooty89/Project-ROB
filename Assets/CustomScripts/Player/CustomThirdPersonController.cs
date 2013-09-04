@@ -7,9 +7,9 @@ public delegate void stateChangeEvent(string state);
 public class CustomThirdPersonController : MonoBehaviour
 {
 	public ROB rob;
+	private CharacterClass _Player;
 	public Dictionary<string, AnimationClass> animations;
 	
-	//public stateEvent state;
 	public string state, lastState;
 	public bool loadAnimationInfo;
 	
@@ -42,22 +42,32 @@ public class CustomThirdPersonController : MonoBehaviour
 	
 	private void Start ()
 	{
+		_Player = GetComponent<CharacterClass>();
 		rob = GetComponent<ROB>();
 		controller = GetComponent<CharacterController>();
 		
 		this.enable = true;
-		rob.moveDirection = rob.transform.forward;	// Initialize player's move direction to the direction rob is initially facing
+		_Player.moveDirection = rob.transform.forward;	// Initialize player's move direction to the direction rob is initially facing
 		animationSetup();
 	}
 	
 	// Update the current state of the game
 	void Update() {
+		if(!rob.climbing)
 			rob.ApplyGravity ();	// Apply gravity
 		if (rob.isControllable && this.enable) {		// Kill all inputs if not controllable (here by default, may be useful for in-game cutscenes?)
+				if(rob.climbing)
+					GetComponent<ClimbState>().MovementHandler();
+				else
+			{
 			rob.UpdateSmoothedMovementDirection();	// Smooth the player movement
 			rob.MovementHandler();	// Handle movement
+			}
 			if(Input.anyKey)
 			{
+				if(rob.climbing)
+					GetComponent<ClimbState>().InputHandler();
+				else
 				rob.InputHandler();		// Handle user input (comes after movement, else jumping from ground is irregular)
 			}
 		}
@@ -80,14 +90,14 @@ public class CustomThirdPersonController : MonoBehaviour
 			}
 				
 			if (Mathf.Abs(hit.normal.y) > 0.5) {
-				if(hit.gameObject.CompareTag("Bouncy") && (rob.verticalSpeed <= 0)){    
+				/*if(hit.gameObject.CompareTag("Bouncy") && (_Player.verticalSpeed <= 0)){    
 					rob.bouncing = true;
 					rob.collisionFlags=0;
 					rob.jumping=true;
 					rob.doubleJumping = false;
 					state = "jumping";	
 				    rob.verticalSpeed = (float)20.0;
-				}					// If surface of contact is relatively horizontal
+				}*/					// If surface of contact is relatively horizontal
 				if (rob.hangContact && (hit.normal.y < -0.1) && !rob.aim) {				// If surface is above and player is within hang triggerBox
 					if (!rob.hanging) {											// If player isn't already hanging, set necessary variables
 						rob.hanging = true;
@@ -96,17 +106,16 @@ public class CustomThirdPersonController : MonoBehaviour
 						rob.climbing = false;
 						rob.jumping = false;
 						rob.doubleJumping = false;
-						rob.inAirVelocity = Vector3.zero;
+						_Player.inAirVelocity = Vector3.zero;
 					}
 				}
 				else {													// Else, if surface is below and/or player is not within hang triggerBox
 					rob.hanging = false;
 					if (rob.climbing && rob.decending && hit.normal.y > 0.0) {							// If player just reached flat ground after climbing downward
-						rob.transform.position = new Vector3(rob.transform.position.x + (rob.wallFacing.x * (float)0.2), rob.transform.position.y, rob.transform.position.z + (rob.wallFacing.z * (float)0.2));
-						rob.transform.forward = rob.wallFacing;
-						rob.moveDirection = rob.transform.forward;
-						Debug.Log("here");
-						rob.moveSpeed = (float)0.0;
+						rob.transform.position = new Vector3(rob.transform.position.x + (_Player.wallFacing.x * (float)0.2), rob.transform.position.y, rob.transform.position.z + (_Player.wallFacing.z * (float)0.2));
+						rob.transform.forward = _Player.wallFacing;
+						_Player.moveDirection = rob.transform.forward;
+						_Player.moveSpeed = (float)0.0;
 						rob.climbing = false;
 						rob.decending = false;
 					}
@@ -116,30 +125,32 @@ public class CustomThirdPersonController : MonoBehaviour
 				rob.wallContact = true;
 				if (!rob.aim) {
 					if (rob.climbContact) {										// If player is within climb triggerBox
-						rob.wallFacing = hit.normal;
+						_Player.wallFacing = hit.normal;
 						//rob.wallRight = rob.DirectionOnWall();
-						rob.moveDirection = -rob.wallFacing;
-						rob.transform.rotation = Quaternion.LookRotation(rob.moveDirection);
-						rob.wallRight = rob.transform.right;
+						_Player.moveDirection = -_Player.wallFacing;
+						rob.transform.rotation = Quaternion.LookRotation(_Player.moveDirection);
+						_Player.wallRight = rob.transform.right;
+						GetComponent<ClimbState>().enabled = true;
+						rob.enabled = false;
 						//Debug.Log(rob.wallRight);
 						if (!rob.climbing) {										// If player isn't already climbing, set necessary variables
 							rob.climbing = true;
 							rob.hanging = false;
 							//rob._characterState = AssemblyCSharp.ROB.customCharacterState.Climbing_Idle;
 							if (rob.IsGrounded())										// If player walks into climb surface (rather than jumping)
-								rob.verticalSpeed = (float)1.0;									// need to get them off ground (otherwise, rapid switch between climb and grounded states)
+								_Player.verticalSpeed = (float)1.0;									// need to get them off ground (otherwise, rapid switch between climb and grounded states)
 							rob.wallSliding = false;
 							rob.wasWallSliding = false;
-							rob.moveSpeed = (float)1.0;
-							rob.inAirVelocity = Vector3.zero;
+							_Player.moveSpeed = (float)1.0;
+							_Player.inAirVelocity = Vector3.zero;
 							rob.jumping = false;
 							rob.doubleJumping = false;
 						}
 			    	}
 			    	else {								// Else, if player is against non-climb wall surface
 				    	rob.climbing = false;
-						rob.wallFacing = hit.normal;
-						if (rob.verticalSpeed < -0.4) {		// If player has reached their jump apex or is simply falling	
+						_Player.wallFacing = hit.normal;
+						if (_Player.verticalSpeed < -0.4) {		// If player has reached their jump apex or is simply falling	
 							if (!rob.wallSliding){				// If player is not already wallSliding, set necessary variables
 								rob.wallSliding = true;
 				    			rob.state = "wall_slide";
@@ -198,15 +209,15 @@ public class CustomThirdPersonController : MonoBehaviour
 	
 	// Handle animation states
 	private void AnimationHandler() {
-		Vector3 movement = rob.moveDirection * rob.moveSpeed + new Vector3 (0, rob.verticalSpeed, 0) + rob.inAirVelocity;		// Calculate actual motion
+		Vector3 movement = _Player.moveDirection * _Player.moveSpeed + new Vector3 (0, _Player.verticalSpeed, 0) + _Player.inAirVelocity;		// Calculate actual motion
 		movement *= Time.deltaTime;			// Base degree of applied movement on time since last frame
 		rob.collisionFlags = controller.Move(movement);
-		if(!rob.state.Equals(lastState))
+		/*if(!rob.state.Equals(lastState))
 		{
 			_animation[animations[rob.state].name].speed = animations[rob.state].speed;
 			_animation[animations[rob.state].name].wrapMode = animations[rob.state].wrap;
 			_animation.CrossFade(animations[rob.state].name, animations[rob.state].crossfade);
 			lastState = rob.state;
-		}
+		}*/
 	}
 }

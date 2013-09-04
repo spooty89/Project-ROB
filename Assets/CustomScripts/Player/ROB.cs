@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class ROB : MonoBehaviour
 {
+	private CharacterClass _Player;
 	private float walkSpeed = (float)4.0;	// The speed when walking
 	//private float trotSpeed = (float)5.0;	// After trotAfterSeconds of walking we trot with trotSpeed
 	private float runSpeed = (float)8.0;	// When pressing Shift button we start running
@@ -13,7 +14,6 @@ public class ROB : MonoBehaviour
 	private float jumpHeight = (float)1.5;					// How high we jump when pressing jump and letting go immediately
 	private float doubleJumpHeight = (float)0.75;			// How high we jump when we double jump
 	
-	private float gravity = (float)17.0;				// The gravity for the character
 	private float wallSlidingGravity = (float)3.2;		// Wall sliding reduces gravity's effect on character
 	
 	private float speedSmoothing = (float)10.0;
@@ -28,10 +28,7 @@ public class ROB : MonoBehaviour
 	private float heavyLandingTimeout = (float)0.75;
 	private float heavyLandingTime = (float)0.0;
 	
-	public Vector3 moveDirection = Vector3.zero;	// The current move direction in x-z
-	public float verticalSpeed = (float)0.0;				// The current vertical speed
 	private float previousVerticalSpeed = (float)0.0;
-	public float moveSpeed = (float)0.0;					// The current x-z move speed
 	
 	// The last collision flags returned from controller.Move
 	public CollisionFlags collisionFlags; 
@@ -66,23 +63,22 @@ public class ROB : MonoBehaviour
 	// The height we jumped from (Used to determine for how long to apply extra jump power after jumping.)
 	public float lastJumpStartHeight = (float)0.0;
 	
-	// Direction to face when wall sliding and jumping from wall
-	public Vector3 wallFacing = Vector3.zero;
-	public Vector3 wallRight = Vector3.zero;
-	
-	public Vector3 inAirVelocity = Vector3.zero;
-	
 	public string state;
 	public bool isControllable = true;
 	
 	public Transform upDownAim;
 	public Transform hand;
 	
+	private void Start()
+	{
+		_Player = GetComponent<CharacterClass>();
+	}
+	
 	public float CalculateJumpVerticalSpeed (float targetJumpHeight)
 	{
 		// From the jump height and gravity we deduce the upwards speed 
 		// for the character to reach at the apex.
-		return Mathf.Sqrt(2 * targetJumpHeight * gravity);
+		return Mathf.Sqrt(2 * targetJumpHeight * _Player.gravity);
 	}
 
 	public void UpdateSmoothedMovementDirection ()
@@ -118,8 +114,8 @@ public class ROB : MonoBehaviour
 			if (targetDirection != Vector3.zero)
 			{
 				// Smoothly turn towards the target direction
-				moveDirection = Vector3.RotateTowards(moveDirection, targetDirection, rotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
-				moveDirection = moveDirection.normalized;
+				_Player.moveDirection = Vector3.RotateTowards(_Player.moveDirection, targetDirection, rotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
+				_Player.moveDirection = _Player.moveDirection.normalized;
 				
 			}
 			
@@ -161,7 +157,7 @@ public class ROB : MonoBehaviour
 				}
 			}
 			
-			moveSpeed = Mathf.Lerp(moveSpeed, targetSpeed, curSmooth);
+			_Player.moveSpeed = Mathf.Lerp(_Player.moveSpeed, targetSpeed, curSmooth);
 		}
 		// In air controls
 		else
@@ -172,22 +168,22 @@ public class ROB : MonoBehaviour
 				{
 					if ((Time.time - lastJumpTime) <= timeAfterJumpLimitRotate) {
 						var temp = (1.0 / timeAfterJumpLimitRotate) * (Time.time - lastJumpTime);
-						moveDirection += Vector3.RotateTowards(moveDirection, targetDirection, (inAirRotateSpeed*(float)temp) * Mathf.Deg2Rad * Time.deltaTime, 1000);
+						_Player.moveDirection += Vector3.RotateTowards(_Player.moveDirection, targetDirection, (inAirRotateSpeed*(float)temp) * Mathf.Deg2Rad * Time.deltaTime, 1000);
 					}
 					else
 						wasWallSliding = false;
 				}
 				else
-					moveDirection += Vector3.RotateTowards(moveDirection, targetDirection, inAirRotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
+					_Player.moveDirection += Vector3.RotateTowards(_Player.moveDirection, targetDirection, inAirRotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
 					
-				moveDirection = moveDirection.normalized;
+				_Player.moveDirection = _Player.moveDirection.normalized;
 			}
 	
 			if (isMoving) {
 				if (doubleJumping)
-					inAirVelocity += targetDirection.normalized * Time.deltaTime * jumpAcceleration;
+					_Player.inAirVelocity += targetDirection.normalized * Time.deltaTime * jumpAcceleration;
 				else
-					inAirVelocity += targetDirection.normalized * Time.deltaTime * doubleJumpAcceleration;
+					_Player.inAirVelocity += targetDirection.normalized * Time.deltaTime * doubleJumpAcceleration;
 			}
 		}	
 	}
@@ -195,27 +191,27 @@ public class ROB : MonoBehaviour
 	public void ApplyJumping ()
 	{
 		// Prevent jumping too fast after each other
-		if ((lastJumpTime + jumpRepeatTime > Time.time) && !IsDoubleJumping() || rolling)
+		if ((lastJumpTime + jumpRepeatTime > Time.time) && !doubleJumping || rolling)
 			return;
 		
-		if (IsGrounded() || !IsDoubleJumping() || wallSliding){
+		if (IsGrounded() || !doubleJumping || wallSliding){
 			// Jump
 			// - Only when pressing the button down
 			// - With a timeout so you can press the button slightly before landing	
-			if (!IsJumping() || !IsDoubleJumping()){
-				if (!IsDoubleJumping())
-					verticalSpeed = CalculateJumpVerticalSpeed (jumpHeight);
+			if (!jumping || !doubleJumping){
+				if (!doubleJumping)
+					_Player.verticalSpeed = CalculateJumpVerticalSpeed (jumpHeight);
 				else
-					verticalSpeed = CalculateJumpVerticalSpeed (doubleJumpHeight);
+					_Player.verticalSpeed = CalculateJumpVerticalSpeed (doubleJumpHeight);
 				DidJump();
 				
 				if(wallSliding || climbing){
-					inAirVelocity = Vector3.zero;
+					_Player.inAirVelocity = Vector3.zero;
 					jumpingReachedApex = false;
 					wasWallSliding = true;
-					moveDirection = wallFacing;
-					moveDirection = moveDirection.normalized;
-					moveSpeed = (float)8.0;
+					_Player.moveDirection = _Player.wallFacing;
+					_Player.moveDirection = _Player.moveDirection.normalized;
+					_Player.moveSpeed = (float)8.0;
 					wallSliding = false;
 	        		wallContact = false;
 	        		climbing = false;
@@ -227,7 +223,7 @@ public class ROB : MonoBehaviour
 	// Handle the jump/double-jump actions
 	private void DidJump ()
 	{
-		if(IsJumping()) {
+		if(jumping) {
 			doubleJumping = true;
 			state = "double_jump";
 		}
@@ -248,7 +244,7 @@ public class ROB : MonoBehaviour
 			float temp;
 			
 			// When we reach the apex of the jump we send out a message
-			if ((IsJumping() || IsDoubleJumping()) && !jumpingReachedApex && verticalSpeed <= 0.0 && !climbing)
+			if ((jumping || doubleJumping) && !jumpingReachedApex && _Player.verticalSpeed <= 0.0 && !climbing)
 			{
 				jumpingReachedApex = true;
 				state = "jump_after_apex";
@@ -260,10 +256,10 @@ public class ROB : MonoBehaviour
 				hangContact = false;
 				jumpingReachedApex = false;
 				if (!climbing && !bouncing)
-					verticalSpeed = (float)0.0;
+					_Player.verticalSpeed = (float)0.0;
 				bouncing = false;	
 				
-				if ((previousVerticalSpeed < -10.0) && (moveSpeed >= runSpeed/1.5)) {
+				if ((previousVerticalSpeed < -10.0) && (_Player.moveSpeed >= runSpeed/1.5)) {
 					rolling = true;
 					rollingTime = Time.time;
 					state = "roll";
@@ -280,32 +276,32 @@ public class ROB : MonoBehaviour
 						wallSliding = false;
 						wallContact = false;
 						hangContact = false;
-						verticalSpeed -= gravity * Time.deltaTime;
+						_Player.verticalSpeed -= _Player.gravity * Time.deltaTime;
 						state = "jump_after_apex";
-						temp = moveDirection.normalized.magnitude;
-						moveDirection = DirectionOnWall();
-						moveSpeed *= (moveDirection.magnitude/temp);
+						temp = _Player.moveDirection.normalized.magnitude;
+						_Player.moveDirection = DirectionOnWall();
+						_Player.moveSpeed *= (_Player.moveDirection.magnitude/temp);
 					}
 					else {
-						if (verticalSpeed > -0.3)
-							verticalSpeed = -0.3f;
+						if (_Player.verticalSpeed > -0.3)
+							_Player.verticalSpeed = -0.3f;
 						state = "wall_slide";
-						verticalSpeed -= wallSlidingGravity * Time.deltaTime;
+						_Player.verticalSpeed -= wallSlidingGravity * Time.deltaTime;
 					}
 				}
 				else if (climbing) {
 					if (collisionFlags == 0) {
 						climbing = false;
-						transform.position.Set(transform.position.x + (wallFacing.x * (float)0.1), transform.position.y, transform.position.z + (wallFacing.z * (float)0.1));
+						transform.position.Set(transform.position.x + (_Player.wallFacing.x * (float)0.1), transform.position.y, transform.position.z + (_Player.wallFacing.z * (float)0.1));
 					}
 					else {
-						if (verticalSpeed < -0.5)
-							verticalSpeed += gravity * Time.deltaTime;
-						else if (verticalSpeed > 0.5)
-							verticalSpeed -= gravity * Time.deltaTime;
-						if (Mathf.Abs(verticalSpeed) <= 0.5)
+						if (_Player.verticalSpeed < -0.5)
+							_Player.verticalSpeed += _Player.gravity * Time.deltaTime;
+						else if (_Player.verticalSpeed > 0.5)
+							_Player.verticalSpeed -= _Player.gravity * Time.deltaTime;
+						if (Mathf.Abs(_Player.verticalSpeed) <= 0.5)
 						{
-							verticalSpeed = (float)0.0;
+							_Player.verticalSpeed = (float)0.0;
 								state = "climb_idle";
 						}
 					}
@@ -316,35 +312,35 @@ public class ROB : MonoBehaviour
 						hangContact = false;
 					}
 					else*/
-						verticalSpeed = (float)0.1;
+						_Player.verticalSpeed = (float)0.1;
 				}
 				else if (!IsGrounded()) {
-					if (verticalSpeed <= -1.0)
+					if (_Player.verticalSpeed <= -1.0)
 						state = "jump_after_apex";
-					if (verticalSpeed > -15.0)
-						verticalSpeed -= gravity * Time.deltaTime;
-					if (verticalSpeed <= -15.0){
-						verticalSpeed = (float)-15.0;
+					if (_Player.verticalSpeed > -15.0)
+						_Player.verticalSpeed -= _Player.gravity * Time.deltaTime;
+					if (_Player.verticalSpeed <= -15.0){
+						_Player.verticalSpeed = (float)-15.0;
 						state = "free_fall";
 					}
 				}
 			}
-			previousVerticalSpeed = verticalSpeed;
+			previousVerticalSpeed = _Player.verticalSpeed;
 		}
 	}
 	
 	public Vector3 DirectionOnWall()
 	{
 		Vector3 returnAngle = Vector3.zero;
-		if (wallFacing.x <= -0.1)
-			returnAngle.z = (float)-1.0 + Mathf.Abs(wallFacing.z);
-		else if (wallFacing.x >= 0.1)
-			returnAngle.z = (float)1.0 - Mathf.Abs(wallFacing.z);
+		if (_Player.wallFacing.x <= -0.1)
+			returnAngle.z = (float)-1.0 + Mathf.Abs(_Player.wallFacing.z);
+		else if (_Player.wallFacing.x >= 0.1)
+			returnAngle.z = (float)1.0 - Mathf.Abs(_Player.wallFacing.z);
 		
-		if (wallFacing.z <= -0.1)
-			returnAngle.x = (float)1.0 - Mathf.Abs(wallFacing.x);
-		else if (wallFacing.z >= 0.1)
-			returnAngle.x = (float)-1.0 + Mathf.Abs(wallFacing.x);
+		if (_Player.wallFacing.z <= -0.1)
+			returnAngle.x = (float)1.0 - Mathf.Abs(_Player.wallFacing.x);
+		else if (_Player.wallFacing.z >= 0.1)
+			returnAngle.x = (float)-1.0 + Mathf.Abs(_Player.wallFacing.x);
 		
 		returnAngle = returnAngle.normalized;
 		
@@ -359,8 +355,8 @@ public class ROB : MonoBehaviour
 		else if (Input.GetButton ("Interact"))		// If the interact butten is pressed,
 		{
 			if (climbing) {								// and player is climbing, release from wall and apply slight pushoff (to prevent instantly regrabbing the wall)
-				moveDirection = wallFacing;
-				moveSpeed = (float)1.0;
+				_Player.moveDirection = _Player.wallFacing;
+				_Player.moveSpeed = (float)1.0;
 				climbing = false;
 				jumping = true;
 				numClimbContacts = 0;
@@ -369,7 +365,7 @@ public class ROB : MonoBehaviour
 				hanging = false;
 				hangingContact = false;
 				numHangContacts = 0;
-				verticalSpeed = -1;
+				_Player.verticalSpeed = -1;
 			}
 		}
 			
@@ -380,54 +376,54 @@ public class ROB : MonoBehaviour
 		}
 		
 		// If the player is climbing
-		if (climbing) {
+		/*if (climbing) {
 				state = "climb_idle";
 			if (Input.GetButton ("Vertical")) {			// If one of the up/down buttons is pressed
 				state = "climb_vertical";
-				verticalSpeed = (float)2.0 * Input.GetAxis("Vertical");
-				if (verticalSpeed < 0.0)				// If moving down
+				_Player.verticalSpeed = (float)2.0 * Input.GetAxis("Vertical");
+				if (_Player.verticalSpeed < 0.0)				// If moving down
 					decending = true;
 				else
 					decending = false;
 				if (Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift))		// Climb faster
-					verticalSpeed *= 2;
+					_Player.verticalSpeed *= 2;
 			}
 			// If one of the up/down buttons is released
 			if (Input.GetButtonUp ("Vertical"))
 			{
 				state = "climb_idle";
-				inAirVelocity = Vector3.zero;
-				moveDirection = -wallFacing;
-				moveSpeed = (float)0.1;
+				_Player.inAirVelocity = Vector3.zero;
+				_Player.moveDirection = -_Player.wallFacing;
+				_Player.moveSpeed = (float)0.1;
 			}
 			// If one of the left/right buttons is pressed
 			if (Input.GetButton ("Horizontal"))
 			{
 				state = "climb_horizontal";
-				moveSpeed = (float)2.0;
-				moveDirection += new Vector3(wallRight.x * Input.GetAxis("Horizontal"), wallRight.y * 
-								 Input.GetAxis("Horizontal"), wallRight.z * Input.GetAxis("Horizontal"));
-				moveDirection = moveDirection.normalized;
+				_Player.moveSpeed = (float)2.0;
+				_Player.moveDirection += new Vector3(_Player.wallRight.x * Input.GetAxis("Horizontal"), _Player.wallRight.y * 
+								 Input.GetAxis("Horizontal"), _Player.wallRight.z * Input.GetAxis("Horizontal"));
+				_Player.moveDirection = _Player.moveDirection.normalized;
 				if (Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift))
-					moveSpeed *= 2;
+					_Player.moveSpeed *= 2;
 			}
 			// If one of the left/right buttons is released
 			if (Input.GetButtonUp ("Horizontal"))
 			{
 				state = "climb_idle";
-				inAirVelocity = Vector3.zero;
-				moveDirection = -wallFacing;
-				moveSpeed = (float)0.1;
+				_Player.inAirVelocity = Vector3.zero;
+				_Player.moveDirection = -_Player.wallFacing;
+				_Player.moveSpeed = (float)0.1;
 			}
-		}
+		}*/
 	}
 	
 	public void MovementHandler() {
 		// If rolling (and time since rolling began is less than rolling timeout)
 		if (rolling && ((Time.time - rollingTime) < rollingTimeout)) {
 			state = "roll";
-			if (moveSpeed < 5.0)							// If player speed is below minimum for roll, make minimum roll speed
-				moveSpeed = (float)5.0;
+			if (_Player.moveSpeed < 5.0)							// If player speed is below minimum for roll, make minimum roll speed
+				_Player.moveSpeed = (float)5.0;
 		}
 		else {
 			rolling = false;
@@ -436,7 +432,7 @@ public class ROB : MonoBehaviour
 		// Handle heavy landing (big fall w/o enough forward movement to be roll)
 		if (heavyLanding && ((Time.time - heavyLandingTime) < heavyLandingTimeout)) {
 			state = "heavy_land";
-			verticalSpeed = (float)0.0;
+			_Player.verticalSpeed = (float)0.0;
 			previousVerticalSpeed = (float)0.0;
 			rolling = false;
 		}
@@ -446,16 +442,16 @@ public class ROB : MonoBehaviour
 		// Set rotation to the move direction
 		if (IsGrounded())
 		{
-			if (moveDirection == Vector3.zero) 
-				moveDirection = wallFacing;
+			if (_Player.moveDirection == Vector3.zero) 
+				_Player.moveDirection = _Player.wallFacing;
 			
 			if (aim) {
 				transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
 			}
 			else
-				transform.rotation = Quaternion.LookRotation(moveDirection);
-			inAirVelocity = Vector3.zero;
-			if(IsJumping() && !bouncing){
+				transform.rotation = Quaternion.LookRotation(_Player.moveDirection);
+			_Player.inAirVelocity = Vector3.zero;
+			if(jumping && !bouncing){
 				jumping = false;
 				doubleJumping = false;
 			}
@@ -463,31 +459,22 @@ public class ROB : MonoBehaviour
 			if (climbing && decending) {		// If just reached ground from climbing downward
 				climbing = false;
 				decending = false;
-				transform.position.Set(transform.position.x + (wallFacing.x * (float)0.1), transform.position.y, transform.position.z + (wallFacing.z * (float)0.1));
+				transform.position.Set(transform.position.x + (_Player.wallFacing.x * (float)0.1), transform.position.y, transform.position.z + (_Player.wallFacing.z * (float)0.1));
 			}
 				
 		}	
 		else
 		{
 			if (wallSliding)
-				transform.rotation = Quaternion.LookRotation(wallFacing);
+				transform.rotation = Quaternion.LookRotation(_Player.wallFacing);
 			else {
 				if (aim) {
 					transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
 				}
 				else
-					transform.rotation = Quaternion.LookRotation(moveDirection);
+					transform.rotation = Quaternion.LookRotation(_Player.moveDirection);
 			}
 		}
-	}
-
-
-	public bool IsJumping () {
-		return jumping;
-	}
-	
-	public bool IsDoubleJumping () {
-		return doubleJumping;
 	}
 	
 	public bool IsGrounded () {
