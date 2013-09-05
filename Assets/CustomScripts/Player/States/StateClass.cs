@@ -3,9 +3,7 @@ using UnityEngine;
 public abstract class StateClass : MonoBehaviour
 {
 	protected CharacterClass _Player;
-	
-	public abstract void InputHandler();
-	public abstract void MovementHandler();
+	public abstract void Run();
 	
 	private void Start()
 	{

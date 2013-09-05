@@ -37,6 +37,8 @@ public class AnimationInfoImporter: MonoBehaviour {
     //[UnityEditor.MenuItem( "Pav/Load Animation Info" )]
 	public static void Load()
 	{
+      	_FileName="AnimationInfo.xml"; 
+		_Player = GameObject.Find( "pav" );
 		LoadXML();
 		myData = (Dictionary<string, AnimationClass>)DeserializeObject(_data);
 		_Player.GetComponent<CustomThirdPersonController>().animations = myData;
@@ -74,7 +76,9 @@ public class AnimationInfoImporter: MonoBehaviour {
 		MemoryStream memoryStream = new MemoryStream(); 
 		XmlSerializer xs = new XmlSerializer(typeof(item[]), new XmlRootAttribute() { ElementName = "items" }); 
 		XmlTextWriter xmlTextWriter = new XmlTextWriter(memoryStream, Encoding.UTF8); 
-		xs.Serialize(xmlTextWriter, pObject.Select(i => new item(){id = i.Key, name = i.Value.name, speed = i.Value.speed, wrap = i.Value.wrap, cross = i.Value.crossfade}).ToArray()); 
+		xmlTextWriter.Settings.Indent = true;
+		xmlTextWriter.Settings.NewLineOnAttributes = true;
+		xs.Serialize(xmlTextWriter, pObject.Select(i => new item(){id = i.Key, name = i.Value.name, speed = i.Value.speed, wrap = i.Value.wrap, cross = i.Value.crossfade, state = i.Value.state}).ToArray()); 
 		memoryStream = (MemoryStream)xmlTextWriter.BaseStream; 
 		XmlizedString = UTF8ByteArrayToString(memoryStream.ToArray()); 
 		return XmlizedString; 
@@ -90,7 +94,7 @@ public class AnimationInfoImporter: MonoBehaviour {
 		Dictionary<string, AnimationClass> tempAC = new Dictionary<string, AnimationClass>();
 		foreach(item i in tempItem)
 		{
-			tempAC.Add(i.id, new AnimationClass(i.name, i.speed, i.wrap, i.cross));
+			tempAC.Add(i.id, new AnimationClass(i.name, i.speed, i.wrap, i.cross, i.state));
 		}
 		return tempAC; 
 	} 
@@ -99,7 +103,7 @@ public class AnimationInfoImporter: MonoBehaviour {
 	static void CreateXML() 
 	{ 
 		StreamWriter writer; 
-		FileInfo t = new FileInfo( EditorPrefs.GetString("Pav-AnimationInfoImporter-LastPath") + "\\" + _FileName ); 
+		FileInfo t = new FileInfo( EditorPrefs.GetString("Pav-AnimationInfoImporter-LastPath") + "/" + _FileName ); 
 		if(!t.Exists) 
 		{ 
 			writer = t.CreateText(); 
@@ -115,7 +119,7 @@ public class AnimationInfoImporter: MonoBehaviour {
  
 	static void LoadXML() 
 	{ 
-		StreamReader r = File.OpenText( EditorPrefs.GetString("Pav-AnimationInfoImporter-LastPath") + "\\" + _FileName ); 
+		StreamReader r = File.OpenText( EditorPrefs.GetString("Pav-AnimationInfoImporter-LastPath") + "/" + _FileName ); 
 		string _info = r.ReadToEnd(); 
 		r.Close(); 
 		_data=_info; 
@@ -134,4 +138,6 @@ public class item
     public WrapMode wrap;
     [XmlAttribute]
     public float cross;
+    [XmlAttribute]
+    public string state;
 }

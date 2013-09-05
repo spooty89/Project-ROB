@@ -37,7 +37,7 @@ public class CustomThirdPersonController : MonoBehaviour
 			}
 		}
 		lastState = "";
-		rob.state = "idle";
+		_Player.currentState = "idle";
 	}
 	
 	private void Start ()
@@ -53,25 +53,21 @@ public class CustomThirdPersonController : MonoBehaviour
 	
 	// Update the current state of the game
 	void Update() {
-		if(!rob.climbing)
+		if(GetComponent( animations[_Player.currentState].state))
+			((StateClass)GetComponent( animations[_Player.currentState].state)).Run();
+		else
+		{
 			rob.ApplyGravity ();	// Apply gravity
-		if (rob.isControllable && this.enable) {		// Kill all inputs if not controllable (here by default, may be useful for in-game cutscenes?)
-				if(rob.climbing)
-					GetComponent<ClimbState>().MovementHandler();
-				else
-			{
-			rob.UpdateSmoothedMovementDirection();	// Smooth the player movement
-			rob.MovementHandler();	// Handle movement
-			}
-			if(Input.anyKey)
-			{
-				if(rob.climbing)
-					GetComponent<ClimbState>().InputHandler();
-				else
-				rob.InputHandler();		// Handle user input (comes after movement, else jumping from ground is irregular)
+			if (rob.isControllable && this.enable) {		// Kill all inputs if not controllable (here by default, may be useful for in-game cutscenes?)
+				rob.UpdateSmoothedMovementDirection();	// Smooth the player movement
+				rob.MovementHandler();	// Handle movement
+				if(Input.anyKey)
+				{
+					rob.InputHandler();		// Handle user input (comes after movement, else jumping from ground is irregular)
+				}
 			}
 		}
-		if (rob.collisionFlags == 0) {		// If rob is no longer in contact with 
+		if (_Player.collisionFlags == 0) {		// If rob is no longer in contact with 
 			if(contactObject != null)				// Useful for when no object has been contacted
 				contactObject.SendMessage("noContact", SendMessageOptions.DontRequireReceiver);
 		}
@@ -124,7 +120,8 @@ public class CustomThirdPersonController : MonoBehaviour
 			else {													// If surface of contact is relatively vertical
 				rob.wallContact = true;
 				if (!rob.aim) {
-					if (rob.climbContact) {										// If player is within climb triggerBox
+					Debug.Log(Vector3.Angle(hit.normal, transform.forward));
+					if (rob.climbContact && Vector3.Angle(hit.normal, transform.forward) > 150f) {										// If player is within climb triggerBox
 						_Player.wallFacing = hit.normal;
 						//rob.wallRight = rob.DirectionOnWall();
 						_Player.moveDirection = -_Player.wallFacing;
@@ -134,6 +131,7 @@ public class CustomThirdPersonController : MonoBehaviour
 						rob.enabled = false;
 						//Debug.Log(rob.wallRight);
 						if (!rob.climbing) {										// If player isn't already climbing, set necessary variables
+							_Player.currentState = "climb_idle";
 							rob.climbing = true;
 							rob.hanging = false;
 							//rob._characterState = AssemblyCSharp.ROB.customCharacterState.Climbing_Idle;
@@ -153,7 +151,7 @@ public class CustomThirdPersonController : MonoBehaviour
 						if (_Player.verticalSpeed < -0.4) {		// If player has reached their jump apex or is simply falling	
 							if (!rob.wallSliding){				// If player is not already wallSliding, set necessary variables
 								rob.wallSliding = true;
-				    			rob.state = "wall_slide";
+				    			_Player.currentState = "wall_slide";
 				    			rob.jumping = true;
 				    			rob.doubleJumping = false;
 							}
@@ -177,6 +175,7 @@ public class CustomThirdPersonController : MonoBehaviour
 	        rob.numClimbContacts += 1;						// Keep track of how many climb boxes player is currently in
 		}
 	    if(other.gameObject.CompareTag("Hang")) {    	// If the triggerBox has a "Hang" tag
+			_Player.currentState = "hang_idle";
 	        rob.hangContact = true;							// Set hang contact to true
 	        rob.numHangContacts += 1;						// Keep track of how many hang boxes player is currently in
 		}
@@ -192,6 +191,7 @@ public class CustomThirdPersonController : MonoBehaviour
 	    if(other.gameObject.CompareTag("Climb")) {    	// If the triggerBox has a "Climb" tag
 	    	rob.numClimbContacts -= 1;						// Keep track of how many climb boxes player is currently in
 	    	if (rob.numClimbContacts <= 0) {				// If the player is not in any climb boxes
+				_Player.currentState = "idle";
 				rob.numClimbContacts = 0;
 				rob.climbContact = false;						// Set climb contact to false
 				rob.climbing = false;							// Set climbing to false
@@ -200,6 +200,7 @@ public class CustomThirdPersonController : MonoBehaviour
 	    if(other.gameObject.CompareTag("Hang")) {    	// If the triggerBox has a "Hang" tag
 	    	rob.numHangContacts -= 1;						// Keep track of how many climb boxes player is currently in
 	    	if (rob.numHangContacts <= 0) {					// If the player has exited all triggerBoxes with "Hang" tags
+				_Player.currentState = "idle";
 				rob.numHangContacts = 0;
 				rob.hangContact = false;						// Set hang contact to false
 				rob.hanging = false;							// Set hanging to false
@@ -211,13 +212,13 @@ public class CustomThirdPersonController : MonoBehaviour
 	private void AnimationHandler() {
 		Vector3 movement = _Player.moveDirection * _Player.moveSpeed + new Vector3 (0, _Player.verticalSpeed, 0) + _Player.inAirVelocity;		// Calculate actual motion
 		movement *= Time.deltaTime;			// Base degree of applied movement on time since last frame
-		rob.collisionFlags = controller.Move(movement);
-		/*if(!rob.state.Equals(lastState))
+		_Player.collisionFlags = controller.Move(movement);
+		if(!_Player.currentState.Equals(lastState))
 		{
-			_animation[animations[rob.state].name].speed = animations[rob.state].speed;
-			_animation[animations[rob.state].name].wrapMode = animations[rob.state].wrap;
-			_animation.CrossFade(animations[rob.state].name, animations[rob.state].crossfade);
-			lastState = rob.state;
-		}*/
+			_animation[animations[_Player.currentState].name].speed = animations[_Player.currentState].speed;
+			_animation[animations[_Player.currentState].name].wrapMode = animations[_Player.currentState].wrap;
+			_animation.CrossFade(animations[_Player.currentState].name, animations[_Player.currentState].crossfade);
+			lastState = _Player.currentState;
+		}
 	}
 }

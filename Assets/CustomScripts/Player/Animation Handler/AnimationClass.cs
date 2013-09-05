@@ -9,6 +9,7 @@ public class AnimationClass
 	public float speed;
 	public WrapMode wrap;
 	public float crossfade;
+	public string state = "";
 	
 	public AnimationClass(AnimationClip animationClip)
 	{
@@ -41,15 +42,16 @@ public class AnimationClass
 	
 	public AnimationClass(string animationName, float animationSpeed, WrapMode wrapMode)
 	{
-		new AnimationClass( animationName, animationSpeed, wrapMode, 0.5f );
+		new AnimationClass( animationName, animationSpeed, wrapMode, 0.5f, "" );
 	}
 	
-	public AnimationClass(string animationName, float animationSpeed, WrapMode wrapMode, float crossFade)
+	public AnimationClass(string animationName, float animationSpeed, WrapMode wrapMode, float crossFade, string stateName)
 	{
 		name = animationName;
 		speed = animationSpeed;
 		wrap = wrapMode;
 		crossfade = crossFade;
+		state = stateName;
 	}
 }
 

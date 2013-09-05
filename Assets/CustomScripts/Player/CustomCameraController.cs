@@ -12,9 +12,9 @@ public class CustomCameraController : MonoBehaviour {
 	
 	public GameObject aimTarget;
 	
-	private bool aim = false;
+	//private bool aim = false;
 	
-	public float aimDistance = 0.0f;
+	//public float aimDistance = 0.0f;
 	
 	public float normalDistance = 4.5f;
 
@@ -126,7 +126,7 @@ public class CustomCameraController : MonoBehaviour {
 
         }
 		
-		if (Input.GetButtonDown("Fire2")){
+		/*if (Input.GetButtonDown("Fire2")){
 			aim = !aim;
 			if (aim) {
 				target = aimTarget;
@@ -140,7 +140,7 @@ public class CustomCameraController : MonoBehaviour {
 				desiredDistance = normalDistance;
 				currentDistance = normalHeight;
 			}
-		}
+		}*/
 			
     }
 
@@ -244,7 +244,7 @@ public class CustomCameraController : MonoBehaviour {
 
         // Calculate the desired distance
 		
-		if (!aim)
+		//if (!aim)
 	        desiredDistance -= Input.GetAxis ("Mouse ScrollWheel") * Time.deltaTime * zoomRate * Mathf.Abs (desiredDistance);
 		
         desiredDistance = Mathf.Clamp (desiredDistance, minDistance, maxDistance);
