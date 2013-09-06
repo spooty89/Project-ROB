@@ -53,25 +53,13 @@ public class CustomThirdPersonController : MonoBehaviour
 	
 	// Update the current state of the game
 	void Update() {
-		if(GetComponent( animations[_Player.currentState].state))
-			((StateClass)GetComponent( animations[_Player.currentState].state)).Run();
-		else
-		{
-			rob.ApplyGravity ();	// Apply gravity
-			if (rob.isControllable && this.enable) {		// Kill all inputs if not controllable (here by default, may be useful for in-game cutscenes?)
-				rob.UpdateSmoothedMovementDirection();	// Smooth the player movement
-				rob.MovementHandler();	// Handle movement
-				if(Input.anyKey)
-				{
-					rob.InputHandler();		// Handle user input (comes after movement, else jumping from ground is irregular)
-				}
-			}
-		}
+		if(GetComponent( animations[_Player.currentState].state ))
+			((StateClass)GetComponent( animations[_Player.currentState].state )).Run();
 		if (_Player.collisionFlags == 0) {		// If rob is no longer in contact with 
 			if(contactObject != null)				// Useful for when no object has been contacted
 				contactObject.SendMessage("noContact", SendMessageOptions.DontRequireReceiver);
 		}
-			AnimationHandler();		// Handle animations
+		AnimationHandler();		// Handle animations
 	}
 	
 	// Player has come in contact with a surface
@@ -120,7 +108,6 @@ public class CustomThirdPersonController : MonoBehaviour
 			else {													// If surface of contact is relatively vertical
 				rob.wallContact = true;
 				if (!rob.aim) {
-					Debug.Log(Vector3.Angle(hit.normal, transform.forward));
 					if (rob.climbContact && Vector3.Angle(hit.normal, transform.forward) > 150f) {										// If player is within climb triggerBox
 						_Player.wallFacing = hit.normal;
 						//rob.wallRight = rob.DirectionOnWall();

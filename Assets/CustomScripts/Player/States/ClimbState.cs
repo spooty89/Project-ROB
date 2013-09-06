@@ -40,7 +40,6 @@ public class ClimbState : StateClass
 	
 	private void MovementHandler()
 	{
-		Vector3 targetDirection = transform.forward;
 		if (Mathf.Abs(_Player.verticalSpeed) < 0.5f)
 		{
 			_Player.verticalSpeed = 0.0f;

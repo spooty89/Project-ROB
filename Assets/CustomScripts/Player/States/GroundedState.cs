@@ -45,17 +45,14 @@ public class GroundedState : StateClass
 		_Player.inAirVelocity = Vector3.zero;
 		Transform cameraTransform = Camera.main.transform;
 		
-		// Forward vector relative to the camera along the x-z plane	
-		Vector3 forward = cameraTransform.TransformDirection(Vector3.forward);
+		Vector3 forward = cameraTransform.TransformDirection(Vector3.forward);		// Forward vector relative to the camera along the x-z plane	
 		forward.y = (float)0.0;
 		forward = forward.normalized;
 	
-		// Right vector relative to the camera
-		// Always orthogonal to the forward vector
-		Vector3 right = new Vector3(forward.z, 0, -forward.x);
-		Vector3 targetDirection = transform.forward;
-		// Target direction relative to the camera
-		targetDirection = h * right + v * forward;
+
+		Vector3 right = new Vector3(forward.z, 0, -forward.x);		// Right vector relative to the camera
+		Vector3 targetDirection = transform.forward;				// Always orthogonal to the forward vector
+		targetDirection = h * right + v * forward;					// Target direction relative to the camera
 		
 	
 		// We store speed and direction seperately,
@@ -63,16 +60,12 @@ public class GroundedState : StateClass
 		// moveDirection is always normalized, and we only update it if there is user input.
 		if (targetDirection != Vector3.zero)
 		{
-			// Smoothly turn towards the target direction
-			_Player.moveDirection = Vector3.RotateTowards(_Player.moveDirection, targetDirection, _Player.rotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
+			_Player.moveDirection = Vector3.RotateTowards(_Player.moveDirection, targetDirection, 			// Smoothly turn towards the target direction
+															_Player.rotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
 			_Player.moveDirection = _Player.moveDirection.normalized;
-			
 		}
 		
-		// Smooth the speed based on the current target direction
-		float curSmooth = _Player.speedSmoothing * Time.deltaTime;
-		
-		// Choose target speed
+		float curSmooth = _Player.speedSmoothing * Time.deltaTime;			// Smooth the speed based on the current target direction
 		float targetSpeed = Mathf.Min(targetDirection.magnitude, (float)1.0);	//* Support analog input but insure you cant walk faster diagonally than just f/b/l/r
 	
 		if (!isMoving)
