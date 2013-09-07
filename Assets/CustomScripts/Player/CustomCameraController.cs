@@ -122,7 +122,7 @@ public class CustomCameraController : MonoBehaviour {
 
             target = GameObject.FindGameObjectWithTag("Player") as GameObject;
 
-            Debug.Log("Looking for Player");
+            //Debug.Log("Looking for Player");
 
         }
 		
