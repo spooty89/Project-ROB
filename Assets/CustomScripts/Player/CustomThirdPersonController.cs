@@ -187,7 +187,7 @@ public class CustomThirdPersonController : MonoBehaviour
 	    if(other.gameObject.CompareTag("Hang")) {    	// If the triggerBox has a "Hang" tag
 	    	rob.numHangContacts -= 1;						// Keep track of how many climb boxes player is currently in
 	    	if (rob.numHangContacts <= 0) {					// If the player has exited all triggerBoxes with "Hang" tags
-				_Player.currentState = "idle";
+				_Player.currentState = "jump_after_apex";
 				rob.numHangContacts = 0;
 				rob.hangContact = false;						// Set hang contact to false
 				rob.hanging = false;							// Set hanging to false

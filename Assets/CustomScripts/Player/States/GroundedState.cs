@@ -88,9 +88,6 @@ public class GroundedState : StateClass
 		
 		_Player.moveSpeed = Mathf.Lerp(_Player.moveSpeed, targetSpeed, curSmooth);
 		
-		if (_Player.moveDirection == Vector3.zero) 
-			_Player.moveDirection = _Player.wallFacing;
-		
 		transform.rotation = Quaternion.LookRotation(_Player.moveDirection);
 	}
 	
