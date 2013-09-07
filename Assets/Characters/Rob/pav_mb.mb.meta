@@ -1,0 +1,821 @@
+fileFormatVersion: 2
+guid: b15ecd1387f814b73929f0bef7309c3d
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: pav_blow_left1
+    100002: pav_blow_right1
+    100004: pav_brow_left2
+    100006: pav_brow_left3
+    100008: pav_brow_left4
+    100010: pav_brow_middle
+    100012: pav_brow_right2
+    100014: pav_brow_right3
+    100016: pav_brow_right4
+    100018: pav_ChestEndEffector
+    100020: pav_ChestOriginEffector
+    100022: pav_chin
+    100024: pav_Ctrl_Reference
+    100026: pav_eye_left
+    100028: pav_eye_right
+    100030: pav_Head
+    100032: pav_Head 1
+    100034: pav_HeadEffector
+    100036: pav_Hips
+    100038: pav_Hips 1
+    100040: pav_HipsEffector
+    100042: pav_joint1
+    100044: pav_LeftAnkleEffector
+    100046: pav_LeftArm
+    100048: pav_LeftArm 1
+    100050: pav_LeftElbowEffector
+    100052: pav_LeftFoot
+    100054: pav_LeftFoot 1
+    100056: pav_LeftFootEffector
+    100058: pav_LeftFootMiddle
+    100060: pav_LeftFootMiddle 1
+    100062: pav_LeftFootMiddleEffector
+    100064: pav_LeftFootToe
+    100066: pav_LeftFootToe 1
+    100068: pav_LeftForeArm
+    100070: pav_LeftForeArm 1
+    100072: pav_LeftHand
+    100074: pav_LeftHand 1
+    100076: pav_LeftHandIndex1
+    100078: pav_LeftHandIndex1 1
+    100080: pav_LeftHandIndex2
+    100082: pav_LeftHandIndex2 1
+    100084: pav_LeftHandIndex3
+    100086: pav_LeftHandIndex3 1
+    100088: pav_LeftHandIndex4
+    100090: pav_LeftHandIndex4 1
+    100092: pav_LeftHandIndexEffector
+    100094: pav_LeftHandMiddle1
+    100096: pav_LeftHandMiddle1 1
+    100098: pav_LeftHandMiddle2
+    100100: pav_LeftHandMiddle2 1
+    100102: pav_LeftHandMiddle3
+    100104: pav_LeftHandMiddle3 1
+    100106: pav_LeftHandMiddle4
+    100108: pav_LeftHandMiddle4 1
+    100110: pav_LeftHandMiddleEffector
+    100112: pav_LeftHandPinky1
+    100114: pav_LeftHandPinky1 1
+    100116: pav_LeftHandPinky2
+    100118: pav_LeftHandPinky2 1
+    100120: pav_LeftHandPinky3
+    100122: pav_LeftHandPinky3 1
+    100124: pav_LeftHandPinky4
+    100126: pav_LeftHandPinky4 1
+    100128: pav_LeftHandPinkyEffector
+    100130: pav_LeftHandThumb1
+    100132: pav_LeftHandThumb1 1
+    100134: pav_LeftHandThumb2
+    100136: pav_LeftHandThumb2 1
+    100138: pav_LeftHandThumb3
+    100140: pav_LeftHandThumb3 1
+    100142: pav_LeftHandThumb4
+    100144: pav_LeftHandThumb4 1
+    100146: pav_LeftHandThumbEffector
+    100148: pav_LeftHipEffector
+    100150: pav_LeftKneeEffector
+    100152: pav_LeftLeg
+    100154: pav_LeftLeg 1
+    100156: pav_LeftShoulder
+    100158: pav_LeftShoulder 1
+    100160: pav_LeftShoulderEffector
+    100162: pav_LeftToeBase
+    100164: pav_LeftToeBase 1
+    100166: pav_LeftUpLeg
+    100168: pav_LeftUpLeg 1
+    100170: pav_LeftWristEffector
+    100172: //RootNode
+    100174: pav_mouth_left
+    100176: pav_mouth_lower_left1
+    100178: pav_mouth_lower_left2
+    100180: pav_mouth_lower_middle
+    100182: pav_mouth_lower_right1
+    100184: pav_mouth_lower_right2
+    100186: pav_mouth_right
+    100188: pav_mouth_upper_left1
+    100190: pav_mouth_upper_left2
+    100192: pav_mouth_upper_left3
+    100194: pav_mouth_upper_middle
+    100196: pav_mouth_upper_right1
+    100198: pav_mouth_upper_right2
+    100200: pav_mouth_upper_right3
+    100202: pav_Neck
+    100204: pav_Neck 1
+    100206: pav_Neck1
+    100208: pav_Neck1 1
+    100210: pav_pupil_left1
+    100212: pav_pupil_right1
+    100214: pav_quad2
+    100216: pav_Reference
+    100218: pav_RightAnkleEffector
+    100220: pav_RightArm
+    100222: pav_RightArm 1
+    100224: pav_RightElbowEffector
+    100226: pav_RightFoot
+    100228: pav_RightFoot 1
+    100230: pav_RightFootEffector
+    100232: pav_RightFootMiddle
+    100234: pav_RightFootMiddle 1
+    100236: pav_RightFootMiddleEffector
+    100238: pav_RightFootToe
+    100240: pav_RightFootToe 1
+    100242: pav_RightForeArm
+    100244: pav_RightForeArm 1
+    100246: pav_RightHand
+    100248: pav_RightHand 1
+    100250: pav_RightHandIndex1
+    100252: pav_RightHandIndex1 1
+    100254: pav_RightHandIndex2
+    100256: pav_RightHandIndex2 1
+    100258: pav_RightHandIndex3
+    100260: pav_RightHandIndex3 1
+    100262: pav_RightHandIndex4
+    100264: pav_RightHandIndex4 1
+    100266: pav_RightHandIndexEffector
+    100268: pav_RightHandMiddle1
+    100270: pav_RightHandMiddle1 1
+    100272: pav_RightHandMiddle2
+    100274: pav_RightHandMiddle2 1
+    100276: pav_RightHandMiddle3
+    100278: pav_RightHandMiddle3 1
+    100280: pav_RightHandMiddle4
+    100282: pav_RightHandMiddle4 1
+    100284: pav_RightHandMiddleEffector
+    100286: pav_RightHandPinky1
+    100288: pav_RightHandPinky1 1
+    100290: pav_RightHandPinky2
+    100292: pav_RightHandPinky2 1
+    100294: pav_RightHandPinky3
+    100296: pav_RightHandPinky3 1
+    100298: pav_RightHandPinky4
+    100300: pav_RightHandPinky4 1
+    100302: pav_RightHandPinkyEffector
+    100304: pav_RightHandThumb1
+    100306: pav_RightHandThumb1 1
+    100308: pav_RightHandThumb2
+    100310: pav_RightHandThumb2 1
+    100312: pav_RightHandThumb3
+    100314: pav_RightHandThumb3 1
+    100316: pav_RightHandThumb4
+    100318: pav_RightHandThumb4 1
+    100320: pav_RightHandThumbEffector
+    100322: pav_RightHipEffector
+    100324: pav_RightKneeEffector
+    100326: pav_RightLeg
+    100328: pav_RightLeg 1
+    100330: pav_RightShoulder
+    100332: pav_RightShoulder 1
+    100334: pav_RightShoulderEffector
+    100336: pav_RightToeBase
+    100338: pav_RightToeBase 1
+    100340: pav_RightUpLeg
+    100342: pav_RightUpLeg 1
+    100344: pav_RightWristEffector
+    100346: pav_Spine
+    100348: pav_Spine 1
+    100350: pav_Spine1
+    100352: pav_Spine1 1
+    100354: pav_Spine2
+    100356: pav_Spine2 1
+    100358: pav_Spine3
+    100360: pav_Spine3 1
+    100362: pav_Spine4
+    100364: pav_Spine4 1
+    100366: pav_Spine5
+    100368: pav_Spine5 1
+    100370: pav_Spine6
+    100372: pav_Spine6 1
+    100374: pav_Spine7
+    100376: pav_Spine7 1
+    100378: pav_Spine8
+    100380: pav_Spine8 1
+    400000: pav_blow_left1
+    400002: pav_blow_right1
+    400004: pav_brow_left2
+    400006: pav_brow_left3
+    400008: pav_brow_left4
+    400010: pav_brow_middle
+    400012: pav_brow_right2
+    400014: pav_brow_right3
+    400016: pav_brow_right4
+    400018: pav_ChestEndEffector
+    400020: pav_ChestOriginEffector
+    400022: pav_chin
+    400024: pav_Ctrl_Reference
+    400026: pav_eye_left
+    400028: pav_eye_right
+    400030: pav_Head
+    400032: pav_Head 1
+    400034: pav_HeadEffector
+    400036: pav_Hips
+    400038: pav_Hips 1
+    400040: pav_HipsEffector
+    400042: pav_joint1
+    400044: pav_LeftAnkleEffector
+    400046: pav_LeftArm
+    400048: pav_LeftArm 1
+    400050: pav_LeftElbowEffector
+    400052: pav_LeftFoot
+    400054: pav_LeftFoot 1
+    400056: pav_LeftFootEffector
+    400058: pav_LeftFootMiddle
+    400060: pav_LeftFootMiddle 1
+    400062: pav_LeftFootMiddleEffector
+    400064: pav_LeftFootToe
+    400066: pav_LeftFootToe 1
+    400068: pav_LeftForeArm
+    400070: pav_LeftForeArm 1
+    400072: pav_LeftHand
+    400074: pav_LeftHand 1
+    400076: pav_LeftHandIndex1
+    400078: pav_LeftHandIndex1 1
+    400080: pav_LeftHandIndex2
+    400082: pav_LeftHandIndex2 1
+    400084: pav_LeftHandIndex3
+    400086: pav_LeftHandIndex3 1
+    400088: pav_LeftHandIndex4
+    400090: pav_LeftHandIndex4 1
+    400092: pav_LeftHandIndexEffector
+    400094: pav_LeftHandMiddle1
+    400096: pav_LeftHandMiddle1 1
+    400098: pav_LeftHandMiddle2
+    400100: pav_LeftHandMiddle2 1
+    400102: pav_LeftHandMiddle3
+    400104: pav_LeftHandMiddle3 1
+    400106: pav_LeftHandMiddle4
+    400108: pav_LeftHandMiddle4 1
+    400110: pav_LeftHandMiddleEffector
+    400112: pav_LeftHandPinky1
+    400114: pav_LeftHandPinky1 1
+    400116: pav_LeftHandPinky2
+    400118: pav_LeftHandPinky2 1
+    400120: pav_LeftHandPinky3
+    400122: pav_LeftHandPinky3 1
+    400124: pav_LeftHandPinky4
+    400126: pav_LeftHandPinky4 1
+    400128: pav_LeftHandPinkyEffector
+    400130: pav_LeftHandThumb1
+    400132: pav_LeftHandThumb1 1
+    400134: pav_LeftHandThumb2
+    400136: pav_LeftHandThumb2 1
+    400138: pav_LeftHandThumb3
+    400140: pav_LeftHandThumb3 1
+    400142: pav_LeftHandThumb4
+    400144: pav_LeftHandThumb4 1
+    400146: pav_LeftHandThumbEffector
+    400148: pav_LeftHipEffector
+    400150: pav_LeftKneeEffector
+    400152: pav_LeftLeg
+    400154: pav_LeftLeg 1
+    400156: pav_LeftShoulder
+    400158: pav_LeftShoulder 1
+    400160: pav_LeftShoulderEffector
+    400162: pav_LeftToeBase
+    400164: pav_LeftToeBase 1
+    400166: pav_LeftUpLeg
+    400168: pav_LeftUpLeg 1
+    400170: pav_LeftWristEffector
+    400172: //RootNode
+    400174: pav_mouth_left
+    400176: pav_mouth_lower_left1
+    400178: pav_mouth_lower_left2
+    400180: pav_mouth_lower_middle
+    400182: pav_mouth_lower_right1
+    400184: pav_mouth_lower_right2
+    400186: pav_mouth_right
+    400188: pav_mouth_upper_left1
+    400190: pav_mouth_upper_left2
+    400192: pav_mouth_upper_left3
+    400194: pav_mouth_upper_middle
+    400196: pav_mouth_upper_right1
+    400198: pav_mouth_upper_right2
+    400200: pav_mouth_upper_right3
+    400202: pav_Neck
+    400204: pav_Neck 1
+    400206: pav_Neck1
+    400208: pav_Neck1 1
+    400210: pav_pupil_left1
+    400212: pav_pupil_right1
+    400214: pav_quad2
+    400216: pav_Reference
+    400218: pav_RightAnkleEffector
+    400220: pav_RightArm
+    400222: pav_RightArm 1
+    400224: pav_RightElbowEffector
+    400226: pav_RightFoot
+    400228: pav_RightFoot 1
+    400230: pav_RightFootEffector
+    400232: pav_RightFootMiddle
+    400234: pav_RightFootMiddle 1
+    400236: pav_RightFootMiddleEffector
+    400238: pav_RightFootToe
+    400240: pav_RightFootToe 1
+    400242: pav_RightForeArm
+    400244: pav_RightForeArm 1
+    400246: pav_RightHand
+    400248: pav_RightHand 1
+    400250: pav_RightHandIndex1
+    400252: pav_RightHandIndex1 1
+    400254: pav_RightHandIndex2
+    400256: pav_RightHandIndex2 1
+    400258: pav_RightHandIndex3
+    400260: pav_RightHandIndex3 1
+    400262: pav_RightHandIndex4
+    400264: pav_RightHandIndex4 1
+    400266: pav_RightHandIndexEffector
+    400268: pav_RightHandMiddle1
+    400270: pav_RightHandMiddle1 1
+    400272: pav_RightHandMiddle2
+    400274: pav_RightHandMiddle2 1
+    400276: pav_RightHandMiddle3
+    400278: pav_RightHandMiddle3 1
+    400280: pav_RightHandMiddle4
+    400282: pav_RightHandMiddle4 1
+    400284: pav_RightHandMiddleEffector
+    400286: pav_RightHandPinky1
+    400288: pav_RightHandPinky1 1
+    400290: pav_RightHandPinky2
+    400292: pav_RightHandPinky2 1
+    400294: pav_RightHandPinky3
+    400296: pav_RightHandPinky3 1
+    400298: pav_RightHandPinky4
+    400300: pav_RightHandPinky4 1
+    400302: pav_RightHandPinkyEffector
+    400304: pav_RightHandThumb1
+    400306: pav_RightHandThumb1 1
+    400308: pav_RightHandThumb2
+    400310: pav_RightHandThumb2 1
+    400312: pav_RightHandThumb3
+    400314: pav_RightHandThumb3 1
+    400316: pav_RightHandThumb4
+    400318: pav_RightHandThumb4 1
+    400320: pav_RightHandThumbEffector
+    400322: pav_RightHipEffector
+    400324: pav_RightKneeEffector
+    400326: pav_RightLeg
+    400328: pav_RightLeg 1
+    400330: pav_RightShoulder
+    400332: pav_RightShoulder 1
+    400334: pav_RightShoulderEffector
+    400336: pav_RightToeBase
+    400338: pav_RightToeBase 1
+    400340: pav_RightUpLeg
+    400342: pav_RightUpLeg 1
+    400344: pav_RightWristEffector
+    400346: pav_Spine
+    400348: pav_Spine 1
+    400350: pav_Spine1
+    400352: pav_Spine1 1
+    400354: pav_Spine2
+    400356: pav_Spine2 1
+    400358: pav_Spine3
+    400360: pav_Spine3 1
+    400362: pav_Spine4
+    400364: pav_Spine4 1
+    400366: pav_Spine5
+    400368: pav_Spine5 1
+    400370: pav_Spine6
+    400372: pav_Spine6 1
+    400374: pav_Spine7
+    400376: pav_Spine7 1
+    400378: pav_Spine8
+    400380: pav_Spine8 1
+    4300000: pav_quad2
+    4300002: pav_pupil_right1
+    4300004: pav_pupil_left1
+    7400000: walk
+    7400002: run
+    7400004: jump
+    7400006: jump_after_apex
+    7400008: double_jump
+    7400010: wall_slide
+    7400012: roll
+    7400014: climb_idle
+    7400016: climb_vertical
+    7400018: climb_horizontal
+    7400020: hang_idle
+    7400022: hang_move
+    7400024: freefall
+    7400026: land_heavy
+    7400028: idle
+    7400030: aim
+    7400032: shoot
+    9500000: //RootNode
+    11100000: //RootNode
+    13700000: pav_pupil_left1
+    13700002: pav_pupil_right1
+    13700004: pav_quad2
+  materials:
+    importMaterials: 1
+    materialName: 2
+    materialSearch: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 1
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    clipAnimations:
+    - name: walk
+      takeName: Take 001
+      firstFrame: 15
+      lastFrame: 75
+      wrapMode: 2
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      transformMask: []
+    - name: run
+      takeName: Take 001
+      firstFrame: 115
+      lastFrame: 175
+      wrapMode: 2
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      transformMask: []
+    - name: jump
+      takeName: Take 001
+      firstFrame: 201
+      lastFrame: 201.100006
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      transformMask: []
+    - name: jump_after_apex
+      takeName: Take 001
+      firstFrame: 205
+      lastFrame: 205.100006
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      transformMask: []
+    - name: double_jump
+      takeName: Take 001
+      firstFrame: 220
+      lastFrame: 270
+      wrapMode: 1
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      transformMask: []
+    - name: wall_slide
+      takeName: Take 001
+      firstFrame: 300
+      lastFrame: 300.100006
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      transformMask: []
+    - name: roll
+      takeName: Take 001
+      firstFrame: 310
+      lastFrame: 370
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      transformMask: []
+    - name: climb_idle
+      takeName: Take 001
+      firstFrame: 400
+      lastFrame: 400.100006
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      transformMask: []
+    - name: climb_vertical
+      takeName: Take 001
+      firstFrame: 415
+      lastFrame: 475
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      transformMask: []
+    - name: climb_horizontal
+      takeName: Take 001
+      firstFrame: 500
+      lastFrame: 560
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      transformMask: []
+    - name: hang_idle
+      takeName: Take 001
+      firstFrame: 615
+      lastFrame: 675
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      transformMask: []
+    - name: hang_move
+      takeName: Take 001
+      firstFrame: 715
+      lastFrame: 775
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      transformMask: []
+    - name: freefall
+      takeName: Take 001
+      firstFrame: 815
+      lastFrame: 875
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      transformMask: []
+    - name: land_heavy
+      takeName: Take 001
+      firstFrame: 915
+      lastFrame: 975
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      transformMask: []
+    - name: idle
+      takeName: Take 001
+      firstFrame: 1010
+      lastFrame: 1390
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      transformMask: []
+    - name: aim
+      takeName: Take 001
+      firstFrame: 1400
+      lastFrame: 1450
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      transformMask: []
+    - name: shoot
+      takeName: Take 001
+      firstFrame: 1450
+      lastFrame: 1490
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      transformMask: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    handles: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  additionalBone: 1
+  animationType: 1
+  userData: 
