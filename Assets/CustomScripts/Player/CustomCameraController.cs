@@ -8,9 +8,9 @@ public class CustomCameraController : MonoBehaviour {
 
     public GameObject target;                           // Target to follow
 	
-	public GameObject normalTarget;
+	//public GameObject normalTarget;
 	
-	public GameObject aimTarget;
+	//public GameObject aimTarget;
 	
 	//private bool aim = false;
 	
@@ -81,6 +81,14 @@ public class CustomCameraController : MonoBehaviour {
 
     {       
 
+        if (target == null){
+
+            target = GameObject.FindGameObjectWithTag("Player") as GameObject;
+
+            //Debug.Log("Looking for Player");
+
+        }
+
         Vector3 angles = transform.eulerAngles;
 
         xDeg = angles.x;
@@ -117,14 +125,6 @@ public class CustomCameraController : MonoBehaviour {
      }
 
     void Update(){
-
-        if (target == null){
-
-            target = GameObject.FindGameObjectWithTag("Player") as GameObject;
-
-            Debug.Log("Looking for Player");
-
-        }
 		
 		/*if (Input.GetButtonDown("Fire2")){
 			aim = !aim;
