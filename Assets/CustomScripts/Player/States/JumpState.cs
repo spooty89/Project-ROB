@@ -37,6 +37,7 @@ public class JumpState : StateClass
 	
 	private void MovementHandler()
 	{
+		_Player.moveDirection.y = 0.0f;
 		if (_Player.verticalSpeed > -15.0)
 			_Player.verticalSpeed -= _Player.gravity * Time.deltaTime;
 		// When we reach the apex
@@ -58,7 +59,7 @@ public class JumpState : StateClass
 		
 		// Forward vector relative to the camera along the x-z plane	
 		Vector3 forward = cameraTransform.TransformDirection(Vector3.forward);
-		forward.y = (float)0.0;
+		forward.y = 0.0f;
 		forward = forward.normalized;
 	
 		// Right vector relative to the camera
@@ -106,7 +107,7 @@ public class JumpState : StateClass
 		if(_Player.IsGrounded())
 			stateChange("idle");
 		
-		else if (_Player.climbContact && Vector3.Angle(hit.normal, transform.forward) > 100f) {										// If player is within climb triggerBox
+		else if (_Player.verticalSpeed < 0.0f && _Player.climbContact && Vector3.Angle(hit.normal, transform.forward) > 100f) {// If player is within climb triggerBox
 			_Player.wallFacing = hit.normal;
 			_Player.moveDirection = -_Player.wallFacing;
 			transform.rotation = Quaternion.LookRotation(_Player.moveDirection);

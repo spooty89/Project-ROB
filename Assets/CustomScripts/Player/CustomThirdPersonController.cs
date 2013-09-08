@@ -192,8 +192,8 @@ public class CustomThirdPersonController : MonoBehaviour
 	    	if (rob.numClimbContacts <= 0) {				// If the player is not in any climb boxes
 				_Player.SetCurrentState("jump_after_apex");
 				rob.numClimbContacts = 0;
-				rob.climbContact = false;						// Set climb contact to false
-				rob.climbing = false;							// Set climbing to false
+				_Player.climbContact = false;						// Set climb contact to false
+				_Player.climbing = false;							// Set climbing to false
 			}
 		}
 	    if(other.gameObject.CompareTag("Hang")) {    	// If the triggerBox has a "Hang" tag

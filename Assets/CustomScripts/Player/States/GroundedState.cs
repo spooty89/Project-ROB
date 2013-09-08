@@ -4,8 +4,10 @@ public class GroundedState : StateClass
 {
 	private bool isMoving;
 	private float v, h;
-	private float walkSpeed = (float)4.0;	// The speed when walking
-	private float runSpeed = (float)8.0;	// When pressing Shift button we start running
+	private float walkSpeed = 4.0f;	// The speed when walking
+	private float runSpeed = 8.0f;	// When pressing Shift button we start running
+	private Vector3 surfaceUp = Vector3.up;
+	
 	
 	public override void Run()
 	{
@@ -46,7 +48,7 @@ public class GroundedState : StateClass
 		Transform cameraTransform = Camera.main.transform;
 		
 		Vector3 forward = cameraTransform.TransformDirection(Vector3.forward);		// Forward vector relative to the camera along the x-z plane	
-		forward.y = (float)0.0;
+		forward.y = surfaceUp.z;
 		forward = forward.normalized;
 	
 
@@ -88,7 +90,7 @@ public class GroundedState : StateClass
 		
 		_Player.moveSpeed = Mathf.Lerp(_Player.moveSpeed, targetSpeed, curSmooth);
 		
-		transform.rotation = Quaternion.LookRotation(_Player.moveDirection);
+		transform.rotation = Quaternion.LookRotation(new Vector3(_Player.moveDirection.x, 0.0f, _Player.moveDirection.z));
 	}
 	
 	
@@ -102,7 +104,8 @@ public class GroundedState : StateClass
 	
 	public override void CollisionHandler(ControllerColliderHit hit)
 	{
-		//Debug.Log("groundedstate - controllercolliderhit - here");
+		if(_Player.IsGrounded())
+			surfaceUp = hit.normal;
 	}
 }
 

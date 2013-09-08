@@ -13,7 +13,7 @@ public class CharacterClass : MonoBehaviour
 	[HideInInspector]
 	public float verticalSpeed = (float)0.0,		// The current vertical speed
 					moveSpeed = (float)0.0;			// The current x-z move speed
-	[HideInInspector]
+	//[HideInInspector]
 	public Vector3 moveDirection = Vector3.zero,	// The current move direction in x-z
 					inAirVelocity = Vector3.zero,
 					wallFacing = Vector3.zero,
