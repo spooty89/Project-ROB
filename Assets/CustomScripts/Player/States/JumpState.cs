@@ -9,8 +9,6 @@ public class JumpState : StateClass
 	{
 		InputHandler();
 		MovementHandler();
-		if(_Player.IsGrounded())
-			_Player.currentState = "idle";
 	}
 	
 	
@@ -47,11 +45,11 @@ public class JumpState : StateClass
 			if (!_Player.jumpingReachedApex)
 			{
 				_Player.jumpingReachedApex = true;
-				_Player.currentState = "jump_after_apex";
+				_Player.SetCurrentState("jump_after_apex");
 			}
 			else if (_Player.verticalSpeed <= -15.0){
 				_Player.verticalSpeed = (float)-15.0;
-				_Player.currentState = "free_fall";
+				_Player.SetCurrentState("free_fall");
 			}
 		}
 		
@@ -97,8 +95,29 @@ public class JumpState : StateClass
 		if( !_Player.doubleJumping )
 		{
 			_Player.verticalSpeed = _Player.CalculateJumpVerticalSpeed (_Player.doubleJumpHeight);
-			_Player.currentState = "double_jump";
+			_Player.SetCurrentState("double_jump");
 			_Player.doubleJumping = true;
+		}
+	}
+	
+	
+	public override void CollisionHandler(ControllerColliderHit hit)
+	{
+		if(_Player.IsGrounded())
+			stateChange("idle");
+		
+		else if (_Player.climbContact && Vector3.Angle(hit.normal, transform.forward) > 100f) {										// If player is within climb triggerBox
+			_Player.wallFacing = hit.normal;
+			_Player.moveDirection = -_Player.wallFacing;
+			transform.rotation = Quaternion.LookRotation(_Player.moveDirection);
+			_Player.wallRight = transform.right;
+			
+				stateChange("climb_idle");
+				_Player.climbing = true;
+				_Player.moveSpeed = (float)1.0;
+				_Player.inAirVelocity = Vector3.zero;
+				_Player.jumping = false;
+				_Player.doubleJumping = false;
 		}
 	}
 }

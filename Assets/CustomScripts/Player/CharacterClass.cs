@@ -23,10 +23,23 @@ public class CharacterClass : MonoBehaviour
 	[HideInInspector]
 	public bool jumping = false,
 				doubleJumping = false,
-				jumpingReachedApex = false;
+				jumpingReachedApex = false,
+				climbContact = false,
+				climbing = false;
 	
-	public string currentState;
+	private string currentState;
 	
+	
+	
+	public string GetCurrentState()
+	{
+		return currentState;
+	}
+	public void SetCurrentState( string state )
+	{
+		currentState = state;
+		
+	}
 	
 	
 	public float CalculateJumpVerticalSpeed (float targetJumpHeight)

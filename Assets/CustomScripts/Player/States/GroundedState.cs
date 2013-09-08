@@ -13,7 +13,7 @@ public class GroundedState : StateClass
 		if(_Player.IsGrounded())
 			MovementHandler();
 		else if (!_Player.jumping)
-			_Player.currentState = "jump_after_apex";
+			stateChange("jump_after_apex");
 	}
 	
 	
@@ -66,23 +66,23 @@ public class GroundedState : StateClass
 		}
 		
 		float curSmooth = _Player.speedSmoothing * Time.deltaTime;			// Smooth the speed based on the current target direction
-		float targetSpeed = Mathf.Min(targetDirection.magnitude, (float)1.0);	//* Support analog input but insure you cant walk faster diagonally than just f/b/l/r
+		float targetSpeed = Mathf.Min(targetDirection.magnitude, 1.0f);	//* Support analog input but insure you cant walk faster diagonally than just f/b/l/r
 	
 		if (!isMoving)
 		{
-			_Player.currentState = "idle";
+			_Player.SetCurrentState("idle");
 		}
 		else{
 			// Pick speed modifier
 			if (Input.GetKey (KeyCode.LeftShift))
 			{
 				targetSpeed *= runSpeed;
-				_Player.currentState = "run";
+				_Player.SetCurrentState("run");
 			}
 			else
 			{
 				targetSpeed *= walkSpeed;
-				_Player.currentState = "walk";
+				_Player.SetCurrentState("walk");
 			}
 		}
 		
@@ -95,8 +95,14 @@ public class GroundedState : StateClass
 	public void ApplyJump ()
 	{
 		_Player.verticalSpeed = _Player.CalculateJumpVerticalSpeed (_Player.jumpHeight);
-		_Player.currentState = "jump";
+		stateChange("jump");
 		_Player.jumping = true;
+	}
+	
+	
+	public override void CollisionHandler(ControllerColliderHit hit)
+	{
+		//Debug.Log("groundedstate - controllercolliderhit - here");
 	}
 }
 

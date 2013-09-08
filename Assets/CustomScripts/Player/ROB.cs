@@ -125,15 +125,15 @@ public class ROB : MonoBehaviour
 			if (!isMoving)
 			{
 				if (hanging) {
-					_Player.currentState = "hang_idle";
+					_Player.SetCurrentState("hang_idle");
 				}
 				else if(climbing)
 				{
-					_Player.currentState = "climb_idle";	
+					_Player.SetCurrentState("climb_idle");	
 				}
 				else
 				{
-					_Player.currentState = "idle";
+					_Player.SetCurrentState("idle");
 				}
 			}
 			else{
@@ -141,15 +141,15 @@ public class ROB : MonoBehaviour
 				if (Input.GetKey (KeyCode.LeftShift))
 				{
 					targetSpeed *= runSpeed;
-					_Player.currentState = "run";
+					_Player.SetCurrentState("run");
 				}
 				else
 				{
 					targetSpeed *= walkSpeed;
-					_Player.currentState = "walk";
+					_Player.SetCurrentState("walk");
 				}			
 				if (hanging) {
-					_Player.currentState = "hang_move";
+					_Player.SetCurrentState("hang_move");
 				}
 			}
 			
@@ -221,11 +221,11 @@ public class ROB : MonoBehaviour
 	{
 		if(jumping) {
 			doubleJumping = true;
-			_Player.currentState = "double_jump";
+			_Player.SetCurrentState("double_jump");
 		}
 		else {
 			jumping = true;
-			_Player.currentState = "jump";
+			_Player.SetCurrentState("jump");
 		}
 		
 		jumpingReachedApex = false;
@@ -243,7 +243,7 @@ public class ROB : MonoBehaviour
 			if ((jumping || doubleJumping) && !jumpingReachedApex && _Player.verticalSpeed <= 0.0 && !climbing)
 			{
 				jumpingReachedApex = true;
-				_Player.currentState = "jump_after_apex";
+				_Player.SetCurrentState("jump_after_apex");
 			}
 		
 			if (IsGrounded ()) {
@@ -258,12 +258,12 @@ public class ROB : MonoBehaviour
 				if ((previousVerticalSpeed < -10.0) && (_Player.moveSpeed >= runSpeed/1.5)) {
 					rolling = true;
 					rollingTime = Time.time;
-					_Player.currentState = "roll";
+					_Player.SetCurrentState("roll");
 				}
 				else if (previousVerticalSpeed <= -25.0) {
 					heavyLanding = true;
 					heavyLandingTime = Time.time;
-					_Player.currentState = "heavy_land";
+					_Player.SetCurrentState("heavy_land");
 				}
 			}
 			else {
@@ -273,7 +273,7 @@ public class ROB : MonoBehaviour
 						wallContact = false;
 						hangContact = false;
 						_Player.verticalSpeed -= _Player.gravity * Time.deltaTime;
-						_Player.currentState = "jump_after_apex";
+						_Player.SetCurrentState("jump_after_apex");
 						temp = _Player.moveDirection.normalized.magnitude;
 						_Player.moveDirection = DirectionOnWall();
 						_Player.moveSpeed *= (_Player.moveDirection.magnitude/temp);
@@ -281,7 +281,7 @@ public class ROB : MonoBehaviour
 					else {
 						if (_Player.verticalSpeed > -0.3)
 							_Player.verticalSpeed = -0.3f;
-						_Player.currentState = "wall_slide";
+						_Player.SetCurrentState("wall_slide");
 						_Player.verticalSpeed -= wallSlidingGravity * Time.deltaTime;
 					}
 				}
@@ -298,7 +298,7 @@ public class ROB : MonoBehaviour
 						if (Mathf.Abs(_Player.verticalSpeed) <= 0.5)
 						{
 							_Player.verticalSpeed = (float)0.0;
-								_Player.currentState = "climb_idle";
+								_Player.SetCurrentState("climb_idle");
 						}
 					}
 				}
@@ -312,12 +312,12 @@ public class ROB : MonoBehaviour
 				}
 				else if (!IsGrounded()) {
 					if (_Player.verticalSpeed <= -1.0)
-						_Player.currentState = "jump_after_apex";
+						_Player.SetCurrentState("jump_after_apex");
 					if (_Player.verticalSpeed > -15.0)
 						_Player.verticalSpeed -= _Player.gravity * Time.deltaTime;
 					if (_Player.verticalSpeed <= -15.0){
 						_Player.verticalSpeed = (float)-15.0;
-						_Player.currentState = "free_fall";
+						_Player.SetCurrentState("free_fall");
 					}
 				}
 			}
@@ -417,7 +417,7 @@ public class ROB : MonoBehaviour
 	public void MovementHandler() {
 		// If rolling (and time since rolling began is less than rolling timeout)
 		if (rolling && ((Time.time - rollingTime) < rollingTimeout)) {
-			_Player.currentState = "roll";
+			_Player.SetCurrentState("roll");
 			if (_Player.moveSpeed < 5.0)							// If player speed is below minimum for roll, make minimum roll speed
 				_Player.moveSpeed = (float)5.0;
 		}
@@ -427,7 +427,7 @@ public class ROB : MonoBehaviour
 		
 		// Handle heavy landing (big fall w/o enough forward movement to be roll)
 		if (heavyLanding && ((Time.time - heavyLandingTime) < heavyLandingTimeout)) {
-			_Player.currentState = "heavy_land";
+			_Player.SetCurrentState("heavy_land");
 			_Player.verticalSpeed = (float)0.0;
 			previousVerticalSpeed = (float)0.0;
 			rolling = false;
