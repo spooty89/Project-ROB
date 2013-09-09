@@ -6,8 +6,8 @@
 <item id="climb_vertical" name="climb_vertical" speed="1" wrap="Loop" cross="0.25" state="ClimbState" />
 <item id="double_jump" name="double_jump" speed="1.375" wrap="ClampForever" cross="0.25" state="JumpState" />
 <item id="free_fall" name="free_fall" speed="1" wrap="Loop" cross="0.5" state="JumpState" />
-<item id="hang_idle" name="hang_idle" speed="1" wrap="Loop" cross="0.1" state="GroundedState" />
-<item id="hang_move" name="hang_move" speed="1.5" wrap="Loop" cross="0.5" state="GroundedState" />
+<item id="hang_idle" name="hang_idle" speed="1" wrap="Loop" cross="0.1" state="HangState" />
+<item id="hang_move" name="hang_move" speed="1.5" wrap="Loop" cross="0.5" state="HangState" />
 <item id="heavy_land" name="heavy_land" speed="1" wrap="Loop" cross="0.1" state="GroundedState" />
 <item id="idle" name="idle" speed="1" wrap="Loop" cross="0.3" state="GroundedState" />
 <item id="jump" name="jump" speed="1" wrap="Loop" cross="0.25" state="JumpState" />

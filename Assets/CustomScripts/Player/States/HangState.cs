@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class GroundedState : StateClass
+public class HangState : StateClass
 {
 	private bool isMoving;
 	private float v, h;
@@ -12,12 +12,7 @@ public class GroundedState : StateClass
 	public override void Run()
 	{
 		InputHandler();
-		if(!_Player.jumping)
-		{
-			MovementHandler();
-		}
-		else if (!_Player.IsGrounded())
-			stateChange("jump_after_apex");
+		MovementHandler();
 	}
 	
 	
@@ -30,9 +25,11 @@ public class GroundedState : StateClass
 			
 			isMoving = Mathf.Abs (h) > 0.05f || Mathf.Abs (v) > 0.05f;
 			
-			if( Input.GetButton( "Jump" ) )
+			if( Input.GetButton( "Interact" ) )
 			{
-				ApplyJump();
+				_Player.verticalSpeed = -0.1f;
+				stateChange("jump_after_apex");
+				_Player.jumpingReachedApex = true;
 			}
 		}
 		else
@@ -74,19 +71,18 @@ public class GroundedState : StateClass
 	
 		if (!isMoving)
 		{
-			_Player.SetCurrentState("idle");
+			_Player.SetCurrentState("hang_idle");
 		}
 		else{
+			_Player.SetCurrentState("hang_move");
 			// Pick speed modifier
 			if (Input.GetKey (KeyCode.LeftShift))
 			{
 				targetSpeed *= runSpeed;
-				_Player.SetCurrentState("run");
 			}
 			else
 			{
 				targetSpeed *= walkSpeed;
-				_Player.SetCurrentState("walk");
 			}
 		}
 		
@@ -99,15 +95,28 @@ public class GroundedState : StateClass
 	public void ApplyJump ()
 	{
 		_Player.verticalSpeed = _Player.CalculateJumpVerticalSpeed (_Player.jumpHeight);
-		_Player.jumping = true;
 		stateChange("jump");
+		_Player.jumping = true;
 	}
 	
 	
 	public override void CollisionHandler(ControllerColliderHit hit)
 	{
-		if(_Player.IsGrounded())
-			surfaceUp = hit.normal;
+		if((_Player.collisionFlags & CollisionFlags.CollidedAbove) != 0)
+			surfaceUp = -hit.normal;
+	}
+	
+	private void OnTriggerExit(Collider other)
+	{
+	    if(other.gameObject.CompareTag("Hang")) {    	// If the triggerBox has a "Hang" tag
+	    	_Player.numHangContacts -= 1;						// Keep track of how many climb boxes player is currently in
+	    	if (_Player.numHangContacts <= 0) {					// If the player has exited all triggerBoxes with "Hang" tags
+				stateChange("jump_after_apex");
+				_Player.numHangContacts = 0;
+				_Player.hangContact = false;						// Set hang contact to false
+				_Player.hanging = false;							// Set hanging to false
+			}
+		}
 	}
 }
 

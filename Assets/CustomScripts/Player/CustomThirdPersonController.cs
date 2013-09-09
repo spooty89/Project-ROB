@@ -6,19 +6,18 @@ public delegate void stateChangeEvent( string state );
 
 public class CustomThirdPersonController : MonoBehaviour
 {
-	public ROB rob;
+	//public ROB rob;
 	private CharacterClass _Player;
 	public Dictionary<string, AnimationClass> animations;
 	
-	public string state, lastState;
+	public string lastState;
 	public bool loadAnimationInfo;
 	
 	private Animation _animation;
-	private GameObject contactObject;
+	//private GameObject contactObject;
 	private CharacterController controller;
 	private StateClass[] scArray;
-	
-	public bool enable;
+	private StateClass stateClass;
 	
 	void animationSetup()
 	{
@@ -38,7 +37,7 @@ public class CustomThirdPersonController : MonoBehaviour
 			}
 		}
 		lastState = "";
-		_Player.SetCurrentState("idle");
+		stateChangeHandler("idle");
 	}
 	
 	void stateChangeSetup()
@@ -53,23 +52,21 @@ public class CustomThirdPersonController : MonoBehaviour
 	private void Start ()
 	{
 		_Player = GetComponent<CharacterClass>();
-		rob = GetComponent<ROB>();
+		//rob = GetComponent<ROB>();
 		controller = GetComponent<CharacterController>();
 		
-		this.enable = true;
-		_Player.moveDirection = rob.transform.forward;	// Initialize player's move direction to the direction rob is initially facing
+		_Player.moveDirection = transform.forward;	// Initialize player's move direction to the direction rob is initially facing
 		stateChangeSetup();
 		animationSetup();
 	}
 	
 	// Update the current state of the game
 	void Update() {
-		if(GetComponent( animations[_Player.GetCurrentState()].state ))
-			((StateClass)GetComponent( animations[_Player.GetCurrentState()].state )).Run();
-		if (_Player.collisionFlags == 0) {		// If rob is no longer in contact with 
+		stateClass.Run();
+		/*if (_Player.collisionFlags == 0) {		// If rob is no longer in contact with 
 			if(contactObject != null)				// Useful for when no object has been contacted
 				contactObject.SendMessage("noContact", SendMessageOptions.DontRequireReceiver);
-		}
+		}*/
 		AnimationHandler();		// Handle animations
 	}
 	
@@ -162,7 +159,7 @@ public class CustomThirdPersonController : MonoBehaviour
 	}
 	
 	// If the player enters a triggerBox
-	private void OnTriggerEnter(Collider other)
+	/*private void OnTriggerEnter(Collider other)
 	{
 		ContactObjectInterface i = (ContactObjectInterface)other.gameObject.GetComponent(typeof(ContactObjectInterface));
 		
@@ -174,18 +171,17 @@ public class CustomThirdPersonController : MonoBehaviour
 	        rob.numClimbContacts += 1;						// Keep track of how many climb boxes player is currently in
 		}
 	    if(other.gameObject.CompareTag("Hang")) {    	// If the triggerBox has a "Hang" tag
-			_Player.SetCurrentState("hang_idle");
-	        rob.hangContact = true;							// Set hang contact to true
+	        _Player.hangContact = true;							// Set hang contact to true
 	        rob.numHangContacts += 1;						// Keep track of how many hang boxes player is currently in
 		}
-		if(other.gameObject.CompareTag("Token")) {
+		/*if(other.gameObject.CompareTag("Token")) {
 			GetComponent<ROBgui>().tokens++;
 			Destroy(other.gameObject);
-		}
-	}
+		}*/
+	//}
 	
 	// If the player exits a triggerBox
-	private void OnTriggerExit(Collider other)
+	/*private void OnTriggerExit(Collider other)
 	{
 	    if(other.gameObject.CompareTag("Climb")) {    	// If the triggerBox has a "Climb" tag
 	    	rob.numClimbContacts -= 1;						// Keep track of how many climb boxes player is currently in
@@ -201,11 +197,11 @@ public class CustomThirdPersonController : MonoBehaviour
 	    	if (rob.numHangContacts <= 0) {					// If the player has exited all triggerBoxes with "Hang" tags
 				_Player.SetCurrentState("jump_after_apex");
 				rob.numHangContacts = 0;
-				rob.hangContact = false;						// Set hang contact to false
-				rob.hanging = false;							// Set hanging to false
+				_Player.hangContact = false;						// Set hang contact to false
+				_Player.hanging = false;							// Set hanging to false
 			}
 		}
-	}
+	}*/
 	
 	private void stateChangeHandler( string state )
 	{
@@ -213,7 +209,9 @@ public class CustomThirdPersonController : MonoBehaviour
 		{
 			sc.enabled = false;
 		}
-		((StateClass)GetComponent(animations[state].state)).enabled = true;
+		//Debug.Log(state);
+		stateClass = (StateClass)GetComponent(animations[state].state);
+		stateClass.enabled = true;
 		_Player.SetCurrentState( state );
 	}
 	

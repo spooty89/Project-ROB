@@ -86,5 +86,18 @@ public class ClimbState : StateClass
 			stateChange("idle");
 		}
 	}
+	
+	private void OnTriggerExit(Collider other)
+	{
+	    if(other.gameObject.CompareTag("Climb")) {    	// If the triggerBox has a "Climb" tag
+	    	_Player.numClimbContacts -= 1;						// Keep track of how many climb boxes player is currently in
+	    	if (_Player.numClimbContacts <= 0) {				// If the player is not in any climb boxes
+				stateChange("jump_after_apex");
+				_Player.numClimbContacts = 0;
+				_Player.climbContact = false;						// Set climb contact to false
+				_Player.climbing = false;							// Set climbing to false
+			}
+		}
+	}
 }
 

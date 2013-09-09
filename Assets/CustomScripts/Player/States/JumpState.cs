@@ -48,8 +48,8 @@ public class JumpState : StateClass
 				_Player.jumpingReachedApex = true;
 				_Player.SetCurrentState("jump_after_apex");
 			}
-			else if (_Player.verticalSpeed <= -15.0){
-				_Player.verticalSpeed = (float)-15.0;
+			else if (_Player.verticalSpeed <= -15.0f){
+				_Player.verticalSpeed = -15.0f;
 				_Player.SetCurrentState("free_fall");
 			}
 		}
@@ -81,7 +81,7 @@ public class JumpState : StateClass
 		}
 		
 		if (isMoving) {
-			if (_Player.doubleJumping)
+			if (!_Player.doubleJumping)
 				_Player.inAirVelocity += targetDirection.normalized * Time.deltaTime * _Player.jumpAcceleration;
 			else
 				_Player.inAirVelocity += targetDirection.normalized * Time.deltaTime * _Player.doubleJumpAcceleration;
@@ -105,17 +105,43 @@ public class JumpState : StateClass
 	public override void CollisionHandler(ControllerColliderHit hit)
 	{
 		if(_Player.IsGrounded())
+		{
 			stateChange("idle");
+		}
 		
-		else if (_Player.verticalSpeed < 0.0f && _Player.climbContact && Vector3.Angle(hit.normal, transform.forward) > 100f) {// If player is within climb triggerBox
-			_Player.wallFacing = hit.normal;
-			_Player.moveDirection = -_Player.wallFacing;
-			transform.rotation = Quaternion.LookRotation(_Player.moveDirection);
-			_Player.wallRight = transform.right;
-			
-				stateChange("climb_idle");
-				_Player.climbing = true;
-				_Player.moveSpeed = (float)1.0;
+		else if (Vector3.Angle(hit.normal, transform.forward) > 100f)
+		{
+			if (_Player.verticalSpeed < 0.0f )
+			{
+				if (_Player.climbContact) {// If player is within climb triggerBox
+					_Player.wallFacing = hit.normal;
+					_Player.moveDirection = -_Player.wallFacing;
+					transform.rotation = Quaternion.LookRotation(_Player.moveDirection);
+					_Player.wallRight = transform.right;
+					
+						stateChange("climb_idle");
+						_Player.climbing = true;
+						_Player.moveSpeed = 1.0f;
+						_Player.inAirVelocity = Vector3.zero;
+						_Player.jumping = false;
+						_Player.doubleJumping = false;
+				}
+				else
+				{
+					_Player.wallFacing = hit.normal;
+					_Player.moveDirection = _Player.wallFacing;
+					_Player.moveSpeed = 0.0f;
+						_Player.inAirVelocity = Vector3.zero;
+					stateChange("wall_slide");
+					_Player.wallSliding = true;
+					_Player.jumping = false;
+					_Player.doubleJumping = false;
+				}
+			}
+		}
+		else if (_Player.hangContact && Vector3.Angle(hit.normal, transform.up) > 100f) {// If player is within climb triggerBox;
+				stateChange("hang_idle");
+				_Player.hanging = true;
 				_Player.inAirVelocity = Vector3.zero;
 				_Player.jumping = false;
 				_Player.doubleJumping = false;
