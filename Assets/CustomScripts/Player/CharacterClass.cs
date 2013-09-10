@@ -67,11 +67,6 @@ public class CharacterClass : MonoBehaviour
 	
 	private void OnTriggerEnter(Collider other)
 	{
-		//ContactObjectInterface i = (ContactObjectInterface)other.gameObject.GetComponent(typeof(ContactObjectInterface));
-		
-		//if(i != null)
-		//	i.contact(rob);
-		
 	    if(other.gameObject.CompareTag("Climb")) {    	// If the triggerBox has a "Climb" tag
 	        climbContact = true;						// Set climb contact to true
 	        numClimbContacts += 1;						// Keep track of how many climb boxes player is currently in
@@ -80,10 +75,6 @@ public class CharacterClass : MonoBehaviour
 	        hangContact = true;							// Set hang contact to true
 	        numHangContacts += 1;						// Keep track of how many hang boxes player is currently in
 		}
-		/*if(other.gameObject.CompareTag("Token")) {
-			GetComponent<ROBgui>().tokens++;
-			Destroy(other.gameObject);
-		}*/
 	}
 }
 

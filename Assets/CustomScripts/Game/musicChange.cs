@@ -41,7 +41,8 @@ namespace AssemblyCSharp
 					if (change) {
 						source.clip = song;
 						source.volume = audioVol;
-						source.Play();
+						if(source.enabled)
+							source.Play();
 						//other.audioVol = other.maxVol;
 					}
 					else {
