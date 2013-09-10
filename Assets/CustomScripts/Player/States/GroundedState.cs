@@ -16,8 +16,6 @@ public class GroundedState : StateClass
 		{
 			MovementHandler();
 		}
-		else if (!_Player.IsGrounded())
-			stateChange("jump_after_apex");
 	}
 	
 	
@@ -93,6 +91,9 @@ public class GroundedState : StateClass
 		_Player.moveSpeed = Mathf.Lerp(_Player.moveSpeed, targetSpeed, curSmooth);
 		
 		transform.rotation = Quaternion.LookRotation(new Vector3(_Player.moveDirection.x, 0.0f, _Player.moveDirection.z));
+		
+		if (!_Player.IsGrounded())
+			stateChange("jump_after_apex");
 	}
 	
 	

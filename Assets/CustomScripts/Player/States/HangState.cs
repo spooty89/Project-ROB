@@ -92,14 +92,6 @@ public class HangState : StateClass
 	}
 	
 	
-	public void ApplyJump ()
-	{
-		_Player.verticalSpeed = _Player.CalculateJumpVerticalSpeed (_Player.jumpHeight);
-		stateChange("jump");
-		_Player.jumping = true;
-	}
-	
-	
 	public override void CollisionHandler(ControllerColliderHit hit)
 	{
 		if((_Player.collisionFlags & CollisionFlags.CollidedAbove) != 0)
@@ -111,6 +103,7 @@ public class HangState : StateClass
 	    if(other.gameObject.CompareTag("Hang")) {    	// If the triggerBox has a "Hang" tag
 	    	_Player.numHangContacts -= 1;						// Keep track of how many climb boxes player is currently in
 	    	if (_Player.numHangContacts <= 0) {					// If the player has exited all triggerBoxes with "Hang" tags
+				_Player.verticalSpeed = -0.1f;
 				stateChange("jump_after_apex");
 				_Player.numHangContacts = 0;
 				_Player.hangContact = false;						// Set hang contact to false
