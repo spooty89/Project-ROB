@@ -91,7 +91,7 @@ public class JumpState : StateClass
 	}
 	
 	
-	public void ApplyJump ()
+	private void ApplyJump ()
 	{
 		if( !_Player.doubleJumping )
 		{

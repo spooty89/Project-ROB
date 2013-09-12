@@ -7,7 +7,7 @@ public abstract class StateClass : MonoBehaviour
 	public abstract void Run();
 	public abstract void CollisionHandler(ControllerColliderHit hit);
 	
-	private void Start()
+	protected virtual void Start()
 	{
 		_Player = GetComponent<CharacterClass>();
 	}

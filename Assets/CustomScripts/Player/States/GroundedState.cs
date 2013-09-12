@@ -97,7 +97,7 @@ public class GroundedState : StateClass
 	}
 	
 	
-	public void ApplyJump ()
+	private void ApplyJump ()
 	{
 		_Player.verticalSpeed = _Player.CalculateJumpVerticalSpeed (_Player.jumpHeight);
 		_Player.jumping = true;
