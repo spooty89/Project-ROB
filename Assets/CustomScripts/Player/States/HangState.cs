@@ -89,6 +89,12 @@ public class HangState : StateClass
 		_Player.moveSpeed = Mathf.Lerp(_Player.moveSpeed, targetSpeed, curSmooth);
 		
 		transform.rotation = Quaternion.LookRotation(new Vector3(_Player.moveDirection.x, 0.0f, _Player.moveDirection.z));
+		
+		if(_Player.collisionFlags == 0)
+		{
+			_Player.verticalSpeed = -0.1f;
+			stateChange("jump_after_apex");
+		}
 	}
 	
 	
