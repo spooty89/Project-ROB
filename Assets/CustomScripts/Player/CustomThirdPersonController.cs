@@ -18,6 +18,24 @@ public class CustomThirdPersonController : MonoBehaviour
 	private StateClass stateClass;
 	
 	
+	private void Start ()
+	{
+		_Player = GetComponent<CharacterClass>();
+		controller = GetComponent<CharacterController>();
+		
+		_Player.moveDirection = transform.forward;	// Initialize player's move direction to the direction rob is initially facing
+		stateChangeSetup();
+		animationSetup();
+	}
+	
+	
+	// Update the current state of the game
+	void Update() {
+		stateClass.Run();
+		AnimationHandler();		// Handle animations
+	}
+	
+	
 	void animationSetup()
 	{
 		_animation = GetComponent<Animation>();		// Get the character's animations
@@ -47,24 +65,6 @@ public class CustomThirdPersonController : MonoBehaviour
 		{
 			sc.stateChange = stateChangeHandler;
 		}
-	}
-	
-	
-	private void Start ()
-	{
-		_Player = GetComponent<CharacterClass>();
-		controller = GetComponent<CharacterController>();
-		
-		_Player.moveDirection = transform.forward;	// Initialize player's move direction to the direction rob is initially facing
-		stateChangeSetup();
-		animationSetup();
-	}
-	
-	
-	// Update the current state of the game
-	void Update() {
-		stateClass.Run();
-		AnimationHandler();		// Handle animations
 	}
 	
 	

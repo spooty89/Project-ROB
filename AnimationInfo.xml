@@ -16,5 +16,5 @@
 <item id="run" name="run" speed="1.4" wrap="Loop" cross="0.25" state="GroundedState" />
 <item id="shoot" name="shoot" speed="1" wrap="Loop" cross="0.1" state="GroundedState" />
 <item id="walk" name="walk" speed="1.2" wrap="Loop" cross="0.25" state="GroundedState" />
-<item id="wall_slide" name="wall_slide" speed="1" wrap="Loop" cross="0.25" state="GroundedState" />
+<item id="wall_slide" name="wall_slide" speed="1" wrap="Loop" cross="0.25" state="WallslideState" />
 </items>

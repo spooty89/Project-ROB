@@ -129,9 +129,10 @@ public class JumpState : StateClass
 				else
 				{
 					_Player.wallFacing = hit.normal;
-					_Player.moveDirection = _Player.wallFacing;
-					_Player.moveSpeed = 0.0f;
-						_Player.inAirVelocity = Vector3.zero;
+					transform.rotation = Quaternion.LookRotation(_Player.wallFacing);
+					_Player.wallRight = new Vector3(hit.normal.z, hit.normal.y, -hit.normal.x);
+					//_Player.moveSpeed = 0.0f;
+						//_Player.inAirVelocity = Vector3.zero;
 					stateChange("wall_slide");
 					_Player.wallSliding = true;
 					_Player.jumping = false;
