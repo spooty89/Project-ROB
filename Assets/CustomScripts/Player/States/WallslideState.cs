@@ -57,6 +57,7 @@ public class WallslideState : StateClass
 				{
 					_Player.moveDirection = new Vector3(-_Player.wallFacing.z, _Player.wallFacing.y, _Player.wallFacing.x);
 				}
+				_Player.moveDirection -= _Player.wallFacing;
 			}
 			else
 			{
@@ -84,8 +85,11 @@ public class WallslideState : StateClass
 			_Player.verticalSpeed = -5.0f;
 		}
 		
+		
 		if(_Player.collisionFlags == 0)
+		{
 			stateChange("jump_after_apex");
+		}	
 	}
 	
 	
@@ -93,9 +97,9 @@ public class WallslideState : StateClass
 	{
 		_Player.moveDirection = _Player.wallFacing;
 		_Player.moveSpeed = 8.0f;
-		_Player.verticalSpeed = _Player.CalculateJumpVerticalSpeed (_Player.jumpHeight);
-		_Player.jumping = true;
-		stateChange("jump");
+		_Player.verticalSpeed = _Player.CalculateJumpVerticalSpeed (_Player.doubleJumpHeight);
+		_Player.doubleJumping = true;
+		stateChange("double_jump");
 	}
 	
 	
@@ -107,5 +111,14 @@ public class WallslideState : StateClass
 			stateChange("idle");
 		}
 	}
+	
+	/*void OnCollisionExit(Collision hit)
+	{
+		if((_Player.collisionFlags & CollisionFlags.CollidedSides) == 0)
+		{
+				Debug.Log("or here");
+			stateChange("jump_after_apex");
+		}
+	}*/
 }
 

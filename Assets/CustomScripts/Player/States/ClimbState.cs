@@ -50,7 +50,8 @@ public class ClimbState : StateClass
 				_Player.moveDirection = _Player.moveDirection.normalized;
 				_Player.moveSpeed = 8.0f;
 				_Player.verticalSpeed = _Player.CalculateJumpVerticalSpeed( _Player.jumpHeight );
-				stateChange("jump");
+				_Player.doubleJumping = true;
+				stateChange("double_jump");
 			}
 		}
 		else
@@ -91,7 +92,8 @@ public class ClimbState : StateClass
 	{
 	    if(other.gameObject.CompareTag("Climb")) {    	// If the triggerBox has a "Climb" tag
 	    	_Player.numClimbContacts -= 1;						// Keep track of how many climb boxes player is currently in
-	    	if (_Player.numClimbContacts <= 0) {				// If the player is not in any climb boxes
+	    	if (_Player.numClimbContacts <= 0 && !_Player.doubleJumping) {				// If the player is not in any climb boxes
+				Debug.Log("here");
 				stateChange("jump_after_apex");
 				_Player.numClimbContacts = 0;
 				_Player.climbContact = false;						// Set climb contact to false
