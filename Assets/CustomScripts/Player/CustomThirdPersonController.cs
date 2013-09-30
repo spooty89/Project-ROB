@@ -71,7 +71,14 @@ public class CustomThirdPersonController : MonoBehaviour
 	// Player has come in contact with a surface
 	private void OnControllerColliderHit (ControllerColliderHit hit)
 	{
-		stateClass.CollisionHandler( hit );
+		((StateClass)GetComponent( animations[_Player.GetCurrentState()].state )).CollisionHandler(hit);
+	}
+	
+	
+	void OnCollisionEnter(Collision hit)
+	{
+		//Debug.Log("here");
+		//((StateClass)GetComponent( animations[_Player.GetCurrentState()].state )).CollisionHandler( hit );
 	}
 	
 	
@@ -91,15 +98,14 @@ public class CustomThirdPersonController : MonoBehaviour
 	private void AnimationHandler() {
 		Vector3 movement = _Player.moveDirection * _Player.moveSpeed + new Vector3 (0, _Player.verticalSpeed, 0) + _Player.inAirVelocity;		// Calculate actual motion
 		movement *= Time.deltaTime;			// Base degree of applied movement on time since last frame
+		//transform.position += movement;
 		_Player.collisionFlags = controller.Move(movement);
 		if(!_Player.GetCurrentState().Equals(lastState))
 		{
-			string state = _Player.GetCurrentState();
-			string animationName = animations[state].name;
-			_animation[animationName].speed = animations[state].speed;
-			_animation[animationName].wrapMode = animations[state].wrap;
-			_animation.CrossFade(animationName, animations[state].crossfade);
-			lastState = state;
+			_animation[animations[_Player.GetCurrentState()].name].speed = animations[_Player.GetCurrentState()].speed;
+			_animation[animations[_Player.GetCurrentState()].name].wrapMode = animations[_Player.GetCurrentState()].wrap;
+			_animation.CrossFade(animations[_Player.GetCurrentState()].name, animations[_Player.GetCurrentState()].crossfade);
+			lastState = _Player.GetCurrentState();
 		}
 	}
 }
