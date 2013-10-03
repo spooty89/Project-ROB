@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class GroundedState : StateClass
 {
-	private bool isMoving;
+	private bool isMoving, sliding = false;
 	private float v, h;
 	private float walkSpeed = 4.0f;	// The speed when walking
 	private float runSpeed = 8.0f;	// When pressing Shift button we start running
@@ -12,16 +12,20 @@ public class GroundedState : StateClass
 	public override void Run()
 	{
 		InputHandler();
-		if(!_Player.jumping)
+		if(!(_Player.jumping || sliding))
 		{
 			MovementHandler();
+		}
+		else if(sliding)
+		{
+			Slide();
 		}
 	}
 	
 	
 	private void InputHandler()
 	{
-		if( Input.anyKey)
+		if( Input.anyKey )
 		{
 			v = Input.GetAxisRaw("Vertical");
 			h = Input.GetAxisRaw("Horizontal");
@@ -97,6 +101,14 @@ public class GroundedState : StateClass
 	}
 	
 	
+	private void Slide()
+	{
+		_Player.moveDirection = Vector3.RotateTowards(surfaceUp, Vector3.down, 1.5f, 0f);
+		transform.rotation = Quaternion.LookRotation(_Player.moveDirection);
+		_Player.moveSpeed = 10.0f;
+	}
+	
+	
 	private void ApplyJump ()
 	{
 		_Player.verticalSpeed = _Player.CalculateJumpVerticalSpeed (_Player.jumpHeight);
@@ -108,7 +120,18 @@ public class GroundedState : StateClass
 	public override void CollisionHandler(ControllerColliderHit hit)
 	{
 		if(_Player.IsGrounded())
+		{
 			surfaceUp = hit.normal;
+		}
+		float angle = Vector3.Angle(surfaceUp, Vector3.up);
+		if( angle > 45f && angle < 88f)
+		{
+			sliding = true;
+		}
+		else
+		{
+			sliding = false;
+		}
 	}
 }
 
