@@ -122,15 +122,17 @@ public class GroundedState : StateClass
 		if(_Player.IsGrounded())
 		{
 			surfaceUp = hit.normal;
-		}
-		float angle = Vector3.Angle(surfaceUp, Vector3.up);
-		if( angle > 45f && angle < 88f)
-		{
-			sliding = true;
-		}
-		else
-		{
-			sliding = false;
+			
+			float angle = Vector3.Angle(surfaceUp, Vector3.up);
+			if( angle > 55f && angle < 88f)
+			{
+				Debug.Log(angle);
+				sliding = true;
+			}
+			else
+			{
+				sliding = false;
+			}
 		}
 	}
 }
