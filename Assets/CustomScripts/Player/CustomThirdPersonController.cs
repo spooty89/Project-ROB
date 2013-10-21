@@ -31,6 +31,9 @@ public class CustomThirdPersonController : MonoBehaviour
 	
 	// Update the current state of the game
 	void Update() {
+		if(_Player.transitioning){
+			stateChangeHandler("transition");
+		}
 		stateClass.Run();
 		AnimationHandler();		// Handle animations
 	}
@@ -73,7 +76,6 @@ public class CustomThirdPersonController : MonoBehaviour
 	{
 		((StateClass)GetComponent( animations[_Player.GetCurrentState()].state )).CollisionHandler(hit);
 	}
-	
 	
 	void OnCollisionEnter(Collision hit)
 	{

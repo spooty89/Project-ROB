@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <items xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 <item id="aim" name="aim" speed="1" wrap="Loop" cross="0.25" state="" />
 <item id="climb_horizontal" name="climb_horizontal" speed="1" wrap="Loop" cross="0.25" state="ClimbState" />
@@ -17,4 +17,5 @@
 <item id="shoot" name="shoot" speed="1" wrap="Loop" cross="0.1" state="GroundedState" />
 <item id="walk" name="walk" speed="1.2" wrap="Loop" cross="0.25" state="GroundedState" />
 <item id="wall_slide" name="wall_slide" speed="1" wrap="Loop" cross="0.25" state="WallslideState" />
+<item id="transition" name="transition" speed="1" wrap="Loop" corss="0.25" state="TransitionState" />
 </items>
