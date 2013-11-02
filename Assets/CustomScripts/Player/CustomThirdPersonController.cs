@@ -17,7 +17,6 @@ public class CustomThirdPersonController : MonoBehaviour
 	private StateClass[] scArray;
 	private StateClass stateClass;
 	
-	
 	private void Start ()
 	{
 		_Player = GetComponent<CharacterClass>();
@@ -31,9 +30,6 @@ public class CustomThirdPersonController : MonoBehaviour
 	
 	// Update the current state of the game
 	void Update() {
-		if(_Player.transitioning){
-			stateChangeHandler("transition");
-		}
 		stateClass.Run();
 		AnimationHandler();		// Handle animations
 	}

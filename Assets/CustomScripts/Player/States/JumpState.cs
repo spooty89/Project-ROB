@@ -37,6 +37,10 @@ public class JumpState : StateClass
 	
 	private void MovementHandler()
 	{
+		if(_Player.transitioning){
+			stateChange("transition");
+			return;
+		}
 		_Player.moveDirection.y = 0.0f;
 		if (_Player.verticalSpeed > -15.0)
 			_Player.verticalSpeed -= _Player.gravity * Time.deltaTime;

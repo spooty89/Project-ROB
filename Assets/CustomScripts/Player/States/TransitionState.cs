@@ -5,11 +5,9 @@ public class TransitionState : StateClass {
 	[HideInInspector]
 	public int timer = 0;
 	[HideInInspector]
-	public int curDuration = -1;
 	private int curStage = -1;	
 	private Vector3 curDirection;
 	private float curVelocity;
-	private TransitionAnimSequence animSeq;
 	[HideInInspector]
 	public bool initialized = false;
 	
@@ -22,11 +20,6 @@ public class TransitionState : StateClass {
 			// set initial states
 			_Player.jumping = false;
 			_Player.climbing = false;
-			curStage = 0;
-			animSeq = ((TransitionAnimSequence)_Player.curTransitionBox.GetComponent("TransitionAnimSequence"));
-			curDuration = animSeq.durations[0];
-			curDirection = animSeq.directions[0];
-			curVelocity = animSeq.velocities[0];
 			timer = 0;
 			initialized = true;
 		}
@@ -34,23 +27,14 @@ public class TransitionState : StateClass {
 			// step the transition
 			timer++;
 		}
-		if(timer > curDuration){
-			// step to the next transition stage
-			curStage++;
-			if(curStage < animSeq.durations.Length){
-				curDuration = animSeq.durations[curStage];
-				curDirection = animSeq.directions[curStage];
-				curVelocity = animSeq.velocities[curStage];
-				timer = 0;
-			}
-			else{
+		if(timer > _Player.curTransitionBox.curCond.duration){
 				// exit transition
-				_Player.transitioning = false;
-				_Player.SetCurrentState("free_fall");
-				timer = 0;
-				initialized = false;
-				return;
-			}
+			_Player.transform.Translate(_Player.curTransitionBox.curCond.displacement);
+			_Player.transitioning = false;
+			timer = 0;
+			initialized = false;
+			stateChange(_Player.curTransitionBox.curCond.finalState);
+			return;
 		}
 		InputHandler();
 		MovementHandler();
@@ -61,9 +45,6 @@ public class TransitionState : StateClass {
 	}
 	
 	private void MovementHandler(){
-		// TODO: fix this.
-		_Player.moveDirection = curDirection;
-		_Player.verticalSpeed = curDirection.y;
-		_Player.moveSpeed = curVelocity;
+		_Player.moveSpeed = 0;
 	}
 }

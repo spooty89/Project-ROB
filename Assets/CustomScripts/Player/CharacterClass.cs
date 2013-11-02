@@ -36,9 +36,7 @@ public class CharacterClass : MonoBehaviour
 	[HideInInspector]
 	public string currentState;
 	[HideInInspector]
-	public Collider curTransitionBox;
-	
-	
+	public TransitionBox curTransitionBox;
 	
 	public string GetCurrentState()
 	{
@@ -79,8 +77,13 @@ public class CharacterClass : MonoBehaviour
 	        numHangContacts += 1;						// Keep track of how many hang boxes player is currently in
 		}
 		if(other.gameObject.CompareTag("TransitionBox")){
-			transitioning = true;
-			curTransitionBox = other;
+			TransitionBox transBox = (TransitionBox)other.gameObject.GetComponent("TransitionBox");
+			TransitionEnterCondition curCond = transBox.matchEnterCondition(this);
+			if(curCond != null){
+				transitioning = true;
+				curTransitionBox = transBox;
+				curTransitionBox.curCond = curCond;
+			}
 		}
 	}
 }

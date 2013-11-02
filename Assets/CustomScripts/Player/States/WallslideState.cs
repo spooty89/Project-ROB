@@ -35,6 +35,10 @@ public class WallslideState : StateClass
 	
 	private void MovementHandler()
 	{
+		if(_Player.transitioning){
+			stateChange("transition");
+			return;
+		}		
 		if( isMoving )
 		{
 			Transform cameraTransform = Camera.main.transform;
