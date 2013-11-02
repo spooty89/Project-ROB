@@ -28,14 +28,15 @@ public class CharacterClass : MonoBehaviour
 				climbing = false,
 				hangContact = false,
 				hanging = false,
-				wallSliding = false;
+				wallSliding = false,
+				transitioning = false;
 	[HideInInspector]
 	public int numHangContacts = 0,
 				numClimbContacts = 0;
 	[HideInInspector]
 	public string currentState;
-	
-	
+	[HideInInspector]
+	public TransitionBox curTransitionBox;
 	
 	public string GetCurrentState()
 	{
@@ -74,6 +75,15 @@ public class CharacterClass : MonoBehaviour
 	    if(other.gameObject.CompareTag("Hang")) {    	// If the triggerBox has a "Hang" tag
 	        hangContact = true;							// Set hang contact to true
 	        numHangContacts += 1;						// Keep track of how many hang boxes player is currently in
+		}
+		if(other.gameObject.CompareTag("TransitionBox")){
+			TransitionBox transBox = (TransitionBox)other.gameObject.GetComponent("TransitionBox");
+			TransitionEnterCondition curCond = transBox.matchEnterCondition(this);
+			if(curCond != null){
+				transitioning = true;
+				curTransitionBox = transBox;
+				curTransitionBox.curCond = curCond;
+			}
 		}
 	}
 }

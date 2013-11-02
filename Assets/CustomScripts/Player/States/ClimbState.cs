@@ -65,6 +65,10 @@ public class ClimbState : StateClass
 	
 	private void MovementHandler()
 	{
+		if(_Player.transitioning){
+			stateChange("transition");
+			return;
+		}		
 		if (Mathf.Abs(_Player.verticalSpeed) < 0.5f)
 		{
 			_Player.verticalSpeed = 0.0f;

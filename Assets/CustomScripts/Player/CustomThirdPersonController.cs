@@ -17,7 +17,6 @@ public class CustomThirdPersonController : MonoBehaviour
 	private StateClass[] scArray;
 	private StateClass stateClass;
 	
-	
 	private void Start ()
 	{
 		_Player = GetComponent<CharacterClass>();
@@ -73,7 +72,6 @@ public class CustomThirdPersonController : MonoBehaviour
 	{
 		((StateClass)GetComponent( animations[_Player.GetCurrentState()].state )).CollisionHandler(hit);
 	}
-	
 	
 	void OnCollisionEnter(Collision hit)
 	{

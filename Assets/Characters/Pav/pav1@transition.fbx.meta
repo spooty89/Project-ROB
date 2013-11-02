@@ -1,0 +1,451 @@
+fileFormatVersion: 2
+guid: a4c7d3e8bb67e4719907a03a3334b255
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: pav:pav_blow_left1
+    100004: pav:pav_blow_right1
+    100006: pav:pav_brow_left2
+    100008: pav:pav_brow_left3
+    100010: pav:pav_brow_left4
+    100012: pav:pav_brow_middle
+    100014: pav:pav_brow_right2
+    100016: pav:pav_brow_right3
+    100018: pav:pav_brow_right4
+    100020: pav:pav_ChestEndEffector
+    100022: pav:pav_ChestOriginEffector
+    100024: pav:pav_chin
+    100026: pav:pav_Ctrl_Reference
+    100028: pav:pav_eye_left
+    100030: pav:pav_eye_right
+    100032: pav:pav_Head
+    100034: pav:pav_Head 1
+    100036: pav:pav_HeadEffector
+    100038: pav:pav_Hips
+    100040: pav:pav_Hips 1
+    100042: pav:pav_HipsEffector
+    100044: pav:pav_joint1
+    100046: pav:pav_LeftAnkleEffector
+    100048: pav:pav_LeftArm
+    100050: pav:pav_LeftArm 1
+    100052: pav:pav_LeftElbowEffector
+    100054: pav:pav_LeftFoot
+    100056: pav:pav_LeftFoot 1
+    100058: pav:pav_LeftFootEffector
+    100060: pav:pav_LeftFootMiddle
+    100062: pav:pav_LeftFootMiddle 1
+    100064: pav:pav_LeftFootMiddleEffector
+    100066: pav:pav_LeftFootToe
+    100068: pav:pav_LeftFootToe 1
+    100070: pav:pav_LeftForeArm
+    100072: pav:pav_LeftForeArm 1
+    100074: pav:pav_LeftHand
+    100076: pav:pav_LeftHand 1
+    100078: pav:pav_LeftHandIndex1
+    100080: pav:pav_LeftHandIndex1 1
+    100082: pav:pav_LeftHandIndex2
+    100084: pav:pav_LeftHandIndex2 1
+    100086: pav:pav_LeftHandIndex3
+    100088: pav:pav_LeftHandIndex3 1
+    100090: pav:pav_LeftHandIndex4
+    100092: pav:pav_LeftHandIndex4 1
+    100094: pav:pav_LeftHandIndexEffector
+    100096: pav:pav_LeftHandMiddle1
+    100098: pav:pav_LeftHandMiddle1 1
+    100100: pav:pav_LeftHandMiddle2
+    100102: pav:pav_LeftHandMiddle2 1
+    100104: pav:pav_LeftHandMiddle3
+    100106: pav:pav_LeftHandMiddle3 1
+    100108: pav:pav_LeftHandMiddle4
+    100110: pav:pav_LeftHandMiddle4 1
+    100112: pav:pav_LeftHandMiddleEffector
+    100114: pav:pav_LeftHandPinky1
+    100116: pav:pav_LeftHandPinky1 1
+    100118: pav:pav_LeftHandPinky2
+    100120: pav:pav_LeftHandPinky2 1
+    100122: pav:pav_LeftHandPinky3
+    100124: pav:pav_LeftHandPinky3 1
+    100126: pav:pav_LeftHandPinky4
+    100128: pav:pav_LeftHandPinky4 1
+    100130: pav:pav_LeftHandPinkyEffector
+    100132: pav:pav_LeftHandThumb1
+    100134: pav:pav_LeftHandThumb1 1
+    100136: pav:pav_LeftHandThumb2
+    100138: pav:pav_LeftHandThumb2 1
+    100140: pav:pav_LeftHandThumb3
+    100142: pav:pav_LeftHandThumb3 1
+    100144: pav:pav_LeftHandThumb4
+    100146: pav:pav_LeftHandThumb4 1
+    100148: pav:pav_LeftHandThumbEffector
+    100150: pav:pav_LeftHipEffector
+    100152: pav:pav_LeftKneeEffector
+    100154: pav:pav_LeftLeg
+    100156: pav:pav_LeftLeg 1
+    100158: pav:pav_LeftShoulder
+    100160: pav:pav_LeftShoulder 1
+    100162: pav:pav_LeftShoulderEffector
+    100164: pav:pav_LeftToeBase
+    100166: pav:pav_LeftToeBase 1
+    100168: pav:pav_LeftUpLeg
+    100170: pav:pav_LeftUpLeg 1
+    100172: pav:pav_LeftWristEffector
+    100174: pav:pav_mouth_left
+    100176: pav:pav_mouth_lower_left1
+    100178: pav:pav_mouth_lower_left2
+    100180: pav:pav_mouth_lower_middle
+    100182: pav:pav_mouth_lower_right1
+    100184: pav:pav_mouth_lower_right2
+    100186: pav:pav_mouth_right
+    100188: pav:pav_mouth_upper_left1
+    100190: pav:pav_mouth_upper_left2
+    100192: pav:pav_mouth_upper_left3
+    100194: pav:pav_mouth_upper_middle
+    100196: pav:pav_mouth_upper_right1
+    100198: pav:pav_mouth_upper_right2
+    100200: pav:pav_mouth_upper_right3
+    100202: pav:pav_Neck
+    100204: pav:pav_Neck 1
+    100206: pav:pav_Neck1
+    100208: pav:pav_Neck1 1
+    100210: pav:pav_pupil_left1
+    100212: pav:pav_pupil_right1
+    100214: pav:pav_quad2
+    100216: pav:pav_Reference
+    100218: pav:pav_RightAnkleEffector
+    100220: pav:pav_RightArm
+    100222: pav:pav_RightArm 1
+    100224: pav:pav_RightElbowEffector
+    100226: pav:pav_RightFoot
+    100228: pav:pav_RightFoot 1
+    100230: pav:pav_RightFootEffector
+    100232: pav:pav_RightFootMiddle
+    100234: pav:pav_RightFootMiddle 1
+    100236: pav:pav_RightFootMiddleEffector
+    100238: pav:pav_RightFootToe
+    100240: pav:pav_RightFootToe 1
+    100242: pav:pav_RightForeArm
+    100244: pav:pav_RightForeArm 1
+    100246: pav:pav_RightHand
+    100248: pav:pav_RightHand 1
+    100250: pav:pav_RightHandIndex1
+    100252: pav:pav_RightHandIndex1 1
+    100254: pav:pav_RightHandIndex2
+    100256: pav:pav_RightHandIndex2 1
+    100258: pav:pav_RightHandIndex3
+    100260: pav:pav_RightHandIndex3 1
+    100262: pav:pav_RightHandIndex4
+    100264: pav:pav_RightHandIndex4 1
+    100266: pav:pav_RightHandIndexEffector
+    100268: pav:pav_RightHandMiddle1
+    100270: pav:pav_RightHandMiddle1 1
+    100272: pav:pav_RightHandMiddle2
+    100274: pav:pav_RightHandMiddle2 1
+    100276: pav:pav_RightHandMiddle3
+    100278: pav:pav_RightHandMiddle3 1
+    100280: pav:pav_RightHandMiddle4
+    100282: pav:pav_RightHandMiddle4 1
+    100284: pav:pav_RightHandMiddleEffector
+    100286: pav:pav_RightHandPinky1
+    100288: pav:pav_RightHandPinky1 1
+    100290: pav:pav_RightHandPinky2
+    100292: pav:pav_RightHandPinky2 1
+    100294: pav:pav_RightHandPinky3
+    100296: pav:pav_RightHandPinky3 1
+    100298: pav:pav_RightHandPinky4
+    100300: pav:pav_RightHandPinky4 1
+    100302: pav:pav_RightHandPinkyEffector
+    100304: pav:pav_RightHandThumb1
+    100306: pav:pav_RightHandThumb1 1
+    100308: pav:pav_RightHandThumb2
+    100310: pav:pav_RightHandThumb2 1
+    100312: pav:pav_RightHandThumb3
+    100314: pav:pav_RightHandThumb3 1
+    100316: pav:pav_RightHandThumb4
+    100318: pav:pav_RightHandThumb4 1
+    100320: pav:pav_RightHandThumbEffector
+    100322: pav:pav_RightHipEffector
+    100324: pav:pav_RightKneeEffector
+    100326: pav:pav_RightLeg
+    100328: pav:pav_RightLeg 1
+    100330: pav:pav_RightShoulder
+    100332: pav:pav_RightShoulder 1
+    100334: pav:pav_RightShoulderEffector
+    100336: pav:pav_RightToeBase
+    100338: pav:pav_RightToeBase 1
+    100340: pav:pav_RightUpLeg
+    100342: pav:pav_RightUpLeg 1
+    100344: pav:pav_RightWristEffector
+    100346: pav:pav_Spine
+    100348: pav:pav_Spine 1
+    100350: pav:pav_Spine1
+    100352: pav:pav_Spine1 1
+    100354: pav:pav_Spine2
+    100356: pav:pav_Spine2 1
+    100358: pav:pav_Spine3
+    100360: pav:pav_Spine3 1
+    100362: pav:pav_Spine4
+    100364: pav:pav_Spine4 1
+    100366: pav:pav_Spine5
+    100368: pav:pav_Spine5 1
+    100370: pav:pav_Spine6
+    100372: pav:pav_Spine6 1
+    100374: pav:pav_Spine7
+    100376: pav:pav_Spine7 1
+    100378: pav:pav_Spine8
+    100380: pav:pav_Spine8 1
+    400000: //RootNode
+    400002: pav:pav_blow_left1
+    400004: pav:pav_blow_right1
+    400006: pav:pav_brow_left2
+    400008: pav:pav_brow_left3
+    400010: pav:pav_brow_left4
+    400012: pav:pav_brow_middle
+    400014: pav:pav_brow_right2
+    400016: pav:pav_brow_right3
+    400018: pav:pav_brow_right4
+    400020: pav:pav_ChestEndEffector
+    400022: pav:pav_ChestOriginEffector
+    400024: pav:pav_chin
+    400026: pav:pav_Ctrl_Reference
+    400028: pav:pav_eye_left
+    400030: pav:pav_eye_right
+    400032: pav:pav_Head
+    400034: pav:pav_Head 1
+    400036: pav:pav_HeadEffector
+    400038: pav:pav_Hips
+    400040: pav:pav_Hips 1
+    400042: pav:pav_HipsEffector
+    400044: pav:pav_joint1
+    400046: pav:pav_LeftAnkleEffector
+    400048: pav:pav_LeftArm
+    400050: pav:pav_LeftArm 1
+    400052: pav:pav_LeftElbowEffector
+    400054: pav:pav_LeftFoot
+    400056: pav:pav_LeftFoot 1
+    400058: pav:pav_LeftFootEffector
+    400060: pav:pav_LeftFootMiddle
+    400062: pav:pav_LeftFootMiddle 1
+    400064: pav:pav_LeftFootMiddleEffector
+    400066: pav:pav_LeftFootToe
+    400068: pav:pav_LeftFootToe 1
+    400070: pav:pav_LeftForeArm
+    400072: pav:pav_LeftForeArm 1
+    400074: pav:pav_LeftHand
+    400076: pav:pav_LeftHand 1
+    400078: pav:pav_LeftHandIndex1
+    400080: pav:pav_LeftHandIndex1 1
+    400082: pav:pav_LeftHandIndex2
+    400084: pav:pav_LeftHandIndex2 1
+    400086: pav:pav_LeftHandIndex3
+    400088: pav:pav_LeftHandIndex3 1
+    400090: pav:pav_LeftHandIndex4
+    400092: pav:pav_LeftHandIndex4 1
+    400094: pav:pav_LeftHandIndexEffector
+    400096: pav:pav_LeftHandMiddle1
+    400098: pav:pav_LeftHandMiddle1 1
+    400100: pav:pav_LeftHandMiddle2
+    400102: pav:pav_LeftHandMiddle2 1
+    400104: pav:pav_LeftHandMiddle3
+    400106: pav:pav_LeftHandMiddle3 1
+    400108: pav:pav_LeftHandMiddle4
+    400110: pav:pav_LeftHandMiddle4 1
+    400112: pav:pav_LeftHandMiddleEffector
+    400114: pav:pav_LeftHandPinky1
+    400116: pav:pav_LeftHandPinky1 1
+    400118: pav:pav_LeftHandPinky2
+    400120: pav:pav_LeftHandPinky2 1
+    400122: pav:pav_LeftHandPinky3
+    400124: pav:pav_LeftHandPinky3 1
+    400126: pav:pav_LeftHandPinky4
+    400128: pav:pav_LeftHandPinky4 1
+    400130: pav:pav_LeftHandPinkyEffector
+    400132: pav:pav_LeftHandThumb1
+    400134: pav:pav_LeftHandThumb1 1
+    400136: pav:pav_LeftHandThumb2
+    400138: pav:pav_LeftHandThumb2 1
+    400140: pav:pav_LeftHandThumb3
+    400142: pav:pav_LeftHandThumb3 1
+    400144: pav:pav_LeftHandThumb4
+    400146: pav:pav_LeftHandThumb4 1
+    400148: pav:pav_LeftHandThumbEffector
+    400150: pav:pav_LeftHipEffector
+    400152: pav:pav_LeftKneeEffector
+    400154: pav:pav_LeftLeg
+    400156: pav:pav_LeftLeg 1
+    400158: pav:pav_LeftShoulder
+    400160: pav:pav_LeftShoulder 1
+    400162: pav:pav_LeftShoulderEffector
+    400164: pav:pav_LeftToeBase
+    400166: pav:pav_LeftToeBase 1
+    400168: pav:pav_LeftUpLeg
+    400170: pav:pav_LeftUpLeg 1
+    400172: pav:pav_LeftWristEffector
+    400174: pav:pav_mouth_left
+    400176: pav:pav_mouth_lower_left1
+    400178: pav:pav_mouth_lower_left2
+    400180: pav:pav_mouth_lower_middle
+    400182: pav:pav_mouth_lower_right1
+    400184: pav:pav_mouth_lower_right2
+    400186: pav:pav_mouth_right
+    400188: pav:pav_mouth_upper_left1
+    400190: pav:pav_mouth_upper_left2
+    400192: pav:pav_mouth_upper_left3
+    400194: pav:pav_mouth_upper_middle
+    400196: pav:pav_mouth_upper_right1
+    400198: pav:pav_mouth_upper_right2
+    400200: pav:pav_mouth_upper_right3
+    400202: pav:pav_Neck
+    400204: pav:pav_Neck 1
+    400206: pav:pav_Neck1
+    400208: pav:pav_Neck1 1
+    400210: pav:pav_pupil_left1
+    400212: pav:pav_pupil_right1
+    400214: pav:pav_quad2
+    400216: pav:pav_Reference
+    400218: pav:pav_RightAnkleEffector
+    400220: pav:pav_RightArm
+    400222: pav:pav_RightArm 1
+    400224: pav:pav_RightElbowEffector
+    400226: pav:pav_RightFoot
+    400228: pav:pav_RightFoot 1
+    400230: pav:pav_RightFootEffector
+    400232: pav:pav_RightFootMiddle
+    400234: pav:pav_RightFootMiddle 1
+    400236: pav:pav_RightFootMiddleEffector
+    400238: pav:pav_RightFootToe
+    400240: pav:pav_RightFootToe 1
+    400242: pav:pav_RightForeArm
+    400244: pav:pav_RightForeArm 1
+    400246: pav:pav_RightHand
+    400248: pav:pav_RightHand 1
+    400250: pav:pav_RightHandIndex1
+    400252: pav:pav_RightHandIndex1 1
+    400254: pav:pav_RightHandIndex2
+    400256: pav:pav_RightHandIndex2 1
+    400258: pav:pav_RightHandIndex3
+    400260: pav:pav_RightHandIndex3 1
+    400262: pav:pav_RightHandIndex4
+    400264: pav:pav_RightHandIndex4 1
+    400266: pav:pav_RightHandIndexEffector
+    400268: pav:pav_RightHandMiddle1
+    400270: pav:pav_RightHandMiddle1 1
+    400272: pav:pav_RightHandMiddle2
+    400274: pav:pav_RightHandMiddle2 1
+    400276: pav:pav_RightHandMiddle3
+    400278: pav:pav_RightHandMiddle3 1
+    400280: pav:pav_RightHandMiddle4
+    400282: pav:pav_RightHandMiddle4 1
+    400284: pav:pav_RightHandMiddleEffector
+    400286: pav:pav_RightHandPinky1
+    400288: pav:pav_RightHandPinky1 1
+    400290: pav:pav_RightHandPinky2
+    400292: pav:pav_RightHandPinky2 1
+    400294: pav:pav_RightHandPinky3
+    400296: pav:pav_RightHandPinky3 1
+    400298: pav:pav_RightHandPinky4
+    400300: pav:pav_RightHandPinky4 1
+    400302: pav:pav_RightHandPinkyEffector
+    400304: pav:pav_RightHandThumb1
+    400306: pav:pav_RightHandThumb1 1
+    400308: pav:pav_RightHandThumb2
+    400310: pav:pav_RightHandThumb2 1
+    400312: pav:pav_RightHandThumb3
+    400314: pav:pav_RightHandThumb3 1
+    400316: pav:pav_RightHandThumb4
+    400318: pav:pav_RightHandThumb4 1
+    400320: pav:pav_RightHandThumbEffector
+    400322: pav:pav_RightHipEffector
+    400324: pav:pav_RightKneeEffector
+    400326: pav:pav_RightLeg
+    400328: pav:pav_RightLeg 1
+    400330: pav:pav_RightShoulder
+    400332: pav:pav_RightShoulder 1
+    400334: pav:pav_RightShoulderEffector
+    400336: pav:pav_RightToeBase
+    400338: pav:pav_RightToeBase 1
+    400340: pav:pav_RightUpLeg
+    400342: pav:pav_RightUpLeg 1
+    400344: pav:pav_RightWristEffector
+    400346: pav:pav_Spine
+    400348: pav:pav_Spine 1
+    400350: pav:pav_Spine1
+    400352: pav:pav_Spine1 1
+    400354: pav:pav_Spine2
+    400356: pav:pav_Spine2 1
+    400358: pav:pav_Spine3
+    400360: pav:pav_Spine3 1
+    400362: pav:pav_Spine4
+    400364: pav:pav_Spine4 1
+    400366: pav:pav_Spine5
+    400368: pav:pav_Spine5 1
+    400370: pav:pav_Spine6
+    400372: pav:pav_Spine6 1
+    400374: pav:pav_Spine7
+    400376: pav:pav_Spine7 1
+    400378: pav:pav_Spine8
+    400380: pav:pav_Spine8 1
+    2300000: pav:pav_pupil_left1
+    2300002: pav:pav_pupil_right1
+    2300004: pav:pav_quad2
+    3300000: pav:pav_pupil_left1
+    3300002: pav:pav_pupil_right1
+    3300004: pav:pav_quad2
+    4300000: pav:pav_quad2
+    4300002: pav:pav_pupil_right1
+    4300004: pav:pav_pupil_left1
+    7400000: Take 001
+    9500000: //RootNode
+    11100000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: .00999999978
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    handles: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  additionalBone: 1
+  animationType: 1
+  userData: 

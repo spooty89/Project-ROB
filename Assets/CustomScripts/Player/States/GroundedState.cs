@@ -48,6 +48,10 @@ public class GroundedState : StateClass
 	
 	private void MovementHandler()
 	{
+		if(_Player.transitioning){
+			stateChange("transition");
+			return;
+		}		
 		_Player.inAirVelocity = Vector3.zero;
 		Transform cameraTransform = Camera.main.transform;
 		
