@@ -17,7 +17,7 @@ public class CustomThirdPersonController : MonoBehaviour
 	private StateClass[] scArray;
 	private StateClass stateClass;
 	
-	private void Start ()
+	private void Awake ()
 	{
 		_Player = GetComponent<CharacterClass>();
 		controller = GetComponent<CharacterController>();
