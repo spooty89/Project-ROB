@@ -1,4 +1,4 @@
-using UnityEngine;
+/*using UnityEngine;
 using UnityEditor;
 using System.Collections; 
 using System.Collections.Generic; 
@@ -55,7 +55,7 @@ public class AnimationInfoImporter {
 	}
  
 	/* The following metods came from the referenced URL */ 
-	static string UTF8ByteArrayToString(byte[] characters) 
+/*	static string UTF8ByteArrayToString(byte[] characters) 
 	{      
 		UTF8Encoding encoding = new UTF8Encoding(); 
 		string constructedString = encoding.GetString(characters); 
@@ -147,4 +147,4 @@ public class item
     public float cross;
     [XmlAttribute]
     public string state;
-}
+}*/

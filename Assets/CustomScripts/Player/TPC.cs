@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
+public delegate void stateChangeEvent( string state );
+
 public class TPC: MonoBehaviour
 {
 	private CharacterClass _Player;

@@ -1,8 +1,7 @@
-using System.Collections.Generic;
+/*using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public delegate void stateChangeEvent( string state );
 
 public class CustomThirdPersonController : MonoBehaviour
 {
@@ -40,8 +39,8 @@ public class CustomThirdPersonController : MonoBehaviour
 		_animation = GetComponent<Animation>();		// Get the character's animations
 		animations = new Dictionary<string, LesserAnimationClass>();
 		
-		if(loadAnimationInfo)
-			AnimationInfoImporter.Load();
+		//if(loadAnimationInfo)
+		//	AnimationInfoImporter.Load();
 		foreach( AnimationState aState in _animation )
 		{
 			LesserAnimationClass tempAC = animations.FirstOrDefault (i => i.Key == aState.clip.name).Value;
@@ -106,4 +105,4 @@ public class CustomThirdPersonController : MonoBehaviour
 			lastState = _Player.GetCurrentState();
 		}
 	}
-}
+}*/

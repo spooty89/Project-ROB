@@ -1,4 +1,4 @@
-using UnityEditor;
+/*using UnityEditor;
 using System.IO;
 
 public class AnimationInfoPath : EditorWindow
@@ -16,5 +16,5 @@ public class AnimationInfoPath : EditorWindow
             EditorPrefs.SetString( LastPathKey, path );
         }
     }
-}
+}*/
 

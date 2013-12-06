@@ -21,7 +21,6 @@ public class bullet : MonoBehaviour
 	}
 	void Update ()
 	{
-		Debug.Log(position);
 		position = Vector3.MoveTowards( position, destination, speed * Time.deltaTime );
 	}
 }
