@@ -18,7 +18,7 @@ public class AnimationInfoImporter {
 	// This is our local private members 
 	static string _FileLocation, _FileName; 
 	public static GameObject _Player;
-	static Dictionary<string, AnimationClass> myData;
+	static Dictionary<string, LesserAnimationClass> myData;
 	string _PlayerName; 
 	static string _data;
  
@@ -28,9 +28,9 @@ public class AnimationInfoImporter {
       	// Where we want to save and load to and from 
       	_FileLocation = EditorPrefs.GetString("Pav-AnimationInfoImporter-LastPath");
       	_FileName="AnimationInfo.xml"; 
-		_Player = GameObject.Find( "pav" );
+		_Player = GameObject.Find( "Pav" );
 		if (_Player == null)
-			_Player = GameObject.Find( "Pav" );
+			_Player = GameObject.Find( "pav" );
 	} 
 	
     //[UnityEditor.MenuItem( "Pav/Load Animation Info" )]
@@ -39,11 +39,11 @@ public class AnimationInfoImporter {
       	//_FileName="AnimationInfo.xml"; 
 		Setup();
 		LoadXML();
-		myData = (Dictionary<string, AnimationClass>)DeserializeObject(_data);
+		myData = (Dictionary<string, LesserAnimationClass>)DeserializeObject(_data);
 		_Player.GetComponent<CustomThirdPersonController>().animations = myData;
 	}
 	
-    [UnityEditor.MenuItem( "Pav/Save Animation Info" )]
+    //[UnityEditor.MenuItem( "Pav/Save Animation Info" )]
 	public static void SaveAnimationInfo()
 	{
 		Setup();
@@ -70,7 +70,7 @@ public class AnimationInfoImporter {
 	} 
  
 	// Here we serialize our UserData object of myData 
-	static string SerializeObject(Dictionary<string, AnimationClass> pObject) 
+	static string SerializeObject(Dictionary<string, LesserAnimationClass> pObject) 
 	{ 
 		string XmlizedString = null; 
 		MemoryStream memoryStream = new MemoryStream(); 
@@ -98,10 +98,10 @@ public class AnimationInfoImporter {
 		MemoryStream memoryStream = new MemoryStream(StringToUTF8ByteArray(pXmlizedString)); 
 		//XmlTextWriter xmlTextWriter = new XmlTextWriter(memoryStream, Encoding.UTF8); 
 		item[] tempItem = (item[])xs.Deserialize(memoryStream);
-		Dictionary<string, AnimationClass> tempAC = new Dictionary<string, AnimationClass>();
+		Dictionary<string, LesserAnimationClass> tempAC = new Dictionary<string, LesserAnimationClass>();
 		foreach(item i in tempItem)
 		{
-			tempAC.Add(i.id, new AnimationClass(i.name, i.speed, i.wrap, i.cross, i.state));
+			tempAC.Add(i.id, new LesserAnimationClass(i.name, i.speed, i.wrap, i.cross, i.state));
 		}
 		return tempAC; 
 	} 

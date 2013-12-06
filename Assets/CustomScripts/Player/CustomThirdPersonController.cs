@@ -7,7 +7,7 @@ public delegate void stateChangeEvent( string state );
 public class CustomThirdPersonController : MonoBehaviour
 {
 	private CharacterClass _Player;
-	public Dictionary<string, AnimationClass> animations;
+	public Dictionary<string, LesserAnimationClass> animations;
 	
 	public string lastState;
 	public bool loadAnimationInfo;
@@ -38,15 +38,15 @@ public class CustomThirdPersonController : MonoBehaviour
 	void animationSetup()
 	{
 		_animation = GetComponent<Animation>();		// Get the character's animations
-		animations = new Dictionary<string, AnimationClass>();
+		animations = new Dictionary<string, LesserAnimationClass>();
 		
 		if(loadAnimationInfo)
 			AnimationInfoImporter.Load();
 		foreach( AnimationState aState in _animation )
 		{
-			AnimationClass tempAC = animations.FirstOrDefault (i => i.Key == aState.clip.name).Value;
+			LesserAnimationClass tempAC = animations.FirstOrDefault (i => i.Key == aState.clip.name).Value;
 			if(tempAC == null)
-				animations.Add(aState.clip.name, new AnimationClass(aState.clip, 1.0f, aState.wrapMode == WrapMode.Default ? WrapMode.Loop : aState.wrapMode));
+				animations.Add(aState.clip.name, new LesserAnimationClass(aState.clip, 1.0f, aState.wrapMode == WrapMode.Default ? WrapMode.Loop : aState.wrapMode));
 			else
 			{
 				tempAC.clip = aState.clip;

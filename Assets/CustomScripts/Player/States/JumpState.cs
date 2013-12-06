@@ -54,7 +54,7 @@ public class JumpState : StateClass
 			}
 			else if (_Player.verticalSpeed <= -15.0f){
 				_Player.verticalSpeed = -15.0f;
-				_Player.SetCurrentState("free_fall");
+				//_Player.SetCurrentState("free_fall");
 			}
 		}
 		
@@ -101,6 +101,7 @@ public class JumpState : StateClass
 		{
 			_Player.verticalSpeed = _Player.CalculateJumpVerticalSpeed (_Player.doubleJumpHeight);
 			_Player.SetCurrentState("double_jump");
+			_Player.jumpingReachedApex = false;
 			_Player.doubleJumping = true;
 		}
 	}
@@ -123,7 +124,7 @@ public class JumpState : StateClass
 					transform.rotation = Quaternion.LookRotation(_Player.moveDirection);
 					_Player.wallRight = transform.right;
 					
-						stateChange("climb_idle");
+						stateChange("climb_wall_idle");
 						_Player.climbing = true;
 						_Player.moveSpeed = 1.0f;
 						_Player.inAirVelocity = Vector3.zero;

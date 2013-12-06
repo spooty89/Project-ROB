@@ -13,24 +13,24 @@ public class WallslideState : StateClass
 	
 	private void InputHandler()
 	{	
-		if (Input.anyKey)
+		/*if (Input.anyKey)
 		{
 			v = Input.GetAxisRaw("Vertical");
 			h = Input.GetAxisRaw("Horizontal");
 			
 			isMoving = Mathf.Abs (h) > 0.05f || Mathf.Abs (v) > 0.05f;
-			
+			*/
 			if( Input.GetButton( "Jump" ) )
 			{
 				ApplyJump();
 			}
-		}
+		/*}
 		else
 		{
 			v = 0f;
 			h = 0f;
 			isMoving = false;
-		}
+		}*/
 	}
 	
 	private void MovementHandler()
@@ -39,7 +39,7 @@ public class WallslideState : StateClass
 			stateChange("transition");
 			return;
 		}		
-		if( isMoving )
+		/*if( isMoving )
 		{
 			Transform cameraTransform = Camera.main.transform;
 			
@@ -76,7 +76,7 @@ public class WallslideState : StateClass
 			{
 				_Player.inAirVelocity += _Player.moveDirection.normalized * Time.deltaTime * _Player.jumpAcceleration;
 			}
-		}
+		}*/
 		
 		
 		

@@ -10,7 +10,7 @@ public class CharacterClass : MonoBehaviour
 					jumpAcceleration = (float)2.0,			// Acceleration from jumping
 					doubleJumpHeight = (float)1.5,			// How high we jump when we double jump
 					doubleJumpAcceleration = (float)1.0;	// from double jumping
-	[HideInInspector]
+	//[HideInInspector]
 	public float verticalSpeed = (float)0.0,		// The current vertical speed
 					moveSpeed = (float)0.0;			// The current x-z move speed
 	//[HideInInspector]
@@ -30,13 +30,14 @@ public class CharacterClass : MonoBehaviour
 				hanging = false,
 				wallSliding = false,
 				transitioning = false;
-	[HideInInspector]
+	//[HideInInspector]
 	public int numHangContacts = 0,
 				numClimbContacts = 0;
 	[HideInInspector]
 	public string currentState;
 	[HideInInspector]
 	public TransitionBox curTransitionBox;
+	public stateChangeEvent stateChange;
 	
 	public string GetCurrentState()
 	{
@@ -66,7 +67,7 @@ public class CharacterClass : MonoBehaviour
 	}
 	
 	
-	private void OnTriggerEnter(Collider other)
+	public void OnTriggerEnter(Collider other)
 	{
 	    if(other.gameObject.CompareTag("Climb")) {    	// If the triggerBox has a "Climb" tag
 	        climbContact = true;						// Set climb contact to true
