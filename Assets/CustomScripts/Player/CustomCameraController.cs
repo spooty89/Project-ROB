@@ -17,56 +17,34 @@ public class CustomCameraController : MonoBehaviour {
 	//public float aimDistance = 0.0f;
 	
 	public float normalDistance = 4.5f;
-
     public float targetHeight = 0.7f;                         // Vertical offset adjustment
-	
 	public float normalHeight = 0.7f;
-	
 	public float aimHeight = 1.7f;
-
     public float distance = 4.5f;                            // Default Distance
-
     public float offsetFromWall = 0.1f;                       // Bring camera away from any colliding objects
-
     public float maxDistance = 4.5f;                       // Maximum zoom Distance
-
     public float minDistance = 0.6f;                      // Minimum zoom Distance
-
     public float xSpeed = 200.0f;                             // Orbit speed (Left/Right)
-
     public float ySpeed = 200.0f;                             // Orbit speed (Up/Down)
-
     public float yMinLimit = -80f;                            // Looking up limit
-
     public float yMaxLimit = 80f;                             // Looking down limit
-
     public float zoomRate = 40f;                          // Zoom Speed
-
     public float rotationDampening = 3.0f;                // Auto Rotation speed (higher = faster)
-
     public float zoomDampening = 5.0f;                    // Auto Zoom speed (Higher = faster)
-	
 	public float startHeight = -20.0f;
 
     public LayerMask collisionLayers = -1;     // What the camera will collide with
-
     public bool lockToRearOfTarget = false;             // Lock camera to rear of target
-
     public bool allowMouseInputX = true;                // Allow player to control camera angle on the X axis (Left/Right)
-
     public bool allowMouseInputY = true;                // Allow player to control camera angle on the Y axis (Up/Down)
 	
 
     private float xDeg = 0.0f;
-
-    private float yDeg = 0.0f;
-
+	[HideInInspector]
+    public float yDeg = 0.0f;
     private float currentDistance;
-
     private float desiredDistance;
-
     private float correctedDistance;
-
     private bool rotateBehind = false;
 
 //    private bool mouseSideButton = false;   

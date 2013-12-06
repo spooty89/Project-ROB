@@ -14,23 +14,17 @@ public class JumpState : StateClass
 	
 	private void InputHandler()
 	{
+		v = Input.GetAxisRaw("Vertical");
+		h = Input.GetAxisRaw("Horizontal");
+		
+		isMoving = Mathf.Abs (h) > 0.05f || Mathf.Abs (v) > 0.05f;
+		
 		if( Input.anyKey)
-		{
-			v = Input.GetAxisRaw("Vertical");
-			h = Input.GetAxisRaw("Horizontal");
-			
-			isMoving = Mathf.Abs (h) > 0.05f || Mathf.Abs (v) > 0.05f;
-			
+		{	
 			if( Input.GetButtonDown( "Jump" ) )
 			{
 				ApplyJump();
 			}
-		}
-		else
-		{
-			v = 0f;
-			h = 0f;
-			isMoving = false;
 		}
 	}
 	

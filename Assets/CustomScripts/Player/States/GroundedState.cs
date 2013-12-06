@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class GroundedState : StateClass
 {
-	private bool isMoving, sliding = false;
+	private bool isMoving;//, sliding = false;
 	private float v, h;
 	private float walkSpeed = 4.0f;	// The speed when walking
 	private float runSpeed = 8.0f;	// When pressing Shift button we start running
@@ -12,36 +12,34 @@ public class GroundedState : StateClass
 	public override void Run()
 	{
 		InputHandler();
-		if(!(_Player.jumping || sliding))
+		if(!(_Player.jumping))// || sliding))
 		{
 			MovementHandler();
 		}
-		else if(sliding)
+		/*else if(sliding)
 		{
 			Slide();
-		}
+		}*/
 	}
 	
 	
 	private void InputHandler()
 	{
+		v = Input.GetAxisRaw("Vertical");
+		h = Input.GetAxisRaw("Horizontal");
+		
+		isMoving = Mathf.Abs (h) > 0.05f || Mathf.Abs (v) > 0.05f;
+		
 		if( Input.anyKey )
 		{
-			v = Input.GetAxisRaw("Vertical");
-			h = Input.GetAxisRaw("Horizontal");
-			
-			isMoving = Mathf.Abs (h) > 0.05f || Mathf.Abs (v) > 0.05f;
-			
 			if( Input.GetButton( "Jump" ) )
 			{
 				ApplyJump();
 			}
-		}
-		else
-		{
-			v = 0f;
-			h = 0f;
-			isMoving = false;
+			if( Input.GetButtonDown( "Aim" ) )
+			{
+				_Player.stateChange( "aim_idle" );
+			}
 		}
 	}
 	
@@ -84,7 +82,7 @@ public class GroundedState : StateClass
 		}
 		else{
 			// Pick speed modifier
-			if (Input.GetKey (KeyCode.LeftShift))
+			if (Input.GetButton("Shift"))
 			{
 				targetSpeed *= runSpeed;
 				_Player.SetCurrentState("run");
@@ -105,12 +103,12 @@ public class GroundedState : StateClass
 	}
 	
 	
-	private void Slide()
+	/*private void Slide()
 	{
 		_Player.moveDirection = Vector3.RotateTowards(surfaceUp, Vector3.down, 1.5f, 0f);
 		transform.rotation = Quaternion.LookRotation(_Player.moveDirection);
 		_Player.moveSpeed = 10.0f;
-	}
+	}*/
 	
 	
 	private void ApplyJump ()
@@ -127,7 +125,7 @@ public class GroundedState : StateClass
 		{
 			surfaceUp = hit.normal;
 			
-			float angle = Vector3.Angle(surfaceUp, Vector3.up);
+			/*float angle = Vector3.Angle(surfaceUp, Vector3.up);
 			if( angle > 55f && angle < 88f)
 			{
 				Debug.Log(angle);
@@ -136,7 +134,7 @@ public class GroundedState : StateClass
 			else
 			{
 				sliding = false;
-			}
+			}*/
 		}
 	}
 }

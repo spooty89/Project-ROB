@@ -8,7 +8,6 @@ public class HangState : StateClass
 	private float runSpeed = 8.0f;	// When pressing Shift button we start running
 	private Vector3 surfaceUp = Vector3.up;
 	
-	
 	public override void Run()
 	{
 		InputHandler();
@@ -18,25 +17,19 @@ public class HangState : StateClass
 	
 	private void InputHandler()
 	{
+		v = Input.GetAxisRaw("Vertical");
+		h = Input.GetAxisRaw("Horizontal");
+		
+		isMoving = Mathf.Abs (h) > 0.05f || Mathf.Abs (v) > 0.05f;
+		
 		if( Input.anyKey)
 		{
-			v = Input.GetAxisRaw("Vertical");
-			h = Input.GetAxisRaw("Horizontal");
-			
-			isMoving = Mathf.Abs (h) > 0.05f || Mathf.Abs (v) > 0.05f;
-			
 			if( Input.GetButton( "Interact" ) )
 			{
 				_Player.verticalSpeed = -0.1f;
 				stateChange("jump_after_apex");
 				_Player.jumpingReachedApex = true;
 			}
-		}
-		else
-		{
-			v = 0f;
-			h = 0f;
-			isMoving = false;
 		}
 	}
 	
@@ -80,7 +73,7 @@ public class HangState : StateClass
 		else{
 			_Player.SetCurrentState("hang_move");
 			// Pick speed modifier
-			if (Input.GetKey (KeyCode.LeftShift))
+			if (Input.GetButton("Shift"))
 			{
 				targetSpeed *= runSpeed;
 			}

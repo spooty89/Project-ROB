@@ -70,7 +70,6 @@ public class TPC: MonoBehaviour
 	
 	public void OnTriggerExit(Collider other)
 	{
-		Debug.Log("here");
 		if(other.gameObject.CompareTag("Climb")) {    	// If the triggerBox has a "Climb" tag
 			_Player.numClimbContacts -= 1;						// Keep track of how many climb boxes player is currently in
 			if (_Player.numClimbContacts <= 0 && !_Player.doubleJumping) {				// If the player is not in any climb boxes
@@ -89,7 +88,6 @@ public class TPC: MonoBehaviour
 		{
 			sc.enabled = false;
 		}
-		Debug.Log(state);
 		stateClass = (StateClass)GetComponent(_animations[state].state);
 		stateClass.enabled = true;
 		_Player.SetCurrentState( state );

@@ -10,10 +10,12 @@ public class ClimbState : StateClass
 	
 	private void InputHandler()
 	{	
-		if (Input.anyKey)
+		float vertical = Input.GetAxisRaw("Vertical");
+		float horizontal = Input.GetAxisRaw("Horizontal");
+		if (Input.anyKey || vertical != 0f || horizontal != 0f)
 		{
 			// If one of the up/down buttons is pressed
-			if (Input.GetButton ("Vertical")) {
+			if (Input.GetButton ("Vertical") || vertical != 0f) {
 				if(Input.GetAxis("Vertical") > 0)
 				{
 					_Player.SetCurrentState("climb_wall_up");
@@ -23,18 +25,17 @@ public class ClimbState : StateClass
 					_Player.SetCurrentState("climb_wall_down");
 				}
 				_Player.verticalSpeed = 2.0f * Input.GetAxis("Vertical");
-				if (Input.GetKey (KeyCode.LeftShift))		// Climb faster
+				if (Input.GetButton("Shift"))		// Climb faster
 				{
 					_Player.verticalSpeed *= 1.5f;
 				}
 			}
-			else if (Input.GetButtonUp("Vertical"))
+			else
 			{
 				_Player.verticalSpeed = 0.0f;
-				_Player.SetCurrentState("climb_wall_idle");
 			}
 			// If one of the left/right buttons is pressed
-			if (Input.GetButton ("Horizontal"))
+			if (Input.GetButton ("Horizontal") || horizontal != 0f)
 			{
 				if( Input.GetAxis("Horizontal") > 0 )
 				{
@@ -48,14 +49,13 @@ public class ClimbState : StateClass
 								 Input.GetAxis("Horizontal"), _Player.wallRight.z * Input.GetAxis("Horizontal"));
 				_Player.moveDirection = _Player.moveDirection.normalized;
 				_Player.moveSpeed = 2.0f;
-				if (Input.GetKey (KeyCode.LeftShift))
+				if (Input.GetButton("Shift"))
 					_Player.moveSpeed *= 1.5f;
 			}
-			else if (Input.GetButtonUp("Horizontal"))
+			else
 			{
 				_Player.moveSpeed = 0.0f;
 				_Player.moveDirection = transform.forward;
-				_Player.SetCurrentState("climb_wall_idle");
 			}
 			
 			if (Input.GetButtonDown("Jump"))
@@ -65,6 +65,8 @@ public class ClimbState : StateClass
 				_Player.moveSpeed = 8.0f;
 				_Player.verticalSpeed = _Player.CalculateJumpVerticalSpeed( _Player.jumpHeight );
 				_Player.doubleJumping = true;
+				_Player.climbing = false;
+				_Player.climbContact = false;
 				stateChange("double_jump");
 			}
 		}
