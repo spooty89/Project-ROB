@@ -9,7 +9,7 @@ namespace AssemblyCSharp
 	public class bulletCollision : MonoBehaviour
 	{
 		void OnTriggerEnter(Collider hit) {
-			if(hit.gameObject.CompareTag( "bulletTrigger" ))
+			if(!hit.collider.isTrigger || hit.gameObject.CompareTag( "bulletTrigger" ))
 				Hit( hit.gameObject );
 		}
 

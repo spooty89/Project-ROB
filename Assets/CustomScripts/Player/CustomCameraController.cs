@@ -41,9 +41,11 @@ public class CustomCameraController : MonoBehaviour {
 
     private float xDeg = 0.0f;
 	[HideInInspector]
-    public float yDeg = 0.0f;
-    private float currentDistance;
-    private float desiredDistance;
+	public float yDeg = 0.0f;
+	[HideInInspector]
+	public float currentDistance;
+	[HideInInspector]
+	public float desiredDistance;
     private float correctedDistance;
     private bool rotateBehind = false;
 

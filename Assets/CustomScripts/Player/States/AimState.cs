@@ -8,7 +8,7 @@ public class AimState : StateClass
 	public float maxDistance, bulletSpeed;
 	public LayerMask layerMask;
 	public float targetHeight = 1.0f;
-	private float normalHeight;
+	private float normalHeight, normalDistance;
 	public GUIStyle aimStyle;
 
 	private bool isMoving;
@@ -22,12 +22,13 @@ public class AimState : StateClass
 	{
 		camController = Camera.main.GetComponent<CustomCameraController>();
 		normalHeight = camController.targetHeight;
+		normalDistance = camController.normalDistance;
 	}
 
 	private void OnEnable()
 	{
 		animation[aimUpDown.name].layer = 2;
-		camController.targetHeight = targetHeight;
+		camController.targetHeight = Mathf.Max( targetHeight * (camController.desiredDistance/normalDistance), normalHeight );
 	}
 
 	private void OnDisable()
@@ -64,21 +65,17 @@ public class AimState : StateClass
 
 		if( Input.GetButtonUp( "fire" ) )
 		{
-			RaycastHit hit;
 			GameObject bulletInstance = (GameObject)Resources.Load( "Prefab/" + bullet.name );
 			bulletInstance.GetComponent<bullet>().speed = bulletSpeed;
 
-			if(Physics.Raycast( Camera.main.transform.position, Camera.main.transform.forward,
-			                out hit, maxDistance, layerMask ))
-			{
-				bulletInstance.GetComponent<bullet>().destination = hit.point;
-			}
-			else
-			{
-				Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
-				bulletInstance.GetComponent<bullet>().destination = ray.GetPoint( maxDistance );
-			}
+			Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
+			bulletInstance.GetComponent<bullet>().destination = ray.GetPoint( maxDistance );
+
 			Instantiate( bulletInstance, bulletOrigin.transform.position, bulletOrigin.transform.rotation );
+		}
+		if( Input.GetButton( "Mouse ScrollWheel" ) )
+		{
+			camController.targetHeight = Mathf.Max( targetHeight * (camController.desiredDistance/normalDistance), normalHeight );
 		}
 	}
 	

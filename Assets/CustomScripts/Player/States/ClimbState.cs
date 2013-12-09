@@ -69,6 +69,17 @@ public class ClimbState : StateClass
 				_Player.climbContact = false;
 				stateChange("double_jump");
 			}
+
+			if( Input.GetButton( "Interact" ) )
+			{
+				_Player.verticalSpeed = -0.1f;
+				_Player.transform.forward = _Player.wallFacing;
+				_Player.climbing = false;
+				_Player.transform.position += new Vector3(_Player.wallFacing.x * 0.25f, _Player.wallFacing.y * 0.25f, _Player.wallFacing.z * 0.25f);
+				_Player.moveDirection = _Player.wallFacing;
+				stateChange("jump_after_apex");
+				_Player.jumpingReachedApex = true;
+			}
 		}
 		else
 		{

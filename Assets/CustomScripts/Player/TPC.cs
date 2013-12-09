@@ -27,6 +27,14 @@ public class TPC: MonoBehaviour
 	
 	// Update the current state of the game
 	void Update() {
+		if( Input.GetButtonDown( "Reload" ) )
+		{
+			Application.LoadLevel( Application.loadedLevel );
+		}
+		if( Input.GetButtonDown( "Quit" ) )
+		{
+			Application.Quit();
+        }
 		stateClass.Run();
 		AnimationHandler();		// Handle animations
 	}
