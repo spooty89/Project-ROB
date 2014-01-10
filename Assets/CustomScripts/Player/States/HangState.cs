@@ -87,7 +87,7 @@ public class HangState : StateClass
 		
 		transform.rotation = Quaternion.LookRotation(new Vector3(_Player.moveDirection.x, 0.0f, _Player.moveDirection.z));
 		
-		if(_Player.collisionFlags == 0)
+		if((_Player.controller.collisionFlags & CollisionFlags.Above) == 0)
 		{
 			_Player.verticalSpeed = -0.1f;
 			stateChange("jump_after_apex");
@@ -97,7 +97,7 @@ public class HangState : StateClass
 	
 	public override void CollisionHandler(ControllerColliderHit hit)
 	{
-		if((_Player.collisionFlags & CollisionFlags.CollidedAbove) != 0)
+		if((_Player.controller.collisionFlags & CollisionFlags.CollidedAbove) != 0)
 			surfaceUp = -hit.normal;
 	}
 	

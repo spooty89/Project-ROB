@@ -106,10 +106,6 @@ public class TPC: MonoBehaviour
 	
 	// Handle animation states
 	private void AnimationHandler() {
-		Vector3 movement = _Player.moveDirection * _Player.moveSpeed + new Vector3 (0, _Player.verticalSpeed, 0) + _Player.inAirVelocity;		// Calculate actual motion
-		movement *= Time.deltaTime;			// Base degree of applied movement on time since last frame
-		//transform.position += movement;
-		_Player.collisionFlags = controller.Move(movement);
 		if(!_Player.GetCurrentState().Equals(lastState))
 		{
 			_animation[_animations[_Player.GetCurrentState()].name].speed = _animations[_Player.GetCurrentState()].speed;

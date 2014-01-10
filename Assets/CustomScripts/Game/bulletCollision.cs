@@ -9,17 +9,22 @@ namespace AssemblyCSharp
 	public class bulletCollision : MonoBehaviour
 	{
 		void OnTriggerEnter(Collider hit) {
-			if(!hit.collider.isTrigger || hit.gameObject.CompareTag( "bulletTrigger" ))
+			if(hit.gameObject.CompareTag( "bulletTrigger" ))
+			{
+				//Debug.Log("activate");
 				Hit( hit.gameObject );
+			}
 		}
 
 		void OnCollisionEnter(Collision hit)
 		{
-			Hit( hit.gameObject );
+			if( !hit.gameObject.CompareTag( "bullet" ) )
+				Hit( hit.gameObject );
 		}
 
 		void Hit(GameObject hit)
 		{
+			gameObject.GetComponent<bullet>().destroyOnTime.Stop();
 			hit.SendMessage("activate", SendMessageOptions.DontRequireReceiver);
 			Destroy(gameObject);
 		}

@@ -2,12 +2,25 @@ using UnityEngine;
 
 public class WallslideState : StateClass
 {
-	private bool isMoving;
+	public float inputDelay = 0f,
+					walljumpRotationModifier = 1f,
+					walljumpRotModBuildTime = 0f;
+	private bool isMoving, getInput = false;
 	private float v, h;
-	
+	private int collisionChecker = 0;
+
+	void OnEnable()
+	{
+		getInput = false;
+		CoRoutine.AfterWait(inputDelay, () => getInput = true);
+	}
+
 	public override void Run()
 	{
-		InputHandler();
+		if( getInput )
+		{
+			InputHandler();
+		}
 		MovementHandler();
 	}
 	
@@ -88,12 +101,21 @@ public class WallslideState : StateClass
 		{
 			_Player.verticalSpeed = -5.0f;
 		}
-		
-		
-		if(_Player.collisionFlags == 0)
+
+		if( (_Player.controller.collisionFlags & CollisionFlags.Sides) != 0)
 		{
-			stateChange("jump_after_apex");
+			collisionChecker++;
+			if(collisionChecker > 3)
+			{
+				//Debug.Log("here");
+				collisionChecker = 0;
+				stateChange("jump_after_apex");
+			}
 		}	
+		else
+		{
+			collisionChecker = 0;
+		}
 	}
 	
 	
@@ -102,6 +124,7 @@ public class WallslideState : StateClass
 		_Player.moveDirection = _Player.wallFacing;
 		_Player.moveSpeed = 8.0f;
 		_Player.verticalSpeed = _Player.CalculateJumpVerticalSpeed (_Player.doubleJumpHeight);
+		_Player.setRotationModiferAndBuild( walljumpRotationModifier, walljumpRotModBuildTime );
 		_Player.doubleJumping = true;
 		stateChange("double_jump");
 	}

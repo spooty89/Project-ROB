@@ -10,16 +10,16 @@ public class CharacterClass : MonoBehaviour
 					jumpAcceleration = (float)2.0,			// Acceleration from jumping
 					doubleJumpHeight = (float)1.5,			// How high we jump when we double jump
 					doubleJumpAcceleration = (float)1.0;	// from double jumping
-	//[HideInInspector]
+	[HideInInspector]
 	public float verticalSpeed = (float)0.0,		// The current vertical speed
-					moveSpeed = (float)0.0;			// The current x-z move speed
-	//[HideInInspector]
+					moveSpeed = (float)0.0,			// The current x-z move speed
+					rotationModifier = (float)1.0,
+					rotationModifierBuildTime = (float)0.0f;
+	[HideInInspector]
 	public Vector3 moveDirection = Vector3.zero,	// The current move direction in x-z
 					inAirVelocity = Vector3.zero,
 					wallFacing = Vector3.zero,
-					wallRight = Vector3.zero;
-	[HideInInspector]
-	public CollisionFlags collisionFlags;			// The last collision flags returned from controller.Move
+					wallRight = Vector3.zero;			
 	[HideInInspector]
 	public bool jumping = false,
 				doubleJumping = false,
@@ -30,7 +30,7 @@ public class CharacterClass : MonoBehaviour
 				hanging = false,
 				wallSliding = false,
 				transitioning = false;
-	//[HideInInspector]
+	[HideInInspector]
 	public int numHangContacts = 0,
 				numClimbContacts = 0;
 	[HideInInspector]
@@ -38,6 +38,9 @@ public class CharacterClass : MonoBehaviour
 	[HideInInspector]
 	public TransitionBox curTransitionBox;
 	public stateChangeEvent stateChange;
+	private bool build = false;
+
+	public CharacterController controller;
 	
 	public string GetCurrentState()
 	{
@@ -47,7 +50,35 @@ public class CharacterClass : MonoBehaviour
 	{
 		currentState = state;
 	}
-	
+
+	public void setRotationModiferAndBuild( float buildFrom, float duration )
+	{
+		rotationModifier = buildFrom;
+		rotationModifierBuildTime = duration / (1f - buildFrom);
+		build = true;
+	}
+
+	private void Awake ()
+	{
+		controller = GetComponent<CharacterController>();
+	}
+
+	void Update()
+	{
+		Vector3 movement = moveDirection * moveSpeed + new Vector3 (0, verticalSpeed, 0) + inAirVelocity;		// Calculate actual motion
+		movement *= Time.deltaTime;			// Base degree of applied movement on time since last frame
+		controller.Move(movement);
+
+		if( build )
+		{
+			rotationModifier += Time.deltaTime / rotationModifierBuildTime;
+			if( rotationModifier > 1f )
+			{
+				rotationModifier = 1f;
+				build = false;
+			}
+		}
+	}
 	
 	public float CalculateJumpVerticalSpeed (float targetJumpHeight)
 	{
@@ -57,13 +88,17 @@ public class CharacterClass : MonoBehaviour
 	}
 	
 	public bool IsGrounded () {
-		if ((collisionFlags & CollisionFlags.CollidedBelow) != 0)
+		if ( (controller.collisionFlags & CollisionFlags.CollidedBelow) != 0)
 		{
 			jumping = false;
 			doubleJumping = false;
 			jumpingReachedApex = false;
+			return true;
 		}
-		return (collisionFlags & CollisionFlags.CollidedBelow) != 0;
+		else
+		{
+			return false;
+		}
 	}
 	
 	

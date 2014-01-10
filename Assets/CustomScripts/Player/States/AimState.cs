@@ -57,7 +57,7 @@ public class AimState : StateClass
 			
 		isMoving = Mathf.Abs (h) > 0.05f || Mathf.Abs (v) > 0.05f;
 
-		if( Input.GetButtonDown( "Aim" ) )
+		if( Input.GetButtonUp( "Aim" ) )
 		{
 			_Player.moveDirection = Camera.main.transform.TransformDirection(Vector3.forward).normalized;
 			_Player.stateChange( "idle" );
@@ -67,10 +67,21 @@ public class AimState : StateClass
 		{
 			GameObject bulletInstance = (GameObject)Resources.Load( "Prefab/" + bullet.name );
 			bulletInstance.GetComponent<bullet>().speed = bulletSpeed;
+			bulletInstance.GetComponent<bullet>().maxTime = maxDistance/bulletSpeed;
 
-			Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
-			bulletInstance.GetComponent<bullet>().destination = ray.GetPoint( maxDistance );
-
+			RaycastHit hit;
+			Ray r = Camera.main.ViewportPointToRay (new Vector3(0.5f,0.5f, 0f));
+			Physics.Raycast( r.origin, r.direction, out hit, maxDistance, layerMask );
+			if( hit.point != Vector3.zero)
+			{
+				r = new Ray( bulletOrigin.transform.position, hit.point - bulletOrigin.transform.position );
+			}
+			else
+			{
+				r = new Ray( bulletOrigin.transform.position, r.GetPoint(maxDistance) - bulletOrigin.transform.position );
+			}
+			
+			bulletInstance.GetComponent<bullet>().direction = r.direction;
 			Instantiate( bulletInstance, bulletOrigin.transform.position, bulletOrigin.transform.rotation );
 		}
 		if( Input.GetButton( "Mouse ScrollWheel" ) )

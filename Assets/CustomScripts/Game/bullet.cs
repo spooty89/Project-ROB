@@ -4,7 +4,10 @@ using System.Collections;
 public class bullet : MonoBehaviour
 {
 	public float speed;
-	public Vector3 destination;
+	public Vector3 direction;
+	public float maxTime;
+	[HideInInspector]
+	public CoRoutine destroyOnTime;
 
 	private Vector3 position
 	{
@@ -15,13 +18,16 @@ public class bullet : MonoBehaviour
 		set
 		{
 			gameObject.transform.position = value;
-			if(gameObject.transform.position == destination)
-				Destroy(gameObject);
 		}
+	}
+
+	void Awake()
+	{
+		destroyOnTime = CoRoutine.AfterWait( maxTime, () => Destroy( this.gameObject ) );
 	}
 	void Update ()
 	{
-		position = Vector3.MoveTowards( position, destination, speed * Time.deltaTime );
+		position = Vector3.MoveTowards( position, position + direction * speed, speed * Time.deltaTime );
 	}
 }
 

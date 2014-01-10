@@ -74,7 +74,7 @@ public class JumpState : StateClass
 		if (targetDirection != Vector3.zero)
 		{
 			// Smoothly turn towards the target direction
-			_Player.moveDirection = Vector3.RotateTowards(_Player.moveDirection, targetDirection, _Player.inAirRotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
+			_Player.moveDirection = Vector3.RotateTowards(_Player.moveDirection, targetDirection, _Player.rotationModifier * _Player.inAirRotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
 			_Player.moveDirection = _Player.moveDirection.normalized;
 		}
 		
@@ -105,6 +105,7 @@ public class JumpState : StateClass
 	{
 		if(_Player.IsGrounded())
 		{
+			_Player.rotationModifier = 1f;
 			stateChange("idle");
 		}
 		

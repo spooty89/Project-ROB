@@ -22,7 +22,6 @@ namespace AssemblyCSharp
 		}
 		
 		public void Update () {
-			if(enabled){
 				this.movingPlatform.move();
 				if (rotateAround)
 					this.movingPlatform.rotateAround();
@@ -32,7 +31,6 @@ namespace AssemblyCSharp
 					this.player.position += this.movingPlatform.getDeltaPos();
 					this.movingPlatform.rotateOnPlatform(player, controller);
 				}
-			}
 		}
 		
 		public void transferSpeed (Transform playerTransform) {
