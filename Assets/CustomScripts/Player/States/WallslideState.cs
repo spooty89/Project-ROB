@@ -6,11 +6,12 @@ public class WallslideState : StateClass
 					walljumpRotationModifier = 1f,
 					walljumpRotModBuildTime = 0f,
 					walljumpSpeed = 5f;
-	private bool isMoving, getInput = false;
+	private bool isMoving, getInput = false, justJumped = false;
 	private float v, h;
 
 	void OnEnable()
 	{
+		justJumped = false;
 		getInput = false;
 		CoRoutine.AfterWait(inputDelay, () => getInput = true);
 	}
@@ -21,7 +22,8 @@ public class WallslideState : StateClass
 		{
 			InputHandler();
 		}
-		MovementHandler();
+		if( !justJumped)
+			MovementHandler();
 	}
 	
 	private void InputHandler()
@@ -90,8 +92,16 @@ public class WallslideState : StateClass
 				_Player.inAirVelocity += _Player.moveDirection.normalized * Time.deltaTime * _Player.jumpAcceleration;
 			}
 		}*/
-		
-		
+
+		if( Mathf.Abs(Vector3.Angle( _Player.moveDirection, _Player.wallRight)) > 90f )
+		{
+			_Player.moveDirection = _Player.wallLeft;
+		}
+		else
+		{
+			_Player.moveDirection = _Player.wallRight;
+		}
+		transform.rotation = Quaternion.LookRotation(_Player.wallFacing);
 		
 		if (_Player.verticalSpeed > -5.0f)
 		{
@@ -116,6 +126,7 @@ public class WallslideState : StateClass
 	
 	public void ApplyJump ()
 	{
+		justJumped = true;
 		_Player.moveDirection = _Player.wallFacing;
 		_Player.moveSpeed = walljumpSpeed;
 		_Player.verticalSpeed = _Player.CalculateJumpVerticalSpeed (_Player.doubleJumpHeight);

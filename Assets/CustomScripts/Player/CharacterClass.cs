@@ -19,7 +19,8 @@ public class CharacterClass : MonoBehaviour
 	public Vector3  moveDirection = Vector3.zero,	// The current move direction in x-z
 					inAirVelocity = Vector3.zero,
 					wallFacing = Vector3.zero,
-					wallRight = Vector3.zero;			
+					wallRight = Vector3.zero,
+					wallLeft = Vector3.zero;			
 	[HideInInspector]
 	public bool jumping = false,
 				doubleJumping = false,
@@ -88,6 +89,12 @@ public class CharacterClass : MonoBehaviour
 	{
 		wallFacing = newWallNormal;
 		wallRight = Vector3.Cross( wallFacing, transform.up );
+
+		Quaternion qRotation = Quaternion.LookRotation(wallRight);
+		Vector3 rotation = qRotation.eulerAngles;
+		rotation = new Vector3( rotation.x, rotation.y + 180, rotation.z );
+		qRotation = Quaternion.Euler( rotation );
+		wallLeft = qRotation * Vector3.forward;
 	}
 	
 	public float CalculateJumpVerticalSpeed (float targetJumpHeight)
