@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public delegate void wallNormalChangeEvent( Vector3 wallNormal );
 
-public class SurroundingTrigger : MonoBehaviour
+public class surroundingTrigger : MonoBehaviour
 {
 	public bool horizontalUp, horizontalDown, vertical;
 	public wallNormalChangeEvent wallNormal;
@@ -39,6 +39,8 @@ public class SurroundingTrigger : MonoBehaviour
 				if( Mathf.Abs( contact.normal.y ) <= 0.1f)
 				{
 					wallNormal( contact.normal );
+					vertical = true;
+					Debug.DrawRay( contact.point, contact.normal, Color.white, 1f );
 				}
 			}
 		}
@@ -49,7 +51,7 @@ public class SurroundingTrigger : MonoBehaviour
 		foreach (ContactPoint contact in collision.contacts) {
 			if( Mathf.Abs( contact.normal.y ) <= 0.1f)
 			{
-				wallNormal( contact.normal );
+				//wallNormal( contact.normal );
 				vertical = false;
 			}
 			else if( Mathf.Abs( contact.normal.y ) >= 0.9f)

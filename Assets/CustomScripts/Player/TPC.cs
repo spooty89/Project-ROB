@@ -46,6 +46,7 @@ public class TPC: MonoBehaviour
 		{
 			sc.stateChange = stateChangeHandler;
 		}
+		_Player.surroundingCollision = surroundingCollisionHandler;
 		_Player.stateChange = stateChangeHandler;
 	}
 	
@@ -69,6 +70,12 @@ public class TPC: MonoBehaviour
 	private void OnControllerColliderHit (ControllerColliderHit hit)
 	{
 		((StateClass)GetComponent( _animations[_Player.GetCurrentState()].state )).CollisionHandler(hit);
+	}
+
+
+	private void surroundingCollisionHandler()
+	{
+		((StateClass)GetComponent( _animations[_Player.GetCurrentState()].state )).surroundingCollisionHandler();
 	}
 	
 	
@@ -94,7 +101,8 @@ public class TPC: MonoBehaviour
 		
 		((StateClass)GetComponent( _animations[_Player.GetCurrentState()].state )).TriggerEnterHandler(other);
 	}
-	
+
+
 	public void OnTriggerExit(Collider other)
 	{
 		if(other.gameObject.CompareTag("Climb")) {    	// If the triggerBox has a "Climb" tag
@@ -117,14 +125,8 @@ public class TPC: MonoBehaviour
 		
 		((StateClass)GetComponent( _animations[_Player.GetCurrentState()].state )).TriggerExitHandler(other);
 	}
-	
-	void OnCollisionEnter(Collision hit)
-	{
-		//Debug.Log("here");
-		//((StateClass)GetComponent( animations[_Player.GetCurrentState()].state )).CollisionHandler( hit );
-	}
-	
-	
+
+
 	private void stateChangeHandler( string state )
 	{
 		StateClass[] scArray = GetComponents<StateClass>();

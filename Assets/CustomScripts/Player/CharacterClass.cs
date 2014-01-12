@@ -1,5 +1,7 @@
 using UnityEngine;
 
+public delegate void surroundingCollisionEvent( );
+
 public class CharacterClass : MonoBehaviour
 {
 	public float    gravity = 17.0f,
@@ -43,7 +45,8 @@ public class CharacterClass : MonoBehaviour
 	[HideInInspector]
 	public CharacterController controller;
 	[HideInInspector]
-	public SurroundingTrigger surroundingTrigger;
+	public surroundingTrigger sTrigger;
+	public surroundingCollisionEvent surroundingCollision;
 	
 	public string GetCurrentState()
 	{
@@ -64,8 +67,8 @@ public class CharacterClass : MonoBehaviour
 	private void Awake ()
 	{
 		controller = GetComponent<CharacterController>();
-		surroundingTrigger = transform.GetComponentInChildren<SurroundingTrigger>();
-		surroundingTrigger.wallNormal = wallNormalChangeHandler;
+		sTrigger = transform.GetComponentInChildren<surroundingTrigger>();
+		sTrigger.wallNormal = wallNormalChangeHandler;
 	}
 
 	void Update()
@@ -85,16 +88,13 @@ public class CharacterClass : MonoBehaviour
 		}
 	}
 
+	// Get wall contact information based on the contact point's normal vector
 	public void wallNormalChangeHandler( Vector3 newWallNormal )
 	{
-		wallFacing = newWallNormal;
-		wallRight = Vector3.Cross( wallFacing, transform.up );
-
-		Quaternion qRotation = Quaternion.LookRotation(wallRight);
-		Vector3 rotation = qRotation.eulerAngles;
-		rotation = new Vector3( rotation.x, rotation.y + 180, rotation.z );
-		qRotation = Quaternion.Euler( rotation );
-		wallLeft = qRotation * Vector3.forward;
+		wallFacing = newWallNormal;			// Set wallFacing equal to the contact normal (points out toward player)
+		wallRight = Vector3.Cross( wallFacing, transform.up );		// Cross multiply wallFacing with the player's up vector to get wallRight
+		wallLeft = -wallRight;// Quaternion.Euler( new Vector3( wallRight.x, wallRight.y + 180, wallRight.z ) ) * Vector3.forward;	// Rotate wallRight 180 degrees around y axis to get wallLeft
+		surroundingCollision();
 	}
 	
 	public float CalculateJumpVerticalSpeed (float targetJumpHeight)
@@ -105,7 +105,7 @@ public class CharacterClass : MonoBehaviour
 	}
 	
 	public bool IsGrounded () {
-		if ( surroundingTrigger.horizontalUp || (controller.collisionFlags & CollisionFlags.CollidedBelow) != 0)
+		if ( sTrigger.horizontalUp || (controller.collisionFlags & CollisionFlags.CollidedBelow) != 0)
 		{
 			jumping = false;
 			doubleJumping = false;

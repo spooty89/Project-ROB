@@ -49,6 +49,12 @@ public class TransitionState : StateClass {
 	}
 	
 	
+	public override void surroundingCollisionHandler()
+	{
+		
+	}
+	
+	
 	public override void TriggerEnterHandler(Collider other)
 	{
 		

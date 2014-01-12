@@ -115,7 +115,7 @@ public class WallslideState : StateClass
 		if( _Player.controller.collisionFlags == 0)
 		{
 			//Debug.Log("here");
-			if( !_Player.surroundingTrigger.vertical )
+			if( !_Player.sTrigger.vertical )
 			{
 				//Debug.Log("and here");
 				stateChange("jump_after_apex");
@@ -146,9 +146,28 @@ public class WallslideState : StateClass
 	}
 	
 	
-	public override void TriggerEnterHandler(Collider other)
+	public override void surroundingCollisionHandler()
 	{
 		
+	}
+	
+	
+	public override void TriggerEnterHandler(Collider other)
+	{
+		if (_Player.climbContact) {// If player is within climb triggerBox
+			//_Player.moveDirection = -_Player.wallFacing;
+			transform.rotation = Quaternion.LookRotation(_Player.wallFacing);
+			Vector3 rotation = transform.rotation.eulerAngles;
+			rotation = new Vector3( rotation.x, rotation.y + 180, rotation.z );
+			transform.rotation = Quaternion.Euler( rotation );
+			
+			stateChange("climb_wall_idle");
+			_Player.climbing = true;
+			//_Player.moveSpeed = 1.0f;
+			_Player.inAirVelocity = Vector3.zero;
+			_Player.jumping = false;
+			_Player.doubleJumping = false;
+		}
 	}
 	
 	

@@ -165,6 +165,12 @@ public class AimState : StateClass
 			stateChange("jump_after_apex");
 		}
 	}
+
+
+	public override void surroundingCollisionHandler()
+	{
+
+	}
 	
 	
 	public override void CollisionHandler(ControllerColliderHit hit)

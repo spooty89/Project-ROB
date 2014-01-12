@@ -136,6 +136,12 @@ public class ClimbState : StateClass
 	}
 	
 	
+	public override void surroundingCollisionHandler()
+	{
+		
+	}
+	
+	
 	public override void TriggerEnterHandler(Collider other)
 	{
 		

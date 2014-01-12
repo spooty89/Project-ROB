@@ -102,6 +102,12 @@ public class HangState : StateClass
 	}
 	
 	
+	public override void surroundingCollisionHandler()
+	{
+		
+	}
+	
+	
 	public override void TriggerEnterHandler(Collider other)
 	{
 		
