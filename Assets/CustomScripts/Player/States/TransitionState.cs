@@ -47,4 +47,16 @@ public class TransitionState : StateClass {
 	private void MovementHandler(){
 		_Player.moveSpeed = 0;
 	}
+	
+	
+	public override void TriggerEnterHandler(Collider other)
+	{
+		
+	}
+	
+	
+	public override void TriggerExitHandler(Collider other)
+	{
+		
+	}
 }

@@ -14,7 +14,7 @@ namespace AssemblyCSharp
 				for(int i = 0; i < barriers.Count; i++){
 					barriers[i].SetActive(true);
 				}	
-				player.GetComponent<ROBgui>().tokenRetrieve = true;
+				//player.GetComponent<ROBgui>().tokenRetrieve = true;
 				Destroy(this.gameObject);
 			}
 		}

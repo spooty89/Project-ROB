@@ -10,7 +10,7 @@ namespace AssemblyCSharp
 		//public List <GameObject> tokens;
 		public int tokens;
 		
-		private void Awake () {
+		/*private void Awake () {
 			gui = GameObject.FindGameObjectWithTag("Player").GetComponent<ROBgui>();
 			gui.totalTokens = tokens;
 		}
@@ -20,7 +20,7 @@ namespace AssemblyCSharp
 				gui.tokenRetrieve = false;
 				Destroy(this.gameObject);
 			}
-		}
+		}*/
 	}
 }
 

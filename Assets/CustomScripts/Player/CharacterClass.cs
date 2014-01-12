@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class CharacterClass : MonoBehaviour
 {
-	public float gravity = 17.0f,
+	public float    gravity = 17.0f,
 					rotateSpeed = (float)900.0,
 					inAirRotateSpeed = (float)450.0,
 					speedSmoothing = (float)10.0,
@@ -11,12 +11,12 @@ public class CharacterClass : MonoBehaviour
 					doubleJumpHeight = (float)1.5,			// How high we jump when we double jump
 					doubleJumpAcceleration = (float)1.0;	// from double jumping
 	[HideInInspector]
-	public float verticalSpeed = (float)0.0,		// The current vertical speed
+	public float    verticalSpeed = (float)0.0,		// The current vertical speed
 					moveSpeed = (float)0.0,			// The current x-z move speed
 					rotationModifier = (float)1.0,
 					rotationModifierBuildTime = (float)0.0f;
 	[HideInInspector]
-	public Vector3 moveDirection = Vector3.zero,	// The current move direction in x-z
+	public Vector3  moveDirection = Vector3.zero,	// The current move direction in x-z
 					inAirVelocity = Vector3.zero,
 					wallFacing = Vector3.zero,
 					wallRight = Vector3.zero;			
@@ -29,18 +29,20 @@ public class CharacterClass : MonoBehaviour
 				hangContact = false,
 				hanging = false,
 				wallSliding = false,
-				transitioning = false;
+				transitioning = false,
+				build = false;
 	[HideInInspector]
-	public int numHangContacts = 0,
+	public int  numHangContacts = 0,
 				numClimbContacts = 0;
 	[HideInInspector]
 	public string currentState;
 	[HideInInspector]
 	public TransitionBox curTransitionBox;
 	public stateChangeEvent stateChange;
-	private bool build = false;
-
+	[HideInInspector]
 	public CharacterController controller;
+	[HideInInspector]
+	public SurroundingTrigger surroundingTrigger;
 	
 	public string GetCurrentState()
 	{
@@ -61,6 +63,8 @@ public class CharacterClass : MonoBehaviour
 	private void Awake ()
 	{
 		controller = GetComponent<CharacterController>();
+		surroundingTrigger = transform.GetComponentInChildren<SurroundingTrigger>();
+		surroundingTrigger.wallNormal = wallNormalChangeHandler;
 	}
 
 	void Update()
@@ -79,6 +83,12 @@ public class CharacterClass : MonoBehaviour
 			}
 		}
 	}
+
+	public void wallNormalChangeHandler( Vector3 newWallNormal )
+	{
+		wallFacing = newWallNormal;
+		wallRight = Vector3.Cross( wallFacing, transform.up );
+	}
 	
 	public float CalculateJumpVerticalSpeed (float targetJumpHeight)
 	{
@@ -88,7 +98,7 @@ public class CharacterClass : MonoBehaviour
 	}
 	
 	public bool IsGrounded () {
-		if ( (controller.collisionFlags & CollisionFlags.CollidedBelow) != 0)
+		if ( surroundingTrigger.horizontalUp || (controller.collisionFlags & CollisionFlags.CollidedBelow) != 0)
 		{
 			jumping = false;
 			doubleJumping = false;
@@ -98,28 +108,6 @@ public class CharacterClass : MonoBehaviour
 		else
 		{
 			return false;
-		}
-	}
-	
-	
-	public void OnTriggerEnter(Collider other)
-	{
-	    if(other.gameObject.CompareTag("Climb")) {    	// If the triggerBox has a "Climb" tag
-	        climbContact = true;						// Set climb contact to true
-	        numClimbContacts += 1;						// Keep track of how many climb boxes player is currently in
-		}
-	    if(other.gameObject.CompareTag("Hang")) {    	// If the triggerBox has a "Hang" tag
-	        hangContact = true;							// Set hang contact to true
-	        numHangContacts += 1;						// Keep track of how many hang boxes player is currently in
-		}
-		if(other.gameObject.CompareTag("TransitionBox")){
-			TransitionBox transBox = (TransitionBox)other.gameObject.GetComponent("TransitionBox");
-			TransitionEnterCondition curCond = transBox.matchEnterCondition(this);
-			if(curCond != null){
-				transitioning = true;
-				curTransitionBox = transBox;
-				curTransitionBox.curCond = curCond;
-			}
 		}
 	}
 }

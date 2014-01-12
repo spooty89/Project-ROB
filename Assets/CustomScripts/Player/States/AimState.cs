@@ -82,7 +82,7 @@ public class AimState : StateClass
 			}
 			
 			bulletInstance.GetComponent<bullet>().direction = r.direction;
-			Instantiate( bulletInstance, bulletOrigin.transform.position, bulletOrigin.transform.rotation );
+			Instantiate( bulletInstance, bulletOrigin.transform.position, Quaternion.LookRotation(r.direction) );
 		}
 		if( Input.GetButton( "Mouse ScrollWheel" ) )
 		{
@@ -173,6 +173,18 @@ public class AimState : StateClass
 		{
 			surfaceUp = hit.normal;
 		}
+	}
+
+
+	public override void TriggerEnterHandler(Collider other)
+	{
+
+	}
+
+
+	public override void TriggerExitHandler(Collider other)
+	{
+
 	}
 }
 

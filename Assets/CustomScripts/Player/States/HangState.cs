@@ -24,7 +24,7 @@ public class HangState : StateClass
 		
 		if( Input.anyKey)
 		{
-			if( Input.GetButton( "Interact" ) )
+			if( Input.GetButtonDown( "Interact" ) )
 			{
 				_Player.verticalSpeed = -0.1f;
 				stateChange("jump_after_apex");
@@ -101,17 +101,21 @@ public class HangState : StateClass
 			surfaceUp = -hit.normal;
 	}
 	
-	private void OnTriggerExit(Collider other)
+	
+	public override void TriggerEnterHandler(Collider other)
 	{
-	    if(other.gameObject.CompareTag("Hang")) {    	// If the triggerBox has a "Hang" tag
-	    	_Player.numHangContacts -= 1;						// Keep track of how many climb boxes player is currently in
-	    	if (_Player.numHangContacts <= 0) {					// If the player has exited all triggerBoxes with "Hang" tags
-				_Player.verticalSpeed = -0.1f;
-				stateChange("jump_after_apex");
-				_Player.numHangContacts = 0;
-				_Player.hangContact = false;						// Set hang contact to false
-				_Player.hanging = false;							// Set hanging to false
-			}
+		
+	}
+	
+	
+	public override void TriggerExitHandler(Collider other)
+	{
+		if (_Player.numHangContacts <= 0) {				// If the player is not in any climb boxes
+			_Player.verticalSpeed = -0.1f;
+			_Player.stateChange("jump_after_apex");
+			_Player.numHangContacts = 0;
+			_Player.hangContact = false;						// Set climb contact to false
+			_Player.hanging = false;							// Set climbing to false
 		}
 	}
 }

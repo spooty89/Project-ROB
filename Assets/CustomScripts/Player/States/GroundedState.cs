@@ -137,6 +137,18 @@ public class GroundedState : StateClass
 			}*/
 		}
 	}
+	
+	
+	public override void TriggerEnterHandler(Collider other)
+	{
+		
+	}
+	
+	
+	public override void TriggerExitHandler(Collider other)
+	{
+		
+	}
 }
 
 

@@ -39,14 +39,14 @@ public class JumpState : StateClass
 		if (_Player.verticalSpeed > -15.0)
 			_Player.verticalSpeed -= _Player.gravity * Time.deltaTime;
 		// When we reach the apex
-		if (_Player.verticalSpeed < -1.0)
+		if (_Player.verticalSpeed < -0.5f)
 		{
-			if (!_Player.jumpingReachedApex)
-			{
+			//if (!_Player.jumpingReachedApex)
+			//{
 				_Player.jumpingReachedApex = true;
 				_Player.SetCurrentState("jump_after_apex");
-			}
-			else if (_Player.verticalSpeed <= -15.0f){
+			/*}
+			else*/ if (_Player.verticalSpeed <= -15.0f){
 				_Player.verticalSpeed = -15.0f;
 				//_Player.SetCurrentState("free_fall");
 			}
@@ -113,24 +113,43 @@ public class JumpState : StateClass
 		{
 			if (_Player.verticalSpeed < 0.0f )
 			{
+				_Player.wallFacing = hit.normal;
+				_Player.wallRight = Vector3.Cross( _Player.wallFacing, transform.up );
+
 				if (_Player.climbContact) {// If player is within climb triggerBox
-					_Player.wallFacing = hit.normal;
-					_Player.moveDirection = -_Player.wallFacing;
-					transform.rotation = Quaternion.LookRotation(_Player.moveDirection);
-					_Player.wallRight = transform.right;
+					//_Player.moveDirection = -_Player.wallFacing;
+					transform.rotation = Quaternion.LookRotation(_Player.wallFacing);
+					Vector3 rotation = transform.rotation.eulerAngles;
+					rotation = new Vector3( rotation.x, rotation.y + 180, rotation.z );
+					transform.rotation = Quaternion.Euler( rotation );
 					
 						stateChange("climb_wall_idle");
 						_Player.climbing = true;
-						_Player.moveSpeed = 1.0f;
+						//_Player.moveSpeed = 1.0f;
 						_Player.inAirVelocity = Vector3.zero;
 						_Player.jumping = false;
 						_Player.doubleJumping = false;
 				}
 				else
 				{
-					_Player.wallFacing = hit.normal;
+					Vector3 original = transform.forward;
+					if( Mathf.Abs(Vector3.Angle( transform.forward, _Player.wallRight)) > 90f )
+					{
+						transform.rotation = Quaternion.LookRotation(_Player.wallRight);
+						Vector3 rotation = transform.rotation.eulerAngles;
+						rotation = new Vector3( rotation.x, rotation.y + 180, rotation.z );
+						transform.rotation = Quaternion.Euler( rotation );
+						_Player.moveDirection = transform.forward;
+						_Player.moveSpeed *= (90f - Mathf.Abs(Vector3.Angle( original, transform.forward ))) / 90f;
+					}
+					else
+					{
+						transform.rotation = Quaternion.LookRotation(_Player.wallRight);
+						_Player.moveDirection = transform.forward;
+						_Player.moveSpeed *= (90f - Mathf.Abs(Vector3.Angle( original, transform.forward ))) / 90f;
+					}
 					transform.rotation = Quaternion.LookRotation(_Player.wallFacing);
-					_Player.wallRight = new Vector3(hit.normal.z, hit.normal.y, -hit.normal.x);
+					/*_Player.wallRight = new Vector3(hit.normal.z, hit.normal.y, -hit.normal.x);
 					//_Player.moveSpeed = 0.0f;
 					if(Vector3.Angle(_Player.wallRight, _Player.moveDirection) < 30f)
 					{
@@ -159,5 +178,17 @@ public class JumpState : StateClass
 				_Player.jumping = false;
 				_Player.doubleJumping = false;
 		}
+	}
+	
+	
+	public override void TriggerEnterHandler(Collider other)
+	{
+		
+	}
+	
+	
+	public override void TriggerExitHandler(Collider other)
+	{
+		
 	}
 }

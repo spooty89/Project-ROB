@@ -10,7 +10,6 @@ public class TPC: MonoBehaviour
 	private Animation _animation;
 	private Dictionary<string, AnimationClass> _animations;
 	private CharacterController controller;
-	private StateClass[] scArray;
 	private StateClass stateClass;
 	public string lastState;
 	
@@ -42,7 +41,7 @@ public class TPC: MonoBehaviour
 	
 	void stateChangeSetup()
 	{
-		scArray = GetComponents<StateClass>();
+		StateClass[] scArray = GetComponents<StateClass>();
 		foreach(StateClass sc in scArray)
 		{
 			sc.stateChange = stateChangeHandler;
@@ -72,28 +71,63 @@ public class TPC: MonoBehaviour
 		((StateClass)GetComponent( _animations[_Player.GetCurrentState()].state )).CollisionHandler(hit);
 	}
 	
-	void OnCollisionEnter(Collision hit)
+	
+	public void OnTriggerEnter(Collider other)
 	{
-		//Debug.Log("here");
-		//((StateClass)GetComponent( animations[_Player.GetCurrentState()].state )).CollisionHandler( hit );
+		if(other.gameObject.CompareTag("Climb")) {    	// If the triggerBox has a "Climb" tag
+			_Player.climbContact = true;						// Set climb contact to true
+			_Player.numClimbContacts += 1;						// Keep track of how many climb boxes player is currently in
+		}
+		else if(other.gameObject.CompareTag("Hang")) {    	// If the triggerBox has a "Hang" tag
+			_Player.hangContact = true;							// Set hang contact to true
+			_Player.numHangContacts += 1;						// Keep track of how many hang boxes player is currently in
+		}
+		else if(other.gameObject.CompareTag("TransitionBox")){
+			TransitionBox transBox = (TransitionBox)other.gameObject.GetComponent("TransitionBox");
+			TransitionEnterCondition curCond = transBox.matchEnterCondition(_Player);
+			if(curCond != null){
+				_Player.transitioning = true;
+				_Player.curTransitionBox = transBox;
+				_Player.curTransitionBox.curCond = curCond;
+			}
+		}
+		
+		((StateClass)GetComponent( _animations[_Player.GetCurrentState()].state )).TriggerEnterHandler(other);
 	}
 	
 	public void OnTriggerExit(Collider other)
 	{
 		if(other.gameObject.CompareTag("Climb")) {    	// If the triggerBox has a "Climb" tag
 			_Player.numClimbContacts -= 1;						// Keep track of how many climb boxes player is currently in
-			if (_Player.numClimbContacts <= 0 && !_Player.doubleJumping) {				// If the player is not in any climb boxes
-				_Player.stateChange("jump_after_apex");
+			if (_Player.numClimbContacts <= 0) {				// If the player is not in any climb boxes
 				_Player.numClimbContacts = 0;
 				_Player.climbContact = false;						// Set climb contact to false
 				_Player.climbing = false;							// Set climbing to false
 			}
 		}
+		
+		if(other.gameObject.CompareTag("Hang")) {    	// If the triggerBox has a "Climb" tag
+			_Player.numHangContacts -= 1;						// Keep track of how many climb boxes player is currently in
+			if (_Player.numHangContacts <= 0) {				// If the player is not in any climb boxes
+				_Player.numHangContacts = 0;
+				_Player.hangContact = false;						// Set climb contact to false
+				_Player.hanging = false;							// Set climbing to false
+			}
+		}
+		
+		((StateClass)GetComponent( _animations[_Player.GetCurrentState()].state )).TriggerExitHandler(other);
+	}
+	
+	void OnCollisionEnter(Collision hit)
+	{
+		//Debug.Log("here");
+		//((StateClass)GetComponent( animations[_Player.GetCurrentState()].state )).CollisionHandler( hit );
 	}
 	
 	
 	private void stateChangeHandler( string state )
 	{
+		StateClass[] scArray = GetComponents<StateClass>();
 		foreach(StateClass sc in scArray)
 		{
 			sc.enabled = false;

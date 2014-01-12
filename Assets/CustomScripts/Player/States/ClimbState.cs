@@ -2,9 +2,24 @@ using UnityEngine;
 
 public class ClimbState : StateClass
 {
+	public float inputDelay = 0f,
+					walljumpRotationModifier = 1f,
+					walljumpRotModBuildTime = 0f,
+					walljumpSpeed = 5f;
+	private bool getInput;
+	
+	void OnEnable()
+	{
+		getInput = false;
+		CoRoutine.AfterWait(inputDelay, () => getInput = true);
+	}
+	
 	public override void Run()
 	{
-		InputHandler();
+		if( getInput )
+		{
+			InputHandler();
+		}
 		MovementHandler();
 	}
 	
@@ -55,14 +70,15 @@ public class ClimbState : StateClass
 			else
 			{
 				_Player.moveSpeed = 0.0f;
-				_Player.moveDirection = transform.forward;
+				_Player.moveDirection = Vector3.zero;
 			}
 			
 			if (Input.GetButtonDown("Jump"))
 			{
 				_Player.moveDirection = _Player.wallFacing;
 				_Player.moveDirection = _Player.moveDirection.normalized;
-				_Player.moveSpeed = 8.0f;
+				_Player.moveSpeed = walljumpSpeed;
+				_Player.setRotationModiferAndBuild( walljumpRotationModifier, walljumpRotModBuildTime );
 				_Player.verticalSpeed = _Player.CalculateJumpVerticalSpeed( _Player.jumpHeight );
 				_Player.doubleJumping = true;
 				_Player.climbing = false;
@@ -70,7 +86,7 @@ public class ClimbState : StateClass
 				stateChange("double_jump");
 			}
 
-			if( Input.GetButton( "Interact" ) )
+			if( Input.GetButtonDown( "Interact" ) )
 			{
 				_Player.verticalSpeed = -0.1f;
 				_Player.transform.forward = _Player.wallFacing;
@@ -84,7 +100,7 @@ public class ClimbState : StateClass
 		else
 		{
 			_Player.moveSpeed = 0.0f;
-			_Player.moveDirection = transform.forward;
+			_Player.moveDirection = Vector3.zero;
 			_Player.SetCurrentState("climb_wall_idle");
 			_Player.inAirVelocity = Vector3.zero;
 		}
@@ -116,6 +132,23 @@ public class ClimbState : StateClass
 		{
 			_Player.moveDirection = _Player.wallFacing;
 			stateChange("idle");
+		}
+	}
+	
+	
+	public override void TriggerEnterHandler(Collider other)
+	{
+		
+	}
+	
+	
+	public override void TriggerExitHandler(Collider other)
+	{
+		if (_Player.numClimbContacts <= 0) {				// If the player is not in any climb boxes
+			stateChange("jump_after_apex");
+			_Player.numClimbContacts = 0;
+			_Player.climbContact = false;						// Set climb contact to false
+			_Player.climbing = false;							// Set climbing to false
 		}
 	}
 }

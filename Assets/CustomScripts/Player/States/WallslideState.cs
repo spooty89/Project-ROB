@@ -4,10 +4,10 @@ public class WallslideState : StateClass
 {
 	public float inputDelay = 0f,
 					walljumpRotationModifier = 1f,
-					walljumpRotModBuildTime = 0f;
+					walljumpRotModBuildTime = 0f,
+					walljumpSpeed = 5f;
 	private bool isMoving, getInput = false;
 	private float v, h;
-	private int collisionChecker = 0;
 
 	void OnEnable()
 	{
@@ -33,7 +33,7 @@ public class WallslideState : StateClass
 			
 			isMoving = Mathf.Abs (h) > 0.05f || Mathf.Abs (v) > 0.05f;
 			*/
-			if( Input.GetButton( "Jump" ) )
+			if( Input.GetButtonDown( "Jump" ) )
 			{
 				ApplyJump();
 			}
@@ -102,19 +102,14 @@ public class WallslideState : StateClass
 			_Player.verticalSpeed = -5.0f;
 		}
 
-		if( (_Player.controller.collisionFlags & CollisionFlags.Sides) != 0)
+		if( _Player.controller.collisionFlags == 0)
 		{
-			collisionChecker++;
-			if(collisionChecker > 3)
+			//Debug.Log("here");
+			if( !_Player.surroundingTrigger.vertical )
 			{
-				//Debug.Log("here");
-				collisionChecker = 0;
+				//Debug.Log("and here");
 				stateChange("jump_after_apex");
 			}
-		}	
-		else
-		{
-			collisionChecker = 0;
 		}
 	}
 	
@@ -122,7 +117,7 @@ public class WallslideState : StateClass
 	public void ApplyJump ()
 	{
 		_Player.moveDirection = _Player.wallFacing;
-		_Player.moveSpeed = 8.0f;
+		_Player.moveSpeed = walljumpSpeed;
 		_Player.verticalSpeed = _Player.CalculateJumpVerticalSpeed (_Player.doubleJumpHeight);
 		_Player.setRotationModiferAndBuild( walljumpRotationModifier, walljumpRotModBuildTime );
 		_Player.doubleJumping = true;
@@ -139,13 +134,16 @@ public class WallslideState : StateClass
 		}
 	}
 	
-	/*void OnCollisionExit(Collision hit)
+	
+	public override void TriggerEnterHandler(Collider other)
 	{
-		if((_Player.collisionFlags & CollisionFlags.CollidedSides) == 0)
-		{
-				Debug.Log("or here");
-			stateChange("jump_after_apex");
-		}
-	}*/
+		
+	}
+	
+	
+	public override void TriggerExitHandler(Collider other)
+	{
+		
+	}
 }
 
