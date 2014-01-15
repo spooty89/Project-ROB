@@ -19,7 +19,7 @@ public class HangState : StateClass
 	
 	void OnEnable()
 	{
-		Debug.Log("hangState");
+		//Debug.Log("hangState");
 	}
 
 

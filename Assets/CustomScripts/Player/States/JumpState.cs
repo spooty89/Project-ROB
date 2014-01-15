@@ -8,7 +8,7 @@ public class JumpState : StateClass
 
 	void OnEnable()
 	{
-		Debug.Log("jumpState");
+		//Debug.Log("jumpState");
 	}
 	
 	protected override void Awake()
@@ -136,9 +136,6 @@ public class JumpState : StateClass
 			_Player.wallFacing = hit.normal;
 			_Player.wallRight = Vector3.Cross( _Player.wallFacing, transform.up );
 			_Player.wallLeft = Quaternion.LookRotation(_Player.wallRight, transform.up) * Vector3.back;
-			//_Player.wallLeft = Quaternion.Euler( Quaternion.Euler( _Player.wallRight ).eulerAngles + 180f * transform.up ).eulerAngles;
-			//Debug.Log("Jump - right: " + _Player.wallRight + ", left: " + _Player.wallLeft );
-
 			wallInteract( );
 		}
 		else if (_Player.hangContact && Vector3.Angle(hit.normal, transform.up) > 100f) {// If player is within climb triggerBox;
@@ -174,7 +171,6 @@ public class JumpState : StateClass
 		if (_Player.verticalSpeed < -0.1f )
 		{
 			if (_Player.climbContact) {// If player is within climb triggerBox
-				//_Player.moveDirection = -_Player.wallFacing;
 				transform.rotation = Quaternion.LookRotation(_Player.wallFacing);
 				Vector3 rotation = transform.rotation.eulerAngles;
 				rotation = new Vector3( rotation.x, rotation.y + 180, rotation.z );
@@ -182,22 +178,29 @@ public class JumpState : StateClass
 				
 				stateChange("climb_wall_idle");
 				_Player.climbing = true;
-				//_Player.moveSpeed = 1.0f;
 				_Player.inAirVelocity = Vector3.zero;
 				_Player.jumping = false;
 				_Player.doubleJumping = false;
 			}
 			else
 			{
-				if( Mathf.Abs(Vector3.Angle( transform.forward, _Player.wallRight)) >= 90f )
+				float rightDiff = Mathf.Abs(Vector3.Angle( _Player.moveDirection, _Player.wallRight));
+				float leftDiff = Mathf.Abs(Vector3.Angle( _Player.moveDirection, _Player.wallLeft));
+				if( leftDiff < rightDiff )
 				{
-					_Player.moveDirection = _Player.wallLeft;
-					_Player.wallSlideRight = false;
+					if( leftDiff < 91f )
+					{
+						_Player.moveDirection = _Player.wallLeft;
+						_Player.wallSlideDirection = (int)WallDirections.left;
+					}
 				}
 				else
 				{
-					_Player.moveDirection = _Player.wallRight;
-					_Player.wallSlideRight = true;
+					if( rightDiff < 91f )
+					{
+						_Player.moveDirection = _Player.wallRight;
+						_Player.wallSlideDirection = (int)WallDirections.right;
+					}
 				}
 				
 				_Player.moveSpeed *= (90f - Mathf.Abs(Vector3.Angle( _Player.moveDirection, transform.forward ))) / 90f;

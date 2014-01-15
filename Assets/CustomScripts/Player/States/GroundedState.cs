@@ -10,7 +10,7 @@ public class GroundedState : StateClass
 	
 	void OnEnable()
 	{
-		Debug.Log("groundedState");
+		//Debug.Log("groundedState");
 	}
 	
 	protected override void Awake()

@@ -6,7 +6,7 @@ public class ClimbState : StateClass
 					walljumpRotationModifier = 1f,
 					walljumpRotModBuildTime = 0f,
 					walljumpSpeed = 5f;
-	private bool getInput, enabled = true;
+	private bool getInput;
 	
 	protected override void Awake()
 	{
@@ -18,10 +18,11 @@ public class ClimbState : StateClass
 
 	void OnEnable()
 	{
+		_Player.verticalSpeed = 0f;
 		enabled = true;
 		getInput = false;
 		CoRoutine.AfterWait(inputDelay, () => getInput = true);
-			Debug.Log("climbState");
+		//Debug.Log("climbState");
 	}
 	
 	public override void Run()

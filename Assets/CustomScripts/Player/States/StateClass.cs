@@ -3,6 +3,7 @@ using UnityEngine;
 public abstract class StateClass : MonoBehaviour
 {
 	protected CharacterClass _Player;
+	new protected bool enabled;
 	public stateChangeEvent stateChange;
 	public abstract void Run();
 	public abstract void CollisionHandler(ControllerColliderHit hit);

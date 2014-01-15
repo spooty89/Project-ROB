@@ -26,7 +26,7 @@ public class WallslideState : StateClass
 		justJumped = false;
 		getInput = false;
 		CoRoutine.AfterWait(inputDelay, () => getInput = true);
-			Debug.Log("wallslideState");
+			//Debug.Log("wallslideState");
 	}
 
 	public override void Run()
@@ -105,17 +105,17 @@ public class WallslideState : StateClass
 				_Player.inAirVelocity += _Player.moveDirection.normalized * Time.deltaTime * _Player.jumpAcceleration;
 			}
 		}*/
-
+		/*
 		if( Mathf.Abs(Vector3.Angle( _Player.moveDirection, _Player.wallRight)) > 90f )
 		{
 			_Player.moveDirection = _Player.wallLeft;
-			_Player.wallSlideRight = false;
+			_Player.wallSlideDirection = WallDirections.left;
 		}
 		else
 		{
 			_Player.moveDirection = _Player.wallRight;
-			_Player.wallSlideRight = true;
-		}
+			_Player.wallSlideDirection = WallDirections.right;
+		}*/
 		transform.rotation = Quaternion.LookRotation(_Player.wallFacing);
 
 		if (_Player.verticalSpeed > -5.0f)
@@ -143,6 +143,7 @@ public class WallslideState : StateClass
 		_Player.verticalSpeed = _Player.CalculateJumpVerticalSpeed (_Player.doubleJumpHeight);
 		_Player.setRotationModiferAndBuild( walljumpRotationModifier, walljumpRotModBuildTime );
 		_Player.doubleJumping = true;
+		_Player.wallSlideDirection = (int)WallDirections.neither;
 		stateChange("double_jump");
 	}
 	
@@ -152,6 +153,7 @@ public class WallslideState : StateClass
 		if(_Player.IsGrounded() && _Player.verticalSpeed < 0.0f)
 		{
 			_Player.moveSpeed = Vector3.Magnitude( _Player.inAirVelocity );
+			_Player.wallSlideDirection = (int)WallDirections.neither;
 			stateChange("idle");
 		}
 	}
@@ -167,7 +169,7 @@ public class WallslideState : StateClass
 		}
 		else
 		{
-			if( !_Player.wallSlideRight )
+			if( _Player.wallSlideDirection.Equals( WallDirections.left ) )
 			{
 				if( Mathf.Abs(Vector3.Angle( transform.forward, _Player.wallLeft)) < 90f )
 				{
@@ -175,12 +177,33 @@ public class WallslideState : StateClass
 					transform.rotation = Quaternion.LookRotation(_Player.wallFacing);
 				}
 			}
-			else
+			else if( _Player.wallSlideDirection.Equals( WallDirections.right ) )
 			{
 				if( Mathf.Abs(Vector3.Angle( transform.forward, _Player.wallRight)) < 90f )
 				{
 					_Player.moveDirection = _Player.wallRight;
 					transform.rotation = Quaternion.LookRotation(_Player.wallFacing);
+				}
+			}
+			else
+			{
+				float rightDiff = Mathf.Abs(Vector3.Angle( _Player.moveDirection, _Player.wallRight));
+				float leftDiff = Mathf.Abs(Vector3.Angle( _Player.moveDirection, _Player.wallLeft));
+				if( leftDiff < rightDiff )
+				{
+					if( leftDiff < 90f )
+					{
+						_Player.moveDirection = _Player.wallLeft;
+						_Player.wallSlideDirection = (int)WallDirections.left;
+					}
+				}
+				else
+				{
+					if( rightDiff < 90f )
+					{
+						_Player.moveDirection = _Player.wallRight;
+						_Player.wallSlideDirection = (int)WallDirections.right;
+					}
 				}
 			}
 		}

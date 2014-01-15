@@ -2,8 +2,14 @@ using UnityEngine;
 
 public delegate void surroundingCollisionEvent( );
 
+public enum WallDirections : int
+{
+	left = 1, right = 2, neither = 3
+}
+
 public class CharacterClass : MonoBehaviour
 {
+
 	public float    gravity = 17.0f,
 					rotateSpeed = (float)900.0,
 					inAirRotateSpeed = (float)450.0,
@@ -38,7 +44,8 @@ public class CharacterClass : MonoBehaviour
 				build = false;
 	[HideInInspector]
 	public int  numHangContacts = 0,
-				numClimbContacts = 0;
+				numClimbContacts = 0,
+				wallSlideDirection = (int)WallDirections.neither;
 	[HideInInspector]
 	public string currentState;
 	[HideInInspector]
@@ -93,11 +100,38 @@ public class CharacterClass : MonoBehaviour
 	// Get wall contact information based on the contact point's normal vector
 	public void wallNormalChangeHandler( Vector3 newWallNormal )
 	{
-		wallFacing = newWallNormal;			// Set wallFacing equal to the contact normal (points out toward player)
-		wallRight = Vector3.Cross( wallFacing, transform.up );		// Cross multiply wallFacing with the player's up vector to get wallRight
-		wallLeft = Quaternion.LookRotation(wallRight, transform.up) * Vector3.back;
-		//Debug.Log("Character - right: " + wallRight + ", left: " + wallLeft );
-		surroundingCollision();
+		if( wallSlideDirection.Equals( WallDirections.right ) )
+		{
+			if( Vector3.Angle( wallRight, newWallNormal ) > 90f )
+			{
+				wallFacing = newWallNormal;			// Set wallFacing equal to the contact normal (points out toward player)
+				wallRight = Vector3.Cross( wallFacing, transform.up );		// Cross multiply wallFacing with the player's up vector to get wallRight
+				wallLeft = Quaternion.LookRotation(wallRight, transform.up) * Vector3.back;
+				//Debug.Log("Character - right: " + wallRight + ", left: " + wallLeft );
+				surroundingCollision();
+			}
+			else
+				moveSpeed = 0f;
+		}
+		else if( wallSlideDirection.Equals( WallDirections.left ) )
+		{
+			if( Vector3.Angle( wallLeft, newWallNormal ) > 90f )
+			{
+				wallFacing = newWallNormal;			// Set wallFacing equal to the contact normal (points out toward player)
+				wallRight = Vector3.Cross( wallFacing, transform.up );		// Cross multiply wallFacing with the player's up vector to get wallRight
+				wallLeft = Quaternion.LookRotation(wallRight, transform.up) * Vector3.back;
+				//Debug.Log("Character - right: " + wallRight + ", left: " + wallLeft );
+				surroundingCollision();
+			}
+		}
+		else
+		{
+			wallFacing = newWallNormal;			// Set wallFacing equal to the contact normal (points out toward player)
+			wallRight = Vector3.Cross( wallFacing, transform.up );		// Cross multiply wallFacing with the player's up vector to get wallRight
+			wallLeft = Quaternion.LookRotation(wallRight, transform.up) * Vector3.back;
+			//Debug.Log("Character - right: " + wallRight + ", left: " + wallLeft );
+			surroundingCollision();
+		}
 	}
 	
 	public float CalculateJumpVerticalSpeed (float targetJumpHeight)
@@ -108,7 +142,7 @@ public class CharacterClass : MonoBehaviour
 	}
 	
 	public bool IsGrounded () {
-		if ( sTrigger.horizontalUp || (controller.collisionFlags & CollisionFlags.CollidedBelow) != 0)
+		if ((controller.collisionFlags & CollisionFlags.CollidedBelow) != 0)
 		{
 			jumping = false;
 			doubleJumping = false;

@@ -6,16 +6,15 @@ public delegate void wallNormalChangeEvent( Vector3 wallNormal );
 
 public class surroundingTrigger : MonoBehaviour
 {
-	public bool horizontalUp = false, horizontalDown = false, vertical = false;
+	public bool vertical = false;
 	public wallNormalChangeEvent wallNormal;
-	public float testLineDuration = 0f;
+	public float angleThreshold = 90f, testLineDuration = 0f;
 
 	int numContacts = 0;
 
 	void OnCollisionEnter(Collision collision)
 	{
 		foreach (ContactPoint contact in collision.contacts) {
-			//if( contact.point.y > transform.position
 			if(contact.otherCollider.gameObject != transform.parent.gameObject)
 			{
 				if( Mathf.Abs( contact.normal.y ) <= 0.1f)
@@ -24,50 +23,25 @@ public class surroundingTrigger : MonoBehaviour
 					wallNormal( contact.normal );
 					vertical = true;
 				}
-				/*else if( Mathf.Abs( contact.normal.y ) >= 0.9f)
-				{
-					if( contact.normal.y > 0f)
-					{
-						horizontalUp = true;
-					}
-					else
-						horizontalDown = true;
-				}*/
-				//Debug.Log( "object: " + contact.otherCollider.gameObject.name + ", vertical: " + vertical + ", horizontalUp: " + horizontalUp + ", horizontalDown: " + horizontalDown);
 			}
 		}
 	}
 
 	void OnCollisionStay(Collision collision)
 	{
-		int verts = 0;
 		foreach (ContactPoint contact in collision.contacts) {
 			if(contact.otherCollider.gameObject != transform.parent.gameObject)
 			{
 				if( Mathf.Abs( contact.normal.y ) <= 0.1f)
 				{
-					wallNormal( contact.normal );
 					vertical = true;
-					verts += 1;
+					wallNormal( contact.normal );
 					Debug.DrawRay( contact.point, contact.normal, Color.white, testLineDuration );
 				}
-				/*else if( Mathf.Abs( contact.normal.y ) >= 0.9f)
-				{
-					if( contact.normal.y > 0f)
-					{
-						horizontalUp = true;
-					}
-					else
-						horizontalDown = true;
-				}*/
 			}
 		}
 
 		numContacts = collision.contacts.Length;
-		/*if( verts == 0 )
-		{
-			vertical = false;
-		}*/
 	}
 
 	void OnCollisionExit(Collision collision)
@@ -75,23 +49,17 @@ public class surroundingTrigger : MonoBehaviour
 		foreach (ContactPoint contact in collision.contacts) {
 			if(contact.otherCollider.gameObject != transform.parent.gameObject)
 			{
-			if( Mathf.Abs( contact.normal.y ) <= 0.1f)
-			{
-				wallNormal( contact.normal );
-				vertical = false;
+				if( Mathf.Abs( contact.normal.y ) <= 0.1f)
+				{
+					vertical = false;
+					wallNormal( contact.normal );
+				}
 			}
-			/*else if( Mathf.Abs( contact.normal.y ) >= 0.9f)
-			{
-				if( contact.normal.y > 0f)
-					horizontalUp = false;
-				else
-					horizontalDown = false;
-			}*/
-			}
-			//Debug.Log( "object: " + contact.otherCollider.gameObject.name + ", vertical: " + vertical + ", horizontalUp: " + horizontalUp + ", horizontalDown: " + horizontalDown);
 		}
 		if(collision.contacts.Length >= numContacts)
+		{
 			vertical = false;
+		}
 	}
 }
 

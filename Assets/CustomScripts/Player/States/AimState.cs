@@ -33,7 +33,7 @@ public class AimState : StateClass
 	{
 		animation[aimUpDown.name].layer = 2;
 		camController.targetHeight = Mathf.Max( targetHeight * (camController.desiredDistance/normalDistance), normalHeight );
-		Debug.Log("aimState");
+		//Debug.Log("aimState");
 	}
 
 	private void OnDisable()
