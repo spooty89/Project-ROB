@@ -45,11 +45,11 @@ public class GroundedState : StateClass
 		
 		if( Input.anyKey )
 		{
-			if( Input.GetButton( "Jump" ) )
+			if( Input.GetButtonDown( "Jump" ) )
 			{
 				ApplyJump();
 			}
-			if( Input.GetButtonDown( "Aim" ) )
+			if( Input.GetButton( "Aim" ) )
 			{
 				_Player.stateChange( "aim_idle" );
 			}

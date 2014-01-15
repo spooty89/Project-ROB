@@ -117,7 +117,7 @@ public class WallslideState : StateClass
 			_Player.wallSlideRight = true;
 		}
 		transform.rotation = Quaternion.LookRotation(_Player.wallFacing);
-		
+
 		if (_Player.verticalSpeed > -5.0f)
 		{
 			_Player.verticalSpeed -= (_Player.gravity/2f) * Time.deltaTime;
@@ -127,14 +127,10 @@ public class WallslideState : StateClass
 			_Player.verticalSpeed = -5.0f;
 		}
 
-		if( _Player.controller.collisionFlags == 0)
+		if( _Player.controller.collisionFlags == 0 && !_Player.sTrigger.vertical)
 		{
 			//Debug.Log("here");
-			if( !_Player.sTrigger.vertical )
-			{
-				//Debug.Log("and here");
-				stateChange("jump_after_apex");
-			}
+			stateChange("jump_after_apex");
 		}
 	}
 	
@@ -163,16 +159,31 @@ public class WallslideState : StateClass
 	
 	public override void surroundingCollisionHandler()
 	{
-		if( !_Player.wallSlideRight )
+		
+		if(!_Player.sTrigger.vertical)
 		{
-			_Player.moveDirection = _Player.wallLeft;
+			//Debug.Log("here");
+			stateChange("jump_after_apex");
 		}
 		else
 		{
-			_Player.moveDirection = _Player.wallRight;
+			if( !_Player.wallSlideRight )
+			{
+				if( Mathf.Abs(Vector3.Angle( transform.forward, _Player.wallLeft)) < 90f )
+				{
+					_Player.moveDirection = _Player.wallLeft;
+					transform.rotation = Quaternion.LookRotation(_Player.wallFacing);
+				}
+			}
+			else
+			{
+				if( Mathf.Abs(Vector3.Angle( transform.forward, _Player.wallRight)) < 90f )
+				{
+					_Player.moveDirection = _Player.wallRight;
+					transform.rotation = Quaternion.LookRotation(_Player.wallFacing);
+				}
+			}
 		}
-
-		transform.rotation = Quaternion.LookRotation(_Player.wallFacing);
 	}
 	
 	

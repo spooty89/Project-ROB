@@ -133,7 +133,6 @@ public class JumpState : StateClass
 		}
 		else if( _Player.sTrigger.vertical && Vector3.Angle(hit.normal, transform.forward) > _Player.maxWallInteractAngle && Mathf.Abs(hit.normal.y) <= 0.1f)
 		{
-			Debug.Log("culpret: " + hit.collider.name);
 			_Player.wallFacing = hit.normal;
 			_Player.wallRight = Vector3.Cross( _Player.wallFacing, transform.up );
 			_Player.wallLeft = Quaternion.LookRotation(_Player.wallRight, transform.up) * Vector3.back;

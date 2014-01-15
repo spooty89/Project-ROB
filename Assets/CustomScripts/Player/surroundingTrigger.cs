@@ -20,9 +20,9 @@ public class surroundingTrigger : MonoBehaviour
 				{
 					Debug.Log( contact.normal );
 					wallNormal( contact.normal );
-					//vertical = true;
+					vertical = true;
 				}
-				else if( Mathf.Abs( contact.normal.y ) >= 0.9f)
+				/*else if( Mathf.Abs( contact.normal.y ) >= 0.9f)
 				{
 					if( contact.normal.y > 0f)
 					{
@@ -30,7 +30,7 @@ public class surroundingTrigger : MonoBehaviour
 					}
 					else
 						horizontalDown = true;
-				}
+				}*/
 				//Debug.Log( "object: " + contact.otherCollider.gameObject.name + ", vertical: " + vertical + ", horizontalUp: " + horizontalUp + ", horizontalDown: " + horizontalDown);
 			}
 		}
@@ -38,6 +38,7 @@ public class surroundingTrigger : MonoBehaviour
 
 	void OnCollisionStay(Collision collision)
 	{
+		int verts = 0;
 		foreach (ContactPoint contact in collision.contacts) {
 			if(contact.otherCollider.gameObject != transform.parent.gameObject)
 			{
@@ -45,8 +46,10 @@ public class surroundingTrigger : MonoBehaviour
 				{
 					wallNormal( contact.normal );
 					vertical = true;
+					verts += 1;
+					Debug.DrawRay( contact.point, contact.normal, Color.white, testLineDuration );
 				}
-				else if( Mathf.Abs( contact.normal.y ) >= 0.9f)
+				/*else if( Mathf.Abs( contact.normal.y ) >= 0.9f)
 				{
 					if( contact.normal.y > 0f)
 					{
@@ -54,10 +57,13 @@ public class surroundingTrigger : MonoBehaviour
 					}
 					else
 						horizontalDown = true;
-				}
-				Debug.DrawRay( contact.point, contact.normal, Color.white, testLineDuration );
+				}*/
 			}
 		}
+		/*if( verts == 0 )
+		{
+			vertical = false;
+		}*/
 	}
 
 	void OnCollisionExit(Collision collision)
@@ -70,13 +76,13 @@ public class surroundingTrigger : MonoBehaviour
 				wallNormal( contact.normal );
 				vertical = false;
 			}
-			else if( Mathf.Abs( contact.normal.y ) >= 0.9f)
+			/*else if( Mathf.Abs( contact.normal.y ) >= 0.9f)
 			{
 				if( contact.normal.y > 0f)
 					horizontalUp = false;
 				else
 					horizontalDown = false;
-			}
+			}*/
 			}
 			//Debug.Log( "object: " + contact.otherCollider.gameObject.name + ", vertical: " + vertical + ", horizontalUp: " + horizontalUp + ", horizontalDown: " + horizontalDown);
 		}
