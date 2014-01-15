@@ -11,7 +11,8 @@ public class CharacterClass : MonoBehaviour
 					jumpHeight = (float)1.5,				// How high we jump when pressing jump and letting go immediately
 					jumpAcceleration = (float)2.0,			// Acceleration from jumping
 					doubleJumpHeight = (float)1.5,			// How high we jump when we double jump
-					doubleJumpAcceleration = (float)1.0;	// from double jumping
+					doubleJumpAcceleration = (float)1.0,	// from double jumping
+					maxWallInteractAngle = 90f;
 	[HideInInspector]
 	public float    verticalSpeed = (float)0.0,		// The current vertical speed
 					moveSpeed = (float)0.0,			// The current x-z move speed
@@ -93,7 +94,8 @@ public class CharacterClass : MonoBehaviour
 	{
 		wallFacing = newWallNormal;			// Set wallFacing equal to the contact normal (points out toward player)
 		wallRight = Vector3.Cross( wallFacing, transform.up );		// Cross multiply wallFacing with the player's up vector to get wallRight
-		wallLeft = -wallRight;// Quaternion.Euler( new Vector3( wallRight.x, wallRight.y + 180, wallRight.z ) ) * Vector3.forward;	// Rotate wallRight 180 degrees around y axis to get wallLeft
+		wallLeft = Quaternion.LookRotation(wallRight, transform.up) * Vector3.back;
+		//Debug.Log("Character - right: " + wallRight + ", left: " + wallLeft );
 		surroundingCollision();
 	}
 	

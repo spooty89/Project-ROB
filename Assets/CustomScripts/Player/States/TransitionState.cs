@@ -11,6 +11,15 @@ public class TransitionState : StateClass {
 	[HideInInspector]
 	public bool initialized = false;
 	
+	protected override void Awake()
+	{
+		if( _Player == null )
+		{
+			_Player = GetComponent<CharacterClass>();
+		}
+	}
+
+
 	public override void CollisionHandler(ControllerColliderHit hit)
 	{
 	}

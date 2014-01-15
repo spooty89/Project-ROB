@@ -6,21 +6,34 @@ public class ClimbState : StateClass
 					walljumpRotationModifier = 1f,
 					walljumpRotModBuildTime = 0f,
 					walljumpSpeed = 5f;
-	private bool getInput;
+	private bool getInput, enabled = true;
 	
+	protected override void Awake()
+	{
+		if( _Player == null )
+		{
+			_Player = GetComponent<CharacterClass>();
+		}
+	}
+
 	void OnEnable()
 	{
+		enabled = true;
 		getInput = false;
 		CoRoutine.AfterWait(inputDelay, () => getInput = true);
+			Debug.Log("climbState");
 	}
 	
 	public override void Run()
 	{
-		if( getInput )
+		if( enabled )
 		{
-			InputHandler();
+			if( getInput )
+			{
+				InputHandler();
+			}
+			MovementHandler();
 		}
-		MovementHandler();
 	}
 	
 	private void InputHandler()
@@ -93,6 +106,7 @@ public class ClimbState : StateClass
 				_Player.climbing = false;
 				_Player.transform.position += new Vector3(_Player.wallFacing.x * 0.25f, _Player.wallFacing.y * 0.25f, _Player.wallFacing.z * 0.25f);
 				_Player.moveDirection = _Player.wallFacing;
+				enabled = false;
 				stateChange("jump_after_apex");
 				_Player.jumpingReachedApex = true;
 			}
@@ -138,7 +152,7 @@ public class ClimbState : StateClass
 	
 	public override void surroundingCollisionHandler()
 	{
-		
+
 	}
 	
 	
@@ -152,6 +166,7 @@ public class ClimbState : StateClass
 	{
 		if (_Player.numClimbContacts <= 0) {				// If the player is not in any climb boxes
 			stateChange("jump_after_apex");
+			enabled = false;
 			_Player.numClimbContacts = 0;
 			_Player.climbContact = false;						// Set climb contact to false
 			_Player.climbing = false;							// Set climbing to false

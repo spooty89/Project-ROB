@@ -2,10 +2,24 @@ using UnityEngine;
 
 public class JumpState : StateClass
 {
-	public float maxWallInteractAngle = 100f;
 	private bool isMoving;
 	private float v, h;
+
+
+	void OnEnable()
+	{
+		Debug.Log("jumpState");
+	}
 	
+	protected override void Awake()
+	{
+		if( _Player == null )
+		{
+			_Player = GetComponent<CharacterClass>();
+		}
+	}
+
+
 	public override void Run()
 	{
 		InputHandler();
@@ -42,6 +56,13 @@ public class JumpState : StateClass
 		// When we reach the apex
 		if (_Player.verticalSpeed < -0.5f)
 		{
+			/*if( _Player.sTrigger.vertical )
+			{
+				Debug.Log("here");
+				wallInteract();
+			}
+			else
+			{*/
 			//if (!_Player.jumpingReachedApex)
 			//{
 				_Player.jumpingReachedApex = true;
@@ -50,7 +71,8 @@ public class JumpState : StateClass
 			else*/ if (_Player.verticalSpeed <= -15.0f){
 				_Player.verticalSpeed = -15.0f;
 				//_Player.SetCurrentState("free_fall");
-			}
+				}
+			//}
 		}
 		
 		
@@ -109,15 +131,14 @@ public class JumpState : StateClass
 			_Player.rotationModifier = 1f;
 			stateChange("idle");
 		}
-		
-		else if (Vector3.Angle(hit.normal, transform.forward) > maxWallInteractAngle)
+		else if( _Player.sTrigger.vertical && Vector3.Angle(hit.normal, transform.forward) > _Player.maxWallInteractAngle && CollisionFlags.CollidedSides != 0)
 		{
+			Debug.Log("culpret: " + hit.collider.name);
 			_Player.wallFacing = hit.normal;
 			_Player.wallRight = Vector3.Cross( _Player.wallFacing, transform.up );
-			_Player.wallLeft = -_Player.wallRight;//Quaternion.Euler( new Vector3( _Player.wallRight.x, _Player.wallRight.y + 180, _Player.wallRight.z ) ) * Vector3.forward;
-			
+			_Player.wallLeft = Quaternion.LookRotation(_Player.wallRight, transform.up) * Vector3.back;
 			//_Player.wallLeft = Quaternion.Euler( Quaternion.Euler( _Player.wallRight ).eulerAngles + 180f * transform.up ).eulerAngles;
-			Debug.Log("right: " + _Player.wallRight + ", left: " + _Player.wallLeft );
+			//Debug.Log("Jump - right: " + _Player.wallRight + ", left: " + _Player.wallLeft );
 
 			wallInteract( );
 		}
@@ -169,7 +190,7 @@ public class JumpState : StateClass
 			}
 			else
 			{
-				if( Mathf.Abs(Vector3.Angle( transform.forward, _Player.wallRight)) > 90f )
+				if( Mathf.Abs(Vector3.Angle( transform.forward, _Player.wallRight)) >= 90f )
 				{
 					_Player.moveDirection = _Player.wallLeft;
 				}

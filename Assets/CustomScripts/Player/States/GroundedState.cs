@@ -8,7 +8,20 @@ public class GroundedState : StateClass
 	private float runSpeed = 8.0f;	// When pressing Shift button we start running
 	private Vector3 surfaceUp = Vector3.up;
 	
+	void OnEnable()
+	{
+		Debug.Log("groundedState");
+	}
 	
+	protected override void Awake()
+	{
+		if( _Player == null )
+		{
+			_Player = GetComponent<CharacterClass>();
+		}
+	}
+
+
 	public override void Run()
 	{
 		InputHandler();
@@ -99,7 +112,10 @@ public class GroundedState : StateClass
 		transform.rotation = Quaternion.LookRotation(new Vector3(_Player.moveDirection.x, 0.0f, _Player.moveDirection.z));
 		
 		if (!_Player.IsGrounded())
+		{
+			//Debug.Log( "not grounded");
 			stateChange("jump_after_apex");
+		}
 	}
 	
 	

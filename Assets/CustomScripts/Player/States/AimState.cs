@@ -18,8 +18,12 @@ public class AimState : StateClass
 	private Vector3 surfaceUp = Vector3.up;
 	private CustomCameraController camController;
 	
-	private void Awake()
+	protected override void Awake()
 	{
+		if( _Player == null )
+		{
+			_Player = GetComponent<CharacterClass>();
+		}
 		camController = Camera.main.GetComponent<CustomCameraController>();
 		normalHeight = camController.targetHeight;
 		normalDistance = camController.normalDistance;
@@ -29,6 +33,7 @@ public class AimState : StateClass
 	{
 		animation[aimUpDown.name].layer = 2;
 		camController.targetHeight = Mathf.Max( targetHeight * (camController.desiredDistance/normalDistance), normalHeight );
+		Debug.Log("aimState");
 	}
 
 	private void OnDisable()

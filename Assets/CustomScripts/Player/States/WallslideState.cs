@@ -9,11 +9,22 @@ public class WallslideState : StateClass
 	private bool isMoving, getInput = false, justJumped = false;
 	private float v, h;
 
+	
+	protected override void Awake()
+	{
+		if( _Player == null )
+		{
+			_Player = GetComponent<CharacterClass>();
+		}
+	}
+
+
 	void OnEnable()
 	{
 		justJumped = false;
 		getInput = false;
 		CoRoutine.AfterWait(inputDelay, () => getInput = true);
+			Debug.Log("wallslideState");
 	}
 
 	public override void Run()
@@ -148,7 +159,16 @@ public class WallslideState : StateClass
 	
 	public override void surroundingCollisionHandler()
 	{
-		
+		if( Mathf.Abs(Vector3.Angle( _Player.moveDirection, _Player.wallRight)) >= _Player.maxWallInteractAngle )
+		{
+			_Player.moveDirection = _Player.wallLeft;
+		}
+		else
+		{
+			_Player.moveDirection = _Player.wallRight;
+		}
+
+		transform.rotation = Quaternion.LookRotation(_Player.wallFacing);
 	}
 	
 	

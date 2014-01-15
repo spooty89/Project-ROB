@@ -10,7 +10,7 @@ public abstract class StateClass : MonoBehaviour
 	public abstract void TriggerEnterHandler(Collider other);
 	public abstract void TriggerExitHandler(Collider other);
 	
-	protected virtual void Start()
+	protected virtual void Awake()
 	{
 		_Player = GetComponent<CharacterClass>();
 	}

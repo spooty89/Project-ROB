@@ -7,7 +7,22 @@ public class HangState : StateClass
 	private float walkSpeed = 4.0f;	// The speed when walking
 	private float runSpeed = 8.0f;	// When pressing Shift button we start running
 	private Vector3 surfaceUp = Vector3.up;
+
 	
+	protected override void Awake()
+	{
+		if( _Player == null )
+		{
+			_Player = GetComponent<CharacterClass>();
+		}
+	}
+	
+	void OnEnable()
+	{
+		Debug.Log("hangState");
+	}
+
+
 	public override void Run()
 	{
 		InputHandler();
