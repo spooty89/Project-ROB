@@ -10,6 +10,8 @@ public class surroundingTrigger : MonoBehaviour
 	public wallNormalChangeEvent wallNormal;
 	public float testLineDuration = 0f;
 
+	int numContacts = 0;
+
 	void OnCollisionEnter(Collision collision)
 	{
 		foreach (ContactPoint contact in collision.contacts) {
@@ -60,6 +62,8 @@ public class surroundingTrigger : MonoBehaviour
 				}*/
 			}
 		}
+
+		numContacts = collision.contacts.Length;
 		/*if( verts == 0 )
 		{
 			vertical = false;
@@ -86,6 +90,8 @@ public class surroundingTrigger : MonoBehaviour
 			}
 			//Debug.Log( "object: " + contact.otherCollider.gameObject.name + ", vertical: " + vertical + ", horizontalUp: " + horizontalUp + ", horizontalDown: " + horizontalDown);
 		}
+		if(collision.contacts.Length >= numContacts)
+			vertical = false;
 	}
 }
 
