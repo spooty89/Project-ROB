@@ -69,7 +69,8 @@ public class TPC: MonoBehaviour
 	// Player has come in contact with a surface
 	private void OnControllerColliderHit (ControllerColliderHit hit)
 	{
-		((StateClass)GetComponent( _animations[_Player.GetCurrentState()].state )).CollisionHandler(hit);
+		if( hit.collider.gameObject != _Player.sTrigger.gameObject )
+			((StateClass)GetComponent( _animations[_Player.GetCurrentState()].state )).CollisionHandler(hit);
 	}
 
 

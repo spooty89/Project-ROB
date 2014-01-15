@@ -10,8 +10,6 @@ public class surroundingTrigger : MonoBehaviour
 	public wallNormalChangeEvent wallNormal;
 	public float testLineDuration = 0f;
 
-	private bool newNormal = false;
-
 	void OnCollisionEnter(Collision collision)
 	{
 		foreach (ContactPoint contact in collision.contacts) {
@@ -22,7 +20,6 @@ public class surroundingTrigger : MonoBehaviour
 				{
 					Debug.Log( contact.normal );
 					wallNormal( contact.normal );
-					newNormal = true;
 					//vertical = true;
 				}
 				else if( Mathf.Abs( contact.normal.y ) >= 0.9f)
@@ -46,10 +43,7 @@ public class surroundingTrigger : MonoBehaviour
 			{
 				if( Mathf.Abs( contact.normal.y ) <= 0.1f)
 				{
-					if( !newNormal )
-						wallNormal( contact.normal );
-					else
-						newNormal = false;
+					wallNormal( contact.normal );
 					vertical = true;
 				}
 				else if( Mathf.Abs( contact.normal.y ) >= 0.9f)

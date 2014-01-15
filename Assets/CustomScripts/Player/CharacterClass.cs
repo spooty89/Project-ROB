@@ -33,6 +33,7 @@ public class CharacterClass : MonoBehaviour
 				hangContact = false,
 				hanging = false,
 				wallSliding = false,
+				wallSlideRight = false,
 				transitioning = false,
 				build = false;
 	[HideInInspector]

@@ -6,7 +6,9 @@ public class WallslideState : StateClass
 					walljumpRotationModifier = 1f,
 					walljumpRotModBuildTime = 0f,
 					walljumpSpeed = 5f;
-	private bool isMoving, getInput = false, justJumped = false;
+	private bool isMoving,
+				 getInput = false,
+				 justJumped = false;
 	private float v, h;
 
 	
@@ -107,10 +109,12 @@ public class WallslideState : StateClass
 		if( Mathf.Abs(Vector3.Angle( _Player.moveDirection, _Player.wallRight)) > 90f )
 		{
 			_Player.moveDirection = _Player.wallLeft;
+			_Player.wallSlideRight = false;
 		}
 		else
 		{
 			_Player.moveDirection = _Player.wallRight;
+			_Player.wallSlideRight = true;
 		}
 		transform.rotation = Quaternion.LookRotation(_Player.wallFacing);
 		
@@ -159,7 +163,7 @@ public class WallslideState : StateClass
 	
 	public override void surroundingCollisionHandler()
 	{
-		if( Mathf.Abs(Vector3.Angle( _Player.moveDirection, _Player.wallRight)) >= _Player.maxWallInteractAngle )
+		if( !_Player.wallSlideRight )
 		{
 			_Player.moveDirection = _Player.wallLeft;
 		}
