@@ -126,7 +126,7 @@ public class JumpState : StateClass
 	
 	public override void CollisionHandler(ControllerColliderHit hit)
 	{
-		if(_Player.IsGrounded() || Vector3.Angle(hit.normal, transform.up) < 30f)
+		if(_Player.IsGrounded())
 		{
 			_Player.rotationModifier = 1f;
 			stateChange("idle");
@@ -188,19 +188,13 @@ public class JumpState : StateClass
 				float leftDiff = Mathf.Abs(Vector3.Angle( _Player.moveDirection, _Player.wallLeft));
 				if( leftDiff < rightDiff )
 				{
-					if( leftDiff < 91f )
-					{
-						_Player.moveDirection = _Player.wallLeft;
-						_Player.wallSlideDirection = (int)WallDirections.left;
-					}
+					_Player.moveDirection = _Player.wallLeft;
+					_Player.wallSlideDirection = (int)WallDirections.left;
 				}
 				else
 				{
-					if( rightDiff < 91f )
-					{
-						_Player.moveDirection = _Player.wallRight;
-						_Player.wallSlideDirection = (int)WallDirections.right;
-					}
+					_Player.moveDirection = _Player.wallRight;
+					_Player.wallSlideDirection = (int)WallDirections.right;
 				}
 				
 				_Player.moveSpeed *= (90f - Mathf.Abs(Vector3.Angle( _Player.moveDirection, transform.forward ))) / 90f;

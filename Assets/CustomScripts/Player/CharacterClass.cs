@@ -29,7 +29,10 @@ public class CharacterClass : MonoBehaviour
 					inAirVelocity = Vector3.zero,
 					wallFacing = Vector3.zero,
 					wallRight = Vector3.zero,
-					wallLeft = Vector3.zero;			
+					wallLeft = Vector3.zero,
+					oldWallFacing = Vector3.zero,
+					oldwallRight = Vector3.zero,
+					oldwallLeft = Vector3.zero;			
 	[HideInInspector]
 	public bool jumping = false,
 				doubleJumping = false,
@@ -100,37 +103,22 @@ public class CharacterClass : MonoBehaviour
 	// Get wall contact information based on the contact point's normal vector
 	public void wallNormalChangeHandler( Vector3 newWallNormal )
 	{
-		if( wallSlideDirection == (int)WallDirections.right )
-		{
-			//Debug.Log("right");
-			if( Vector3.Angle( wallRight, newWallNormal ) > 90f )
-			{
-				//Debug.Log("here");
-				wallFacing = newWallNormal;			// Set wallFacing equal to the contact normal (points out toward player)
-				wallRight = Vector3.Cross( wallFacing, transform.up );		// Cross multiply wallFacing with the player's up vector to get wallRight
-				wallLeft = Quaternion.LookRotation(wallRight, transform.up) * Vector3.back;
-			}
-		}
-		else if( wallSlideDirection == (int)WallDirections.left )
-		{
-			//Debug.Log("left");
-			if( Vector3.Angle( wallLeft, newWallNormal ) > 90f )
-			{
-				//Debug.Log("here");
-				wallFacing = newWallNormal;			// Set wallFacing equal to the contact normal (points out toward player)
-				wallRight = Vector3.Cross( wallFacing, transform.up );		// Cross multiply wallFacing with the player's up vector to get wallRight
-				wallLeft = Quaternion.LookRotation(wallRight, transform.up) * Vector3.back;
-			}
-		}
-		else
-		{
-			//Debug.Log("neither here");
-			wallFacing = newWallNormal;			// Set wallFacing equal to the contact normal (points out toward player)
-			wallRight = Vector3.Cross( wallFacing, transform.up );		// Cross multiply wallFacing with the player's up vector to get wallRight
-			wallLeft = Quaternion.LookRotation(wallRight, transform.up) * Vector3.back;
-		}
-		//Debug.Log("Character - right: " + wallRight + ", left: " + wallLeft );
+		oldWallFacing = wallFacing;			// Store the old values in case you need to revert back to them
+		oldwallLeft = wallLeft;
+		oldwallRight = wallRight;
+
+		wallFacing = newWallNormal;			// Set wallFacing equal to the contact normal (points out toward player)
+		wallRight = Vector3.Cross( wallFacing, transform.up );		// Cross multiply wallFacing with the player's up vector to get wallRight
+		wallLeft = Quaternion.LookRotation(wallRight, transform.up) * Vector3.back;		// Just look back from wallRight to get wallLeft;
+
 		surroundingCollision();
+	}
+
+	public void getOldWallNormal()			// Restore the old wall vector values
+	{
+		wallFacing = oldWallFacing;
+		wallLeft = oldwallLeft;
+		wallRight = oldwallRight;
 	}
 	
 	public float CalculateJumpVerticalSpeed (float targetJumpHeight)
