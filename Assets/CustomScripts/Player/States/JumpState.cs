@@ -184,7 +184,6 @@ public class JumpState : StateClass
 			}
 			else
 			{
-				Debug.Log("jump here");
 				float rightDiff = Mathf.Abs(Vector3.Angle( _Player.moveDirection, _Player.wallRight));
 				float leftDiff = Mathf.Abs(Vector3.Angle( _Player.moveDirection, _Player.wallLeft));
 				if( leftDiff < rightDiff )

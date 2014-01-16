@@ -22,16 +22,14 @@ public class surroundingTrigger : MonoBehaviour
 
 	void OnCollisionStay(Collision collision)
 	{
-		if( vertical )
-		{
-			foreach (ContactPoint contact in collision.contacts) {
-				if(contact.otherCollider.gameObject != transform.parent.gameObject)
+		foreach (ContactPoint contact in collision.contacts) {
+			if(contact.otherCollider.gameObject != transform.parent.gameObject)
+			{
+				if( Mathf.Abs( contact.normal.y ) < 0.2f)
 				{
-					if( Mathf.Abs( contact.normal.y ) < 0.2f)
-					{
-						wallNormal( contact.normal );
-						Debug.DrawRay( contact.point, contact.normal, Color.white, testLineDuration );
-					}
+					vertical = true;
+					wallNormal( contact.normal );
+					//Debug.DrawRay( contact.point, contact.normal, Color.white, testLineDuration );
 				}
 			}
 		}
@@ -46,7 +44,7 @@ public class surroundingTrigger : MonoBehaviour
 
 	void Update()
 	{
-		Debug.Log( numContacts );
+//		Debug.Log( numContacts );
 		if( changed )
 		{
 			if( numContacts == 0 )
@@ -54,8 +52,6 @@ public class surroundingTrigger : MonoBehaviour
 				vertical = false;
 				wallNormal( transform.forward );
 			}
-			else
-				vertical = true;
 		}
 		changed = false;
 	}
