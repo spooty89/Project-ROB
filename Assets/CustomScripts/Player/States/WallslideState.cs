@@ -169,7 +169,7 @@ public class WallslideState : StateClass
 		}
 		else
 		{
-			if( Vector3.Angle( _Player.moveDirection, _Player.wallFacing ) > 90f )		// If we aren't going around outside corners
+			if( Vector3.Angle( _Player.moveDirection, _Player.wallFacing ) > 89f )		// If we aren't going around outside corners
 			{
 				if( _Player.wallSlideDirection == (int)WallDirections.left )
 				{
@@ -181,6 +181,7 @@ public class WallslideState : StateClass
 				}
 				else
 				{
+					Debug.Log("here");
 					float rightDiff = Mathf.Abs(Vector3.Angle( _Player.moveDirection, _Player.wallRight));
 					float leftDiff = Mathf.Abs(Vector3.Angle( _Player.moveDirection, _Player.wallLeft));
 					if( leftDiff < rightDiff )
