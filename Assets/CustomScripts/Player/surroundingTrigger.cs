@@ -11,55 +11,53 @@ public class surroundingTrigger : MonoBehaviour
 	public float angleThreshold = 90f, testLineDuration = 0f;
 
 	int numContacts = 0;
+	bool changed = false;
 
-	void OnCollisionEnter(Collision collision)
+	IEnumerator OnCollisionEnter(Collision collision)
 	{
-		foreach (ContactPoint contact in collision.contacts) {
-			if(contact.otherCollider.gameObject != transform.parent.gameObject)
-			{
-				if( Mathf.Abs( contact.normal.y ) <= 0.1f)
-				{
-					Debug.Log( contact.normal );
-					wallNormal( contact.normal );
-					vertical = true;
-				}
-			}
-		}
+		changed = true;
+		numContacts++;
+		yield return new WaitForFixedUpdate();
 	}
 
 	void OnCollisionStay(Collision collision)
 	{
-		foreach (ContactPoint contact in collision.contacts) {
-			if(contact.otherCollider.gameObject != transform.parent.gameObject)
-			{
-				if( Mathf.Abs( contact.normal.y ) <= 0.1f)
+		if( vertical )
+		{
+			foreach (ContactPoint contact in collision.contacts) {
+				if(contact.otherCollider.gameObject != transform.parent.gameObject)
 				{
-					vertical = true;
-					wallNormal( contact.normal );
-					Debug.DrawRay( contact.point, contact.normal, Color.white, testLineDuration );
+					if( Mathf.Abs( contact.normal.y ) < 0.2f)
+					{
+						wallNormal( contact.normal );
+						Debug.DrawRay( contact.point, contact.normal, Color.white, testLineDuration );
+					}
 				}
 			}
 		}
-
-		numContacts = collision.contacts.Length;
 	}
 
-	void OnCollisionExit(Collision collision)
+	IEnumerator OnCollisionExit(Collision collision)
 	{
-		foreach (ContactPoint contact in collision.contacts) {
-			if(contact.otherCollider.gameObject != transform.parent.gameObject)
-			{
-				if( Mathf.Abs( contact.normal.y ) <= 0.1f)
-				{
-					vertical = false;
-					wallNormal( contact.normal );
-				}
-			}
-		}
-		if(collision.contacts.Length >= numContacts)
+		changed = true;
+		numContacts--;
+		yield return new WaitForFixedUpdate();
+	}
+
+	void Update()
+	{
+		Debug.Log( numContacts );
+		if( changed )
 		{
-			vertical = false;
+			if( numContacts == 0 )
+			{
+				vertical = false;
+				wallNormal( transform.forward );
+			}
+			else
+				vertical = true;
 		}
+		changed = false;
 	}
 }
 

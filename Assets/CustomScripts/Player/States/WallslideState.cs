@@ -25,6 +25,7 @@ public class WallslideState : StateClass
 	{
 		justJumped = false;
 		getInput = false;
+		_Player.wallSlideDirection = (int)WallDirections.neither;
 		CoRoutine.AfterWait(inputDelay, () => getInput = true);
 			//Debug.Log("wallslideState");
 	}
@@ -66,7 +67,7 @@ public class WallslideState : StateClass
 		if(_Player.transitioning){
 			stateChange("transition");
 			return;
-		}		
+		}	
 		/*if( isMoving )
 		{
 			Transform cameraTransform = Camera.main.transform;
@@ -127,11 +128,11 @@ public class WallslideState : StateClass
 			_Player.verticalSpeed = -5.0f;
 		}
 
-		if( _Player.controller.collisionFlags == 0 && !_Player.sTrigger.vertical)
+		/*if( _Player.controller.collisionFlags == 0 && !_Player.sTrigger.vertical)
 		{
 			//Debug.Log("here");
 			stateChange("jump_after_apex");
-		}
+		}*/
 	}
 	
 	
@@ -164,22 +165,22 @@ public class WallslideState : StateClass
 		
 		if(!_Player.sTrigger.vertical)
 		{
-			//Debug.Log("here");
+			Debug.Log("jump transition");
 			stateChange("jump_after_apex");
 		}
 		else
 		{
-			if( _Player.wallSlideDirection.Equals( WallDirections.left ) )
+			if( _Player.wallSlideDirection == (int)WallDirections.left )
 			{
-				if( Mathf.Abs(Vector3.Angle( transform.forward, _Player.wallLeft)) < 90f )
+				if( Mathf.Abs(Vector3.Angle( _Player.moveDirection, _Player.wallLeft)) < 150f )
 				{
 					_Player.moveDirection = _Player.wallLeft;
 					transform.rotation = Quaternion.LookRotation(_Player.wallFacing);
 				}
 			}
-			else if( _Player.wallSlideDirection.Equals( WallDirections.right ) )
+			else if( _Player.wallSlideDirection == (int)WallDirections.right )
 			{
-				if( Mathf.Abs(Vector3.Angle( transform.forward, _Player.wallRight)) < 90f )
+				if( Mathf.Abs(Vector3.Angle( _Player.moveDirection, _Player.wallRight)) < 150f )
 				{
 					_Player.moveDirection = _Player.wallRight;
 					transform.rotation = Quaternion.LookRotation(_Player.wallFacing);

@@ -131,14 +131,14 @@ public class JumpState : StateClass
 			_Player.rotationModifier = 1f;
 			stateChange("idle");
 		}
-		else if( _Player.sTrigger.vertical && Vector3.Angle(hit.normal, transform.forward) > _Player.maxWallInteractAngle && Mathf.Abs(hit.normal.y) <= 0.1f)
+		/*else if( _Player.sTrigger.vertical && Vector3.Angle(hit.normal, transform.forward) > _Player.maxWallInteractAngle && Mathf.Abs(hit.normal.y) <= 0.1f)
 		{
 			_Player.wallFacing = hit.normal;
 			_Player.wallRight = Vector3.Cross( _Player.wallFacing, transform.up );
 			_Player.wallLeft = Quaternion.LookRotation(_Player.wallRight, transform.up) * Vector3.back;
 			wallInteract( );
-		}
-		else if (_Player.hangContact && Vector3.Angle(hit.normal, transform.up) > 100f) {// If player is within climb triggerBox;
+		}*/
+		else if (_Player.hangContact && Vector3.Angle(hit.normal, transform.up) > 100f) {// If player is within hang triggerBox;
 				stateChange("hang_idle");
 				_Player.hanging = true;
 				_Player.inAirVelocity = Vector3.zero;
@@ -184,6 +184,7 @@ public class JumpState : StateClass
 			}
 			else
 			{
+				Debug.Log("jump here");
 				float rightDiff = Mathf.Abs(Vector3.Angle( _Player.moveDirection, _Player.wallRight));
 				float leftDiff = Mathf.Abs(Vector3.Angle( _Player.moveDirection, _Player.wallLeft));
 				if( leftDiff < rightDiff )

@@ -100,38 +100,37 @@ public class CharacterClass : MonoBehaviour
 	// Get wall contact information based on the contact point's normal vector
 	public void wallNormalChangeHandler( Vector3 newWallNormal )
 	{
-		if( wallSlideDirection.Equals( WallDirections.right ) )
+		if( wallSlideDirection == (int)WallDirections.right )
 		{
+			//Debug.Log("right");
 			if( Vector3.Angle( wallRight, newWallNormal ) > 90f )
 			{
+				//Debug.Log("here");
 				wallFacing = newWallNormal;			// Set wallFacing equal to the contact normal (points out toward player)
 				wallRight = Vector3.Cross( wallFacing, transform.up );		// Cross multiply wallFacing with the player's up vector to get wallRight
 				wallLeft = Quaternion.LookRotation(wallRight, transform.up) * Vector3.back;
-				//Debug.Log("Character - right: " + wallRight + ", left: " + wallLeft );
-				surroundingCollision();
 			}
-			else
-				moveSpeed = 0f;
 		}
-		else if( wallSlideDirection.Equals( WallDirections.left ) )
+		else if( wallSlideDirection == (int)WallDirections.left )
 		{
+			//Debug.Log("left");
 			if( Vector3.Angle( wallLeft, newWallNormal ) > 90f )
 			{
+				//Debug.Log("here");
 				wallFacing = newWallNormal;			// Set wallFacing equal to the contact normal (points out toward player)
 				wallRight = Vector3.Cross( wallFacing, transform.up );		// Cross multiply wallFacing with the player's up vector to get wallRight
 				wallLeft = Quaternion.LookRotation(wallRight, transform.up) * Vector3.back;
-				//Debug.Log("Character - right: " + wallRight + ", left: " + wallLeft );
-				surroundingCollision();
 			}
 		}
 		else
 		{
+			//Debug.Log("neither here");
 			wallFacing = newWallNormal;			// Set wallFacing equal to the contact normal (points out toward player)
 			wallRight = Vector3.Cross( wallFacing, transform.up );		// Cross multiply wallFacing with the player's up vector to get wallRight
 			wallLeft = Quaternion.LookRotation(wallRight, transform.up) * Vector3.back;
-			//Debug.Log("Character - right: " + wallRight + ", left: " + wallLeft );
-			surroundingCollision();
 		}
+		//Debug.Log("Character - right: " + wallRight + ", left: " + wallLeft );
+		surroundingCollision();
 	}
 	
 	public float CalculateJumpVerticalSpeed (float targetJumpHeight)
