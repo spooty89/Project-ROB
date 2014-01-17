@@ -20,7 +20,12 @@ public class TPC: MonoBehaviour
 		
 		_Player.moveDirection = transform.forward;	// Initialize player's move direction to the direction rob is initially facing
 		stateChangeSetup();
+	}
+
+	private void Start()
+	{
 		animationSetup();
+
 	}
 	
 	
