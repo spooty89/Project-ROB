@@ -182,19 +182,26 @@ public class JumpState : StateClass
 				_Player.jumping = false;
 				_Player.doubleJumping = false;
 			}
-			else
+			else if( Vector3.Angle( _Player.moveDirection, _Player.wallFacing ) > 89f )		// If we aren't going around outside corners
 			{
+//					Debug.Log("here");
 				float rightDiff = Mathf.Abs(Vector3.Angle( _Player.moveDirection, _Player.wallRight));
 				float leftDiff = Mathf.Abs(Vector3.Angle( _Player.moveDirection, _Player.wallLeft));
 				if( leftDiff < rightDiff )
 				{
-					_Player.moveDirection = _Player.wallLeft;
-					_Player.wallSlideDirection = (int)WallDirections.left;
+					if( leftDiff < 90f )
+					{
+						_Player.moveDirection = _Player.wallLeft;
+						_Player.wallSlideDirection = (int)WallDirections.left;
+					}
 				}
 				else
 				{
-					_Player.moveDirection = _Player.wallRight;
-					_Player.wallSlideDirection = (int)WallDirections.right;
+					if( rightDiff < 90f )
+					{
+						_Player.moveDirection = _Player.wallRight;
+						_Player.wallSlideDirection = (int)WallDirections.right;
+					}
 				}
 				
 				_Player.moveSpeed *= (90f - Mathf.Abs(Vector3.Angle( _Player.moveDirection, transform.forward ))) / 90f;
@@ -206,6 +213,35 @@ public class JumpState : StateClass
 				_Player.jumping = false;
 				_Player.doubleJumping = false;
 			}
+			else
+			{
+				float rightDiff = Mathf.Abs(Vector3.Angle( _Player.moveDirection, _Player.wallRight));
+				float leftDiff = Mathf.Abs(Vector3.Angle( _Player.moveDirection, _Player.wallLeft));
+				if( leftDiff < rightDiff )
+				{
+					_Player.moveDirection = _Player.wallLeft;
+					_Player.wallSlideDirection = (int)WallDirections.left;
+					setWallMovement();
+				}
+				else
+				{
+					_Player.moveDirection = _Player.wallRight;
+					_Player.wallSlideDirection = (int)WallDirections.right;
+					setWallMovement();
+				}
+			}
 		}
+	}
+	
+	void setWallMovement()
+	{
+		_Player.moveSpeed *= (90f - Mathf.Abs(Vector3.Angle( _Player.moveDirection, transform.forward ))) / 90f;
+		transform.rotation = Quaternion.LookRotation(_Player.wallFacing);
+		
+		_Player.inAirVelocity = Vector3.zero;
+		stateChange("wall_slide");
+		_Player.wallSliding = true;
+		_Player.jumping = false;
+		_Player.doubleJumping = false;
 	}
 }

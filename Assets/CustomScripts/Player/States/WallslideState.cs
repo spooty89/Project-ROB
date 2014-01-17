@@ -181,7 +181,7 @@ public class WallslideState : StateClass
 				}
 				else
 				{
-					Debug.Log("here");
+//					Debug.Log("here");
 					float rightDiff = Mathf.Abs(Vector3.Angle( _Player.moveDirection, _Player.wallRight));
 					float leftDiff = Mathf.Abs(Vector3.Angle( _Player.moveDirection, _Player.wallLeft));
 					if( leftDiff < rightDiff )
