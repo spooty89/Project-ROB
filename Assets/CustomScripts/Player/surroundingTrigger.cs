@@ -12,8 +12,7 @@ public class surroundingTrigger : MonoBehaviour
 	public LayerMask layerMask;
 
 	int numContacts = 0, printNum = 0;
-	bool stay = false, free = true, check = false;
-	Vector3 normal = Vector3.zero;
+	bool stay = false, free = true;
 	
 	void Awake()
 	{
@@ -22,14 +21,6 @@ public class surroundingTrigger : MonoBehaviour
 		GetComponent<Rigidbody>().sleepAngularVelocity = 0f;
 		
 	}
-	
-	/*IEnumerator OnCollisionEnter(Collision collision)
-	{
-		changed = true;
-		numContacts++;
-		//yield return null;
-		yield return new WaitForFixedUpdate();
-	}*/
 
 	IEnumerator OnCollisionStay(Collision collision)
 	{
@@ -40,27 +31,18 @@ public class surroundingTrigger : MonoBehaviour
 			{
 				if( Mathf.Abs( hit.normal.y ) < 0.2f)
 				{
-					check = true;
 					vertical = true;
-					normal = hit.normal;
+					wallNormal( hit.normal );
 					stay = true;
 					free = false;
 					numContacts++;
+					//Debug.DrawRay( contact.point, hit.normal, Color.white, testLineDuration );
 					break;
-					//Debug.DrawRay( contact.point, contact.normal, Color.white, testLineDuration );
 				}
 			}
 		}
 		yield return new WaitForFixedUpdate();
 	}
-
-	/*IEnumerator OnCollisionExit(Collision collision)
-	{
-		changed = true;
-		//numContacts--;
-		//yield return null;
-			yield return new WaitForFixedUpdate();
-	}*/
 
 	IEnumerator collisionManager()
 	{
@@ -68,22 +50,12 @@ public class surroundingTrigger : MonoBehaviour
 		{
 			if( !stay )
 			{
-				if(check)
+				if( numContacts == 0 && !free )
 				{
-					if( numContacts == 0 && !free )
-					{
-			vertical = false;
-			wallNormal( transform.forward );
-						check = false;
-						
-						//CoRoutine.AfterWait( .07f, () => testFree() );
-					}
-					free = true;
+					vertical = false;
+					wallNormal( transform.forward );
 				}
-			}
-			else
-			{
-				wallNormal( normal );
+				free = true;
 			}
 			stay = false;
 			printNum = numContacts;
@@ -91,37 +63,10 @@ public class surroundingTrigger : MonoBehaviour
 			yield return new WaitForFixedUpdate();
 		}
 	}
-	
-	void Update()
-	{
-	}
-	
-	void testFree()
-	{
-		if( !check )
-		{
-			vertical = false;
-			wallNormal( transform.forward );
-		}
-	}
-	
-	/*void Update()
-	{
-//		Debug.Log( numContacts );
-		if( changed )
-		{
-			if( numContacts == 0 )
-			{
-				vertical = false;
-				wallNormal( transform.forward );
-			}
-		}
-		changed = false;
-	}*/
 
-	void OnGUI()
+	/*void OnGUI()
 	{
 		GUI.Box(new Rect(0,0,100,50), normal.ToString() + "\nNumContacts: " + printNum + "\nSleeping?: " + GetComponent<Rigidbody>().IsSleeping() );
-	}
+	}*/
 }
 
