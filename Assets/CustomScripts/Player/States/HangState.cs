@@ -11,10 +11,7 @@ public class HangState : StateClass
 	
 	protected override void Awake()
 	{
-		if( _Player == null )
-		{
-			_Player = GetComponent<CharacterClass>();
-		}
+		base.Awake();
 	}
 	
 	void OnEnable()
@@ -43,6 +40,7 @@ public class HangState : StateClass
 			{
 				_Player.verticalSpeed = -0.1f;
 				stateChange("jump_after_apex");
+				_Player.hanging = false;							// Set climbing to false
 				_Player.jumpingReachedApex = true;
 			}
 		}

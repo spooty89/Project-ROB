@@ -15,10 +15,7 @@ public class GroundedState : StateClass
 	
 	protected override void Awake()
 	{
-		if( _Player == null )
-		{
-			_Player = GetComponent<CharacterClass>();
-		}
+		base.Awake();
 	}
 
 
@@ -146,7 +143,15 @@ public class GroundedState : StateClass
 	
 	public override void surroundingCollisionHandler()
 	{
-		
+		if (_Player.climbContact && Vector3.Angle( _Player.moveDirection, _Player.wallFacing ) > 100f ) {// If player is within climb triggerBox
+			transform.rotation = Quaternion.Euler( Quaternion.Euler(_Player.wallFacing) * Vector3.back );
+			
+			stateChange("climb_wall_idle");
+			_Player.climbing = true;
+			_Player.inAirVelocity = Vector3.zero;
+			_Player.jumping = false;
+			_Player.doubleJumping = false;
+		}
 	}
 	
 	

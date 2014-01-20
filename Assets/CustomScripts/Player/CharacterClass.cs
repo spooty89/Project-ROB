@@ -30,9 +30,13 @@ public class CharacterClass : MonoBehaviour
 					wallFacing = Vector3.zero,
 					wallRight = Vector3.zero,
 					wallLeft = Vector3.zero,
+					wallUp = Vector3.zero,
+					wallBack = Vector3.zero,
 					oldWallFacing = Vector3.zero,
 					oldwallRight = Vector3.zero,
-					oldwallLeft = Vector3.zero;			
+					oldwallLeft = Vector3.zero,
+					oldwallUp = Vector3.zero,
+					oldwallBack = Vector3.zero;			
 	[HideInInspector]
 	public bool jumping = false,
 				doubleJumping = false,
@@ -106,10 +110,14 @@ public class CharacterClass : MonoBehaviour
 		oldWallFacing = wallFacing;			// Store the old values in case you need to revert back to them
 		oldwallLeft = wallLeft;
 		oldwallRight = wallRight;
+		oldwallUp = wallUp;
+		oldwallBack = wallBack;
 
 		wallFacing = newWallNormal;			// Set wallFacing equal to the contact normal (points out toward player)
 		wallRight = Vector3.Cross( wallFacing, transform.up );		// Cross multiply wallFacing with the player's up vector to get wallRight
-		wallLeft = Quaternion.LookRotation(wallRight, transform.up) * Vector3.back;		// Just look back from wallRight to get wallLeft;
+		wallUp = Vector3.Cross( wallRight, wallFacing );		// Cross multiply wallFacing with wallLeft to get wallUp
+		wallBack = Vector3.Cross(wallRight, wallUp);		// Just look back from wallUp to get wallDown;
+		wallLeft = Vector3.Cross(wallBack, wallUp);		// Just look back from wallRight to get wallLeft;
 
 		surroundingCollision();
 	}
@@ -119,6 +127,8 @@ public class CharacterClass : MonoBehaviour
 		wallFacing = oldWallFacing;
 		wallLeft = oldwallLeft;
 		wallRight = oldwallRight;
+		wallUp = oldwallUp;
+		wallBack = oldwallBack;
 	}
 	
 	public float CalculateJumpVerticalSpeed (float targetJumpHeight)

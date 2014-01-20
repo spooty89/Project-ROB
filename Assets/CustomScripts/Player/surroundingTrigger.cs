@@ -13,6 +13,7 @@ public class surroundingTrigger : MonoBehaviour
 
 	int numContacts = 0, printNum = 0;
 	bool stay = false, free = true;
+	Vector3 normal = Vector3.zero;
 	
 	void Awake()
 	{
@@ -33,10 +34,11 @@ public class surroundingTrigger : MonoBehaviour
 				{
 					vertical = true;
 					wallNormal( hit.normal );
+					normal = hit.normal;
 					stay = true;
 					free = false;
 					numContacts++;
-					//Debug.DrawRay( contact.point, hit.normal, Color.white, testLineDuration );
+					Debug.DrawRay( contact.point, hit.normal, Color.white, testLineDuration );
 					break;
 				}
 			}
@@ -64,9 +66,9 @@ public class surroundingTrigger : MonoBehaviour
 		}
 	}
 
-	/*void OnGUI()
+	void OnGUI()
 	{
 		GUI.Box(new Rect(0,0,100,50), normal.ToString() + "\nNumContacts: " + printNum + "\nSleeping?: " + GetComponent<Rigidbody>().IsSleeping() );
-	}*/
+	}
 }
 

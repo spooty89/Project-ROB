@@ -25,7 +25,6 @@ public class TPC: MonoBehaviour
 	private void Start()
 	{
 		animationSetup();
-
 	}
 	
 	

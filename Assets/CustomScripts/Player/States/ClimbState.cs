@@ -6,23 +6,29 @@ public class ClimbState : StateClass
 					walljumpRotationModifier = 1f,
 					walljumpRotModBuildTime = 0f,
 					walljumpSpeed = 5f;
-	private bool getInput;
-	
+	private bool getInput, isMoving;
+	private float v, h;
+
 	protected override void Awake()
 	{
-		if( _Player == null )
-		{
-			_Player = GetComponent<CharacterClass>();
-		}
+		base.Awake();
 	}
 
 	void OnEnable()
 	{
+		transform.rotation = Quaternion.LookRotation(_Player.wallBack, _Player.wallUp);
+
+		_Player.moveDirection.y = 0f;
 		_Player.verticalSpeed = 0f;
+		_Player.moveSpeed = 0f;
+		_Player.climbing = true;
+		_Player.inAirVelocity = Vector3.zero;
+		_Player.jumping = false;
+		_Player.doubleJumping = false;
+
 		enabled = true;
 		getInput = false;
 		CoRoutine.AfterWait(inputDelay, () => getInput = true);
-		//Debug.Log("climbState");
 	}
 	
 	public override void Run()
@@ -30,114 +36,81 @@ public class ClimbState : StateClass
 		if( enabled )
 		{
 			if( getInput )
-			{
 				InputHandler();
-			}
-			MovementHandler();
+			if( enabled )
+				MovementHandler();
 		}
 	}
 	
 	private void InputHandler()
 	{	
-		float vertical = Input.GetAxisRaw("Vertical");
-		float horizontal = Input.GetAxisRaw("Horizontal");
-		if (Input.anyKey || vertical != 0f || horizontal != 0f)
-		{
-			// If one of the up/down buttons is pressed
-			if (Input.GetButton ("Vertical") || vertical != 0f) {
-				if(Input.GetAxis("Vertical") > 0)
-				{
-					_Player.SetCurrentState("climb_wall_up");
-				}
-				else
-				{
-					_Player.SetCurrentState("climb_wall_down");
-				}
-				_Player.verticalSpeed = 2.0f * Input.GetAxis("Vertical");
-				if (Input.GetButton("Shift"))		// Climb faster
-				{
-					_Player.verticalSpeed *= 1.5f;
-				}
-			}
-			else
-			{
-				_Player.verticalSpeed = 0.0f;
-			}
-			// If one of the left/right buttons is pressed
-			if (Input.GetButton ("Horizontal") || horizontal != 0f)
-			{
-				if( Input.GetAxis("Horizontal") > 0 )
-				{
-					_Player.SetCurrentState("climb_wall_right");
-				}
-				else
-				{
-					_Player.SetCurrentState("climb_wall_left");
-				}
-				_Player.moveDirection += new Vector3(_Player.wallRight.x * Input.GetAxis("Horizontal"), _Player.wallRight.y * 
-								 Input.GetAxis("Horizontal"), _Player.wallRight.z * Input.GetAxis("Horizontal"));
-				_Player.moveDirection = _Player.moveDirection.normalized;
-				_Player.moveSpeed = 2.0f;
-				if (Input.GetButton("Shift"))
-					_Player.moveSpeed *= 1.5f;
-			}
-			else
-			{
-				_Player.moveSpeed = 0.0f;
-				_Player.moveDirection = Vector3.zero;
-			}
-			
-			if (Input.GetButtonDown("Jump"))
-			{
-				_Player.moveDirection = _Player.wallFacing;
-				_Player.moveDirection = _Player.moveDirection.normalized;
-				_Player.moveSpeed = walljumpSpeed;
-				_Player.setRotationModiferAndBuild( walljumpRotationModifier, walljumpRotModBuildTime );
-				_Player.verticalSpeed = _Player.CalculateJumpVerticalSpeed( _Player.jumpHeight );
-				_Player.doubleJumping = true;
-				_Player.climbing = false;
-				_Player.climbContact = false;
-				stateChange("double_jump");
-			}
+		v = Input.GetAxisRaw("Vertical");
+		h = Input.GetAxisRaw("Horizontal");
+		
+		isMoving = Mathf.Abs (h) > 0.05f || Mathf.Abs (v) > 0.05f;
 
-			if( Input.GetButtonDown( "Interact" ) )
-			{
-				_Player.verticalSpeed = -0.1f;
-				_Player.transform.forward = _Player.wallFacing;
-				_Player.climbing = false;
-				_Player.transform.position += new Vector3(_Player.wallFacing.x * 0.25f, _Player.wallFacing.y * 0.25f, _Player.wallFacing.z * 0.25f);
-				_Player.moveDirection = _Player.wallFacing;
-				enabled = false;
-				stateChange("jump_after_apex");
-				_Player.jumpingReachedApex = true;
-			}
-		}
-		else
+			
+		if (Input.GetButtonDown("Jump"))
 		{
-			_Player.moveSpeed = 0.0f;
-			_Player.moveDirection = Vector3.zero;
-			_Player.SetCurrentState("climb_wall_idle");
-			_Player.inAirVelocity = Vector3.zero;
+			enabled = false;
+			transform.rotation = Quaternion.LookRotation( _Player.wallFacing, transform.up );
+			_Player.moveDirection = _Player.wallFacing;
+			_Player.moveSpeed = walljumpSpeed;
+			_Player.setRotationModiferAndBuild( walljumpRotationModifier, walljumpRotModBuildTime );
+			_Player.verticalSpeed = _Player.CalculateJumpVerticalSpeed( _Player.jumpHeight );
+			_Player.doubleJumping = true;
+			_Player.climbing = false;
+			stateChange("double_jump");
+		}
+
+		if( Input.GetButtonDown( "Interact" ) )
+		{
+			_Player.verticalSpeed = -0.1f;
+			transform.rotation = Quaternion.LookRotation( _Player.wallFacing, transform.up );
+			_Player.climbing = false;
+			_Player.moveDirection = _Player.wallFacing;
+			//_Player.transform.position += new Vector3(_Player.wallFacing.x * 0.25f, _Player.wallFacing.y * 0.25f, _Player.wallFacing.z * 0.25f);
+			enabled = false;
+			stateChange("jump_after_apex");
+			_Player.jumpingReachedApex = true;
 		}
 	}
 	
 	private void MovementHandler()
 	{
-		if(_Player.transitioning){
-			stateChange("transition");
-			return;
-		}		
-		if (Mathf.Abs(_Player.verticalSpeed) < 0.5f)
+		if ( isMoving )
 		{
-			_Player.verticalSpeed = 0.0f;
+			Vector3 targetDirection = h * _Player.wallRight + v * _Player.wallUp;					// Target direction relative to the camera
+			if( targetDirection != Vector3.zero )
+				_Player.moveDirection = targetDirection;
+			if ( v != 0f) {			// If one of the up/down buttons is pressed
+				if( v > 0)
+					_Player.SetCurrentState("climb_wall_up");
+				else
+					_Player.SetCurrentState("climb_wall_down");
+			}
+			if ( h != 0f)			// If one of the left/right buttons is pressed
+			{
+				if( h > 0.4 )
+					_Player.SetCurrentState("climb_wall_right");
+				else if(h < -0.4)
+					_Player.SetCurrentState("climb_wall_left");
+			}
+			_Player.moveSpeed = 2.0f * Mathf.Min( (Mathf.Abs(h)+Mathf.Abs(v)), 1f );
+			if (Input.GetButton("Shift"))
+				_Player.moveSpeed *= 1.5f;
 		}
 		else
 		{
-			if (_Player.verticalSpeed < 0.0f)
-				_Player.verticalSpeed += _Player.gravity * Time.deltaTime;
-			else
-				_Player.verticalSpeed -= _Player.gravity * Time.deltaTime;
+			_Player.moveSpeed = 0.0f;
+			_Player.moveDirection = transform.forward;
+			_Player.SetCurrentState("climb_wall_idle");
+			_Player.inAirVelocity = Vector3.zero;
 		}
+		/*if(_Player.transitioning){
+			stateChange("transition");
+			return;
+		}*/
 	}
 	
 	
@@ -153,7 +126,13 @@ public class ClimbState : StateClass
 	
 	public override void surroundingCollisionHandler()
 	{
-
+		if(_Player.sTrigger.vertical)
+		{
+			if( Vector3.Angle( transform.forward, _Player.wallFacing ) > 44f )		// If we aren't going around outside corners
+			{
+				transform.rotation = Quaternion.LookRotation( _Player.wallBack );
+			}
+		}
 	}
 	
 	

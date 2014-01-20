@@ -20,10 +20,7 @@ public class AimState : StateClass
 	
 	protected override void Awake()
 	{
-		if( _Player == null )
-		{
-			_Player = GetComponent<CharacterClass>();
-		}
+		base.Awake();
 		camController = Camera.main.GetComponent<CustomCameraController>();
 		normalHeight = camController.targetHeight;
 		normalDistance = camController.normalDistance;
