@@ -16,13 +16,17 @@ public class HangState : StateClass
 	
 	void OnEnable()
 	{
-		//Debug.Log("hangState");
+		v = 0;
+		h = 0;
+		isMoving = false;
+		_Player.hanging = true;
 	}
 
 
 	public override void Run()
 	{
-		InputHandler();
+		if( _Player.getInput )
+			InputHandler();
 		MovementHandler();
 	}
 	
@@ -49,10 +53,10 @@ public class HangState : StateClass
 	
 	private void MovementHandler()
 	{
-		if(_Player.transitioning){
+		/*if(_Player.transitioning){
 			stateChange("transition");
 			return;
-		}		
+		}*/		
 		_Player.inAirVelocity = Vector3.zero;
 		Transform cameraTransform = Camera.main.transform;
 		
@@ -82,6 +86,7 @@ public class HangState : StateClass
 		if (!isMoving)
 		{
 			_Player.SetCurrentState("hang_idle");
+			_Player.moveSpeed = 0;
 		}
 		else{
 			_Player.SetCurrentState("hang_move");
@@ -94,17 +99,11 @@ public class HangState : StateClass
 			{
 				targetSpeed *= walkSpeed;
 			}
+			_Player.moveSpeed = Mathf.Lerp(_Player.moveSpeed, targetSpeed, curSmooth);
 		}
-		
-		_Player.moveSpeed = Mathf.Lerp(_Player.moveSpeed, targetSpeed, curSmooth);
+
 		
 		transform.rotation = Quaternion.LookRotation(new Vector3(_Player.moveDirection.x, 0.0f, _Player.moveDirection.z));
-		
-		if((_Player.controller.collisionFlags & CollisionFlags.Above) == 0)
-		{
-			_Player.verticalSpeed = -0.1f;
-			stateChange("jump_after_apex");
-		}
 	}
 	
 	
@@ -117,11 +116,22 @@ public class HangState : StateClass
 	
 	public override void surroundingCollisionHandler()
 	{
-		
+		if (_Player.getInput && _Player.climbContact && Vector3.Angle( _Player.moveDirection, _Player.wallFacing ) > 100f ) {// If player is within climb triggerBox
+			transform.rotation = Quaternion.Euler( _Player.wallBack );
+
+			_Player.delayInput( 0.5f );
+			stateChange("climb_wall_idle");
+		}
 	}
 	
 	
-	public override void TriggerEnterHandler(Collider other)
+	public override void topCollisionHandler()
+	{
+
+    }
+    
+    
+    public override void TriggerEnterHandler(Collider other)
 	{
 		
 	}
@@ -134,8 +144,12 @@ public class HangState : StateClass
 			_Player.stateChange("jump_after_apex");
 			_Player.numHangContacts = 0;
 			_Player.hangContact = false;						// Set climb contact to false
-			_Player.hanging = false;							// Set climbing to false
 		}
+	}
+
+	void OnDisable()
+	{
+		_Player.hanging = false;
 	}
 }
 

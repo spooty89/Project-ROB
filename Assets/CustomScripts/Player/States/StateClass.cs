@@ -8,6 +8,7 @@ public abstract class StateClass : MonoBehaviour
 	public abstract void Run();
 	public abstract void CollisionHandler(ControllerColliderHit hit);
 	public abstract void surroundingCollisionHandler();
+	public abstract void topCollisionHandler();
 	public abstract void TriggerEnterHandler(Collider other);
 	public abstract void TriggerExitHandler(Collider other);
 	

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public delegate void wallNormalChangeEvent( Vector3 wallNormal );
 
-public class surroundingTrigger : MonoBehaviour
+public class verticalCollider : MonoBehaviour
 {
 	public bool vertical = false;
 	public wallNormalChangeEvent wallNormal;

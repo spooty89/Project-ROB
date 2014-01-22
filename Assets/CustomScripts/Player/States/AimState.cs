@@ -30,7 +30,6 @@ public class AimState : StateClass
 	{
 		animation[aimUpDown.name].layer = 2;
 		camController.targetHeight = Mathf.Max( targetHeight * (camController.desiredDistance/normalDistance), normalHeight );
-		//Debug.Log("aimState");
 	}
 
 	private void OnDisable()
@@ -124,13 +123,12 @@ public class AimState : StateClass
 		// moveDirection is always normalized, and we only update it if there is user input.
 		if (targetDirection != Vector3.zero)
 		{
-			_Player.moveDirection = targetDirection;/* Vector3.RotateTowards(_Player.moveDirection, targetDirection, 			// Smoothly turn towards the target direction
-			                                              _Player.rotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);*/
+			_Player.moveDirection = targetDirection; 			// Smoothly turn towards the target direction
 			_Player.moveDirection = _Player.moveDirection.normalized;
 		}
 		
 		float curSmooth = _Player.speedSmoothing * Time.deltaTime;			// Smooth the speed based on the current target direction
-		float targetSpeed = Mathf.Min(targetDirection.magnitude, 1.0f);	//* Support analog input but insure you cant walk faster diagonally than just f/b/l/r
+		float targetSpeed = Mathf.Min(targetDirection.magnitude, 1.0f);		// Support analog input but insure you cant walk faster diagonally than just f/b/l/r
 		
 		if (!isMoving)
 		{
@@ -172,6 +170,12 @@ public class AimState : StateClass
 	public override void surroundingCollisionHandler()
 	{
 
+	}
+	
+	
+	public override void topCollisionHandler()
+    {
+        
 	}
 	
 	

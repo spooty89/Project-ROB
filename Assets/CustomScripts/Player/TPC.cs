@@ -51,6 +51,7 @@ public class TPC: MonoBehaviour
 			sc.stateChange = stateChangeHandler;
 		}
 		_Player.surroundingCollision = surroundingCollisionHandler;
+		_Player.topCollision = topCollisionHandler;
 		_Player.stateChange = stateChangeHandler;
 	}
 	
@@ -73,7 +74,7 @@ public class TPC: MonoBehaviour
 	// Player has come in contact with a surface
 	private void OnControllerColliderHit (ControllerColliderHit hit)
 	{
-		if( hit.collider.gameObject != _Player.sTrigger.gameObject )
+		if( hit.collider.gameObject != _Player.vCollider.gameObject )
 			((StateClass)GetComponent( _animations[_Player.GetCurrentState()].state )).CollisionHandler(hit);
 	}
 
@@ -82,6 +83,12 @@ public class TPC: MonoBehaviour
 	{
 		((StateClass)GetComponent( _animations[_Player.GetCurrentState()].state )).surroundingCollisionHandler();
 	}
+	
+	
+	private void topCollisionHandler()
+	{
+		((StateClass)GetComponent( _animations[_Player.GetCurrentState()].state )).topCollisionHandler();
+    }
 	
 	
 	public void OnTriggerEnter(Collider other)

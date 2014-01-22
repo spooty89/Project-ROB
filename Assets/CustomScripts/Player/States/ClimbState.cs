@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class ClimbState : StateClass
 {
-	public float inputDelay = 0f,
-					walljumpRotationModifier = 1f,
+	public float walljumpRotationModifier = 1f,
 					walljumpRotModBuildTime = 0f,
 					walljumpSpeed = 5f;
-	private bool getInput, isMoving;
+	private bool isMoving;
 	private float v, h;
+	public Vector3 targetDirection;
 
 	protected override void Awake()
 	{
@@ -18,6 +18,7 @@ public class ClimbState : StateClass
 	{
 		transform.rotation = Quaternion.LookRotation(_Player.wallBack, _Player.wallUp);
 
+		targetDirection = Vector3.zero;
 		_Player.moveDirection.y = 0f;
 		_Player.verticalSpeed = 0f;
 		_Player.moveSpeed = 0f;
@@ -27,15 +28,13 @@ public class ClimbState : StateClass
 		_Player.doubleJumping = false;
 
 		enabled = true;
-		getInput = false;
-		CoRoutine.AfterWait(inputDelay, () => getInput = true);
 	}
 	
 	public override void Run()
 	{
 		if( enabled )
 		{
-			if( getInput )
+			if( _Player.getInput )
 				InputHandler();
 			if( enabled )
 				MovementHandler();
@@ -80,20 +79,23 @@ public class ClimbState : StateClass
 	{
 		if ( isMoving )
 		{
-			Vector3 targetDirection = h * _Player.wallRight + v * _Player.wallUp;					// Target direction relative to the camera
+			targetDirection = h * _Player.wallRight + v * _Player.wallUp;					// Target direction relative to the camera
 			if( targetDirection != Vector3.zero )
 				_Player.moveDirection = targetDirection;
 			if ( v != 0f) {			// If one of the up/down buttons is pressed
 				if( v > 0)
+				{
 					_Player.SetCurrentState("climb_wall_up");
+					CheckAbove();
+				}
 				else
 					_Player.SetCurrentState("climb_wall_down");
 			}
-			if ( h != 0f)			// If one of the left/right buttons is pressed
+			if ( h != 0f && enabled)			// If one of the left/right buttons is pressed
 			{
-				if( h > 0.4 )
+				if( h > Mathf.Abs(v) )
 					_Player.SetCurrentState("climb_wall_right");
-				else if(h < -0.4)
+				else if(Mathf.Abs(h) < Mathf.Abs(v))
 					_Player.SetCurrentState("climb_wall_left");
 			}
 			_Player.moveSpeed = 2.0f * Mathf.Min( (Mathf.Abs(h)+Mathf.Abs(v)), 1f );
@@ -102,10 +104,10 @@ public class ClimbState : StateClass
 		}
 		else
 		{
+			targetDirection = Vector3.zero;
 			_Player.moveSpeed = 0.0f;
 			_Player.moveDirection = transform.forward;
 			_Player.SetCurrentState("climb_wall_idle");
-			_Player.inAirVelocity = Vector3.zero;
 		}
 		/*if(_Player.transitioning){
 			stateChange("transition");
@@ -116,17 +118,21 @@ public class ClimbState : StateClass
 	
 	public override void CollisionHandler(ControllerColliderHit hit)
 	{
-		if(_Player.IsGrounded() && _Player.verticalSpeed < 0.0f)
+		if( _Player.getInput )
 		{
-			_Player.moveDirection = _Player.wallFacing;
-			stateChange("idle");
+			if(_Player.IsGrounded() && targetDirection.y < -0.1f)
+			{
+				_Player.moveDirection = _Player.wallFacing;
+				targetDirection = Vector3.zero;
+				stateChange("idle");
+			}
 		}
 	}
-	
+
 	
 	public override void surroundingCollisionHandler()
 	{
-		if(_Player.sTrigger.vertical)
+		if(enabled && _Player.vCollider.vertical)
 		{
 			if( Vector3.Angle( transform.forward, _Player.wallFacing ) > 44f )		// If we aren't going around outside corners
 			{
@@ -136,7 +142,12 @@ public class ClimbState : StateClass
 	}
 	
 	
-	public override void TriggerEnterHandler(Collider other)
+	public override void topCollisionHandler()
+	{
+    }
+    
+    
+    public override void TriggerEnterHandler(Collider other)
 	{
 		
 	}
@@ -149,8 +160,27 @@ public class ClimbState : StateClass
 			enabled = false;
 			_Player.numClimbContacts = 0;
 			_Player.climbContact = false;						// Set climb contact to false
-			_Player.climbing = false;							// Set climbing to false
 		}
+	}
+
+	void CheckAbove()
+	{
+		if( _Player.tCollider.horizontal && _Player.numHangContacts > 0)
+		{
+			enabled = false;
+			transform.rotation = Quaternion.LookRotation( _Player.wallFacing, transform.up );
+			Debug.Log( _Player.wallFacing );
+			_Player.moveDirection = _Player.wallFacing;
+			_Player.delayInput( .5f );
+			stateChange("hang_idle");
+		}
+	}
+
+	void OnDisable()
+	{
+		isMoving = false;
+		_Player.climbing = false;
+		targetDirection = Vector3.zero;
 	}
 }
 

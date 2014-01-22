@@ -20,6 +20,7 @@ public class WallslideState : StateClass
 
 	void OnEnable()
 	{
+		_Player.wallSliding = true;
 		justJumped = false;
 		getInput = false;
 		_Player.wallSlideDirection = (int)WallDirections.neither;
@@ -159,7 +160,7 @@ public class WallslideState : StateClass
 	
 	public override void surroundingCollisionHandler()
 	{
-		if(!_Player.sTrigger.vertical)
+		if(!_Player.vCollider.vertical)
 		{
 			stateChange("jump_after_apex");
 		}
@@ -196,9 +197,15 @@ public class WallslideState : StateClass
 			}
 		}
 	}
-
-
-	void setDirection( Vector3 wallDir )
+	
+	
+	public override void topCollisionHandler()
+	{
+        
+    }
+    
+    
+    void setDirection( Vector3 wallDir )
 	{
 		if( Mathf.Abs(Vector3.Angle( _Player.moveDirection, wallDir)) < 89f)
 		{

@@ -8,7 +8,8 @@ public class JumpState : StateClass
 
 	void OnEnable()
 	{
-		//Debug.Log("jumpState");
+		_Player.jumping = true;
+		_Player.jumpingReachedApex = false;
 	}
 	
 	protected override void Awake()
@@ -137,10 +138,7 @@ public class JumpState : StateClass
 		}*/
 		else if (_Player.hangContact && _Player.verticalSpeed > 0f && Vector3.Angle(hit.normal, transform.up) > 100f) {// If player is within hang triggerBox;
 				stateChange("hang_idle");
-				_Player.hanging = true;
 				_Player.inAirVelocity = Vector3.zero;
-				_Player.jumping = false;
-				_Player.doubleJumping = false;
 		}
 	}
 	
@@ -151,7 +149,13 @@ public class JumpState : StateClass
 	}
 	
 	
-	public override void TriggerEnterHandler(Collider other)
+	public override void topCollisionHandler()
+	{
+        
+    }
+    
+    
+    public override void TriggerEnterHandler(Collider other)
 	{
 		
 	}
@@ -199,6 +203,11 @@ public class JumpState : StateClass
 		_Player.inAirVelocity = Vector3.zero;
 		stateChange("wall_slide");
 		_Player.wallSliding = true;
+	}
+
+
+	void OnDisable()
+	{
 		_Player.jumping = false;
 		_Player.doubleJumping = false;
 	}

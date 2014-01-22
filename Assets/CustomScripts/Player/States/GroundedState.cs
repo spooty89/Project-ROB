@@ -7,60 +7,58 @@ public class GroundedState : StateClass
 	private float walkSpeed = 4.0f;	// The speed when walking
 	private float runSpeed = 8.0f;	// When pressing Shift button we start running
 	private Vector3 surfaceUp = Vector3.up;
-	
-	void OnEnable()
-	{
-		//Debug.Log("groundedState");
-	}
-	
+
+	// Get necessary information right away
 	protected override void Awake()
 	{
 		base.Awake();
 	}
 
+	// Every time this class is enabled, run this
+	void OnEnable()
+	{
+		enabled = true;
+		_Player.inAirVelocity = Vector3.zero;
+	}
 
+	// While this class is running, perform these tasks every frame
 	public override void Run()
 	{
-		InputHandler();
-		if(!(_Player.jumping))// || sliding))
+		if( enabled )
 		{
-			MovementHandler();
+			if( _Player.getInput )
+				InputHandler();
+			if( enabled )				// Check again, in case input disabled this script
+				MovementHandler();
 		}
-		/*else if(sliding)
-		{
-			Slide();
-		}*/
 	}
 	
-	
+	// Get the user's input, make sense of it
 	private void InputHandler()
 	{
-		v = Input.GetAxisRaw("Vertical");
-		h = Input.GetAxisRaw("Horizontal");
-		
-		isMoving = Mathf.Abs (h) > 0.05f || Mathf.Abs (v) > 0.05f;
-		
 		if( Input.anyKey )
 		{
+			v = Input.GetAxisRaw("Vertical");
+			h = Input.GetAxisRaw("Horizontal");
+			
+			isMoving = Mathf.Abs (h) > 0.05f || Mathf.Abs (v) > 0.05f;
+
 			if( Input.GetButtonDown( "Jump" ) )
-			{
 				ApplyJump();
-			}
 			if( Input.GetButton( "Aim" ) )
-			{
 				_Player.stateChange( "aim_idle" );
-			}
+		}
+		else
+		{
+			v = 0f;
+			h = 0f;
+			isMoving = false;
 		}
 	}
 	
 	
 	private void MovementHandler()
-	{
-		if(_Player.transitioning){
-			stateChange("transition");
-			return;
-		}		
-		_Player.inAirVelocity = Vector3.zero;
+	{	
 		Transform cameraTransform = Camera.main.transform;
 		
 		Vector3 forward = cameraTransform.TransformDirection(Vector3.forward);		// Forward vector relative to the camera along the x-z plane	
@@ -110,24 +108,16 @@ public class GroundedState : StateClass
 		
 		if (!_Player.IsGrounded())
 		{
-			//Debug.Log( "not grounded");
 			stateChange("jump_after_apex");
 		}
 	}
-	
-	
-	/*private void Slide()
-	{
-		_Player.moveDirection = Vector3.RotateTowards(surfaceUp, Vector3.down, 1.5f, 0f);
-		transform.rotation = Quaternion.LookRotation(_Player.moveDirection);
-		_Player.moveSpeed = 10.0f;
-	}*/
+
 	
 	
 	private void ApplyJump ()
 	{
+		enabled = false;
 		_Player.verticalSpeed = _Player.CalculateJumpVerticalSpeed (_Player.jumpHeight);
-		_Player.jumping = true;
 		stateChange("jump");
 	}
 	
@@ -136,7 +126,19 @@ public class GroundedState : StateClass
 	{
 		if(_Player.IsGrounded())
 		{
-			surfaceUp = hit.normal;
+			RaycastHit rcHit;
+			if( Physics.Raycast( transform.position, (hit.point - transform.position).normalized,
+			                    out rcHit, Vector3.Distance(hit.point, transform.position) + .5f ) )
+			{
+				if( rcHit.normal.y > 0.8f)
+				{
+					surfaceUp = hit.normal;
+					Debug.DrawRay( hit.point, rcHit.normal, Color.white, 5 );
+				}
+			}
+
+			//surfaceUp = hit.normal;
+
 		}
 	}
 	
@@ -145,17 +147,18 @@ public class GroundedState : StateClass
 	{
 		if (_Player.climbContact && Vector3.Angle( _Player.moveDirection, _Player.wallFacing ) > 100f ) {// If player is within climb triggerBox
 			transform.rotation = Quaternion.Euler( Quaternion.Euler(_Player.wallFacing) * Vector3.back );
-			
 			stateChange("climb_wall_idle");
-			_Player.climbing = true;
-			_Player.inAirVelocity = Vector3.zero;
-			_Player.jumping = false;
-			_Player.doubleJumping = false;
 		}
 	}
 	
 	
-	public override void TriggerEnterHandler(Collider other)
+	public override void topCollisionHandler()
+	{
+        
+    }
+    
+    
+    public override void TriggerEnterHandler(Collider other)
 	{
 		
 	}
@@ -166,6 +169,3 @@ public class GroundedState : StateClass
 		
 	}
 }
-
-
-

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public delegate void surroundingCollisionEvent( );
+public delegate void collisionEvent( );
 
 public enum WallDirections : int
 {
@@ -48,7 +48,8 @@ public class CharacterClass : MonoBehaviour
 				wallSliding = false,
 				wallSlideRight = false,
 				transitioning = false,
-				build = false;
+				build = false,
+				getInput = true;
 	[HideInInspector]
 	public int  numHangContacts = 0,
 				numClimbContacts = 0,
@@ -61,8 +62,10 @@ public class CharacterClass : MonoBehaviour
 	[HideInInspector]
 	public CharacterController controller;
 	[HideInInspector]
-	public surroundingTrigger sTrigger;
-	public surroundingCollisionEvent surroundingCollision;
+	public verticalCollider vCollider;
+	public collisionEvent surroundingCollision;
+	public topCollider tCollider;
+	public collisionEvent topCollision;
 	
 	public string GetCurrentState()
 	{
@@ -83,8 +86,10 @@ public class CharacterClass : MonoBehaviour
 	private void Awake ()
 	{
 		controller = GetComponent<CharacterController>();
-		sTrigger = transform.GetComponentInChildren<surroundingTrigger>();
-		sTrigger.wallNormal = wallNormalChangeHandler;
+		vCollider = transform.GetComponentInChildren<verticalCollider>();
+		vCollider.wallNormal = wallNormalChangeHandler;
+		tCollider = transform.GetComponentInChildren<topCollider>();
+		tCollider.ceilingNormal = ceilingNormalChangeHandler;
 	}
 
 	void Update()
@@ -130,6 +135,11 @@ public class CharacterClass : MonoBehaviour
 		wallUp = oldwallUp;
 		wallBack = oldwallBack;
 	}
+
+	public void ceilingNormalChangeHandler( Vector3 newCeilingNormal )
+	{
+		topCollision();
+	}
 	
 	public float CalculateJumpVerticalSpeed (float targetJumpHeight)
 	{
@@ -150,6 +160,12 @@ public class CharacterClass : MonoBehaviour
 		{
 			return false;
 		}
+	}
+
+	public void delayInput( float delay )
+	{
+		getInput = false;
+		CoRoutine.AfterWait(delay, () => getInput = true);
 	}
 }
 
