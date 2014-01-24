@@ -66,6 +66,9 @@ public class CharacterClass : MonoBehaviour
 	public collisionEvent surroundingCollision;
 	public topCollider tCollider;
 	public collisionEvent topCollision;
+	public bottomCollider bCollider;
+
+	public New_MovingPlatform movingPlatform;
 	
 	public string GetCurrentState()
 	{
@@ -86,10 +89,12 @@ public class CharacterClass : MonoBehaviour
 	private void Awake ()
 	{
 		controller = GetComponent<CharacterController>();
+		movingPlatform = GetComponent<New_MovingPlatform>();
 		vCollider = transform.GetComponentInChildren<verticalCollider>();
 		vCollider.wallNormal = wallNormalChangeHandler;
 		tCollider = transform.GetComponentInChildren<topCollider>();
 		tCollider.ceilingNormal = ceilingNormalChangeHandler;
+		bCollider = transform.GetComponentInChildren<bottomCollider>();
 	}
 
 	void Update()
@@ -149,7 +154,7 @@ public class CharacterClass : MonoBehaviour
 	}
 	
 	public bool IsGrounded () {
-		if ((controller.collisionFlags & CollisionFlags.CollidedBelow) != 0)
+		if ((controller.collisionFlags & CollisionFlags.CollidedBelow) != 0 || bCollider.movingPlatform)
 		{
 			jumping = false;
 			doubleJumping = false;
@@ -166,6 +171,10 @@ public class CharacterClass : MonoBehaviour
 	{
 		getInput = false;
 		CoRoutine.AfterWait(delay, () => getInput = true);
+	}
+	
+	private bool MoveWithPlatform () {
+		return ( movingPlatform.enabled && IsGrounded() && movingPlatform.activePlatform != null );
 	}
 }
 

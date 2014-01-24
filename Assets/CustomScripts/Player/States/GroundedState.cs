@@ -36,24 +36,15 @@ public class GroundedState : StateClass
 	// Get the user's input, make sense of it
 	private void InputHandler()
 	{
-		if( Input.anyKey )
-		{
-			v = Input.GetAxisRaw("Vertical");
-			h = Input.GetAxisRaw("Horizontal");
-			
-			isMoving = Mathf.Abs (h) > 0.05f || Mathf.Abs (v) > 0.05f;
+		v = Input.GetAxisRaw("Vertical");
+		h = Input.GetAxisRaw("Horizontal");
+		
+		isMoving = Mathf.Abs (h) > 0.05f || Mathf.Abs (v) > 0.05f;
 
-			if( Input.GetButtonDown( "Jump" ) )
-				ApplyJump();
-			if( Input.GetButton( "Aim" ) )
-				_Player.stateChange( "aim_idle" );
-		}
-		else
-		{
-			v = 0f;
-			h = 0f;
-			isMoving = false;
-		}
+		if( Input.GetButtonDown( "Jump" ) )
+			ApplyJump();
+		if( Input.GetButton( "Aim" ) )
+			_Player.stateChange( "aim_idle" );
 	}
 	
 	
@@ -108,6 +99,7 @@ public class GroundedState : StateClass
 		
 		if (!_Player.IsGrounded())
 		{
+			Debug.Log("here");
 			stateChange("jump_after_apex");
 		}
 	}

@@ -93,10 +93,13 @@ public class ClimbState : StateClass
 			}
 			if ( h != 0f && enabled)			// If one of the left/right buttons is pressed
 			{
-				if( h > Mathf.Abs(v) )
-					_Player.SetCurrentState("climb_wall_right");
-				else if(Mathf.Abs(h) < Mathf.Abs(v))
-					_Player.SetCurrentState("climb_wall_left");
+				if( Mathf.Abs(h) > Mathf.Abs(v) )
+				{
+					if( h > 0 )
+						_Player.SetCurrentState("climb_wall_right");
+					else
+						_Player.SetCurrentState("climb_wall_left");
+				}
 			}
 			_Player.moveSpeed = 2.0f * Mathf.Min( (Mathf.Abs(h)+Mathf.Abs(v)), 1f );
 			if (Input.GetButton("Shift"))

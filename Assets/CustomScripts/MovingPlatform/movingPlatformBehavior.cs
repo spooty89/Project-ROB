@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 public class movingPlatformBehavior : MonoBehaviour {
@@ -12,22 +13,24 @@ public class movingPlatformBehavior : MonoBehaviour {
 	public bool maintainUp = false;
 	public bool enable = false;
 	private CharacterController controller;
-	
+
 	void Awake () {
 		this.movingPlatform = new MovingPlatform(this.transform, speed, rotationSpeed, wayPoints);
 		this.movingPlatform.maintainUp = maintainUp;
 		enabled = enable;
 	}
 	
-	void Update () {
+	void FixedUpdate () {
 			this.movingPlatform.move();
 			if (rotateAround)
 				this.movingPlatform.rotateAround();
 			else
 				this.movingPlatform.rotate();
 			if (movingPlatform.playerContact){
+				if (rotateAround && !maintainUp)
+					this.movingPlatform.rotateAroundOnPlatform(player);
+			else
 				this.player.position += this.movingPlatform.getDeltaPos();
-				this.movingPlatform.rotateOnPlatform(player, controller);
 			}
 	}
 	
@@ -39,5 +42,32 @@ public class movingPlatformBehavior : MonoBehaviour {
 		
 	public void noContact() {
 		this.movingPlatform.playerContact = false;
+	}
+	
+	IEnumerator OnCollisionStay(Collision collision)
+	{
+		if(collision.collider.gameObject.transform.parent.gameObject.CompareTag( "Player" ))
+		{
+			movingPlatform.playerContact = true;
+			this.player = collision.collider.gameObject.transform.parent;
+			//Debug.Log(this.movingPlatform.getDeltaPos());
+			//transferSpeed(collision.collider.gameObject.transform.parent);
+		}
+
+		yield return new WaitForFixedUpdate();
+	}
+	
+	IEnumerator OnCollisionExit(Collision collision)
+	{
+		if(collision.collider.gameObject.transform.parent.gameObject.CompareTag( "Player" ))
+		{
+			Debug.Log("right here");
+			movingPlatform.playerContact = false;
+			this.player = null;
+			//Debug.Log(this.movingPlatform.getDeltaPos());
+			//transferSpeed(collision.collider.gameObject.transform.parent);
+		}
+		
+		yield return new WaitForFixedUpdate();
 	}
 }

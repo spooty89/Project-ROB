@@ -7,15 +7,16 @@ public class MovingPlatform : Platform, MovingObjectInterface{
 	private List<GameObject> wayPoints;
 	private int wayPointIndex = 0;
 	private Vector3 prevPos;
-	private Vector3 rotationDeg;
+	private Quaternion rotationDeg;
 	private float rotationSpeed;
 	public bool playerContact = false;
 	public bool maintainUp = false;
-	
+
 	public MovingPlatform(Transform transform, float speed, float rotationSpeed, List<GameObject> wayPoints) : base(transform) {
 		this.speed = speed;
 		this.rotationSpeed = rotationSpeed;
 		this.wayPoints = wayPoints;
+		this.prevPos = this.transform.position;
 	}
 	
 	public float getSpeed(){
@@ -50,26 +51,34 @@ public class MovingPlatform : Platform, MovingObjectInterface{
 	}
 	
 	public void rotate(){
-		this.rotationDeg = this.transform.eulerAngles;
+		Vector3 oldEuler = this.transform.eulerAngles;
 		this.transform.Rotate(Vector3.up * Time.deltaTime * this.rotationSpeed);
-		this.rotationDeg = this.transform.eulerAngles - this.rotationDeg;
+		this.rotationDeg = Quaternion.Inverse(Quaternion.FromToRotation( oldEuler, this.transform.eulerAngles ));
 	}
 	
 	public void rotateAround(){
-		this.rotationDeg = this.transform.eulerAngles;
+		Vector3 oldEuler = this.transform.eulerAngles;
 		this.prevPos = this.transform.position;
 		this.transform.RotateAround(this.wayPoints[this.wayPointIndex].transform.position, this.wayPoints[wayPointIndex].transform.up, Time.deltaTime * this.rotationSpeed);
 		if (maintainUp)
 			this.transform.up = Vector3.up;
-		this.rotationDeg = this.transform.eulerAngles - this.rotationDeg;
+		this.rotationDeg = Quaternion.Inverse(Quaternion.FromToRotation( oldEuler, this.transform.eulerAngles ));
 	}
 	
-	public void rotateOnPlatform(Transform player, CharacterController controller) {
-		//player.RotateAround(this.transform.position, this.transform.up, Time.deltaTime * this.rotationSpeed);
-		if (controller.velocity.sqrMagnitude < 0.1)
-		{
-			player.Rotate(this.rotationDeg);
-		}
+	public void rotateOnPlatform(Transform player) {
+		player.RotateAround(this.transform.position, this.transform.up, Time.deltaTime * this.rotationSpeed);
+		//if (controller.velocity.sqrMagnitude < 0.1)
+		//{
+		player.Rotate( this.rotationDeg.eulerAngles );
+		//}*/
+	}
+	
+	public void rotateAroundOnPlatform(Transform player) {
+		player.RotateAround(this.wayPoints[this.wayPointIndex].transform.position, this.wayPoints[wayPointIndex].transform.up, Time.deltaTime * this.rotationSpeed);
+		//if (controller.velocity.sqrMagnitude < 0.1)
+		//{
+		player.Rotate( this.rotationDeg.eulerAngles );
+		//}*/
 	}
 	
 	public Vector3 getDeltaPos() {
