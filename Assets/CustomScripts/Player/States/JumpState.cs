@@ -8,8 +8,8 @@ public class JumpState : StateClass
 
 	void OnEnable()
 	{
-		_Player.jumping = true;
-		_Player.jumpingReachedApex = false;
+		_cc.jumping.jumping = true;
+		_cc.jumpingReachedApex = false;
 	}
 	
 	protected override void Awake()
@@ -31,44 +31,45 @@ public class JumpState : StateClass
 		h = Input.GetAxisRaw("Horizontal");
 		
 		isMoving = Mathf.Abs (h) > 0.05f || Mathf.Abs (v) > 0.05f;
-		
-		if( Input.anyKey)
-		{	
+
 			if( Input.GetButtonDown( "Jump" ) )
 			{
 				ApplyJump();
 			}
-		}
+			if( Input.GetButton( "Jump" ) )
+				_cc.inputJump = true;
+			else
+				_cc.inputJump = false;
 	}
 	
 	
 	private void MovementHandler()
 	{
-		if(_Player.transitioning){
+		if(_cc.transitioning){
 			stateChange("transition");
 			return;
 		}
-		_Player.moveDirection.y = 0.0f;
-		if (_Player.verticalSpeed > -15.0)
-			_Player.verticalSpeed -= _Player.gravity * Time.deltaTime;
+		_cc.moveDirection.y = 0.0f;
+		if (_cc.verticalSpeed > -15.0)
+			_cc.verticalSpeed -= _cc.gravity * Time.deltaTime;
 		// When we reach the apex
-		if (_Player.verticalSpeed < -0.5f)
+		if (_cc.movement.velocity.y < -0.5f)
 		{
-			/*if( _Player.sTrigger.vertical )
+			/*if( _cc.sTrigger.vertical )
 			{
 				Debug.Log("here");
 				wallInteract();
 			}
 			else
 			{*/
-			//if (!_Player.jumpingReachedApex)
+			//if (!_cc.jumpingReachedApex)
 			//{
-				_Player.jumpingReachedApex = true;
-				_Player.SetCurrentState("jump_after_apex");
+				_cc.jumpingReachedApex = true;
+				_cc.SetCurrentState("jump_after_apex");
 			/*}
-			else*/ if (_Player.verticalSpeed <= -15.0f){
-				_Player.verticalSpeed = -15.0f;
-				//_Player.SetCurrentState("free_fall");
+			else*/ if (_cc.verticalSpeed <= -15.0f){
+				_cc.verticalSpeed = -15.0f;
+				//_cc.SetCurrentState("free_fall");
 				}
 			//}
 		}
@@ -95,50 +96,60 @@ public class JumpState : StateClass
 		if (targetDirection != Vector3.zero)
 		{
 			// Smoothly turn towards the target direction
-			_Player.moveDirection = Vector3.RotateTowards(_Player.moveDirection, targetDirection, _Player.rotationModifier * _Player.inAirRotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
-			_Player.moveDirection = _Player.moveDirection.normalized;
-			transform.rotation = Quaternion.LookRotation(_Player.moveDirection);
+			_cc.moveDirection = Vector3.RotateTowards(_cc.moveDirection, targetDirection, _cc.rotationModifier * _cc.inAirRotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
+			_cc.moveDirection = _cc.moveDirection.normalized;
+			transform.rotation = Quaternion.LookRotation(_cc.moveDirection);
 		}
 		
 		if (isMoving) {
-			if (!_Player.doubleJumping)
-				_Player.inAirVelocity += targetDirection.normalized * Time.deltaTime * _Player.jumpAcceleration;
+			if (!_cc.jumping.doubleJumping)
+				_cc.inAirVelocity += targetDirection.normalized * Time.deltaTime * _cc.jumpAcceleration;
 			else
-				_Player.inAirVelocity += targetDirection.normalized * Time.deltaTime * _Player.doubleJumpAcceleration;
+				_cc.inAirVelocity += targetDirection.normalized * Time.deltaTime * _cc.doubleJumpAcceleration;
 		}
+		float curSmooth = _cc.speedSmoothing * Time.deltaTime /2;			// Smooth the speed based on the current target direction
+		float targetSpeed = Mathf.Min(targetDirection.magnitude, 1.0f);		//* Support analog input but insure you cant walk faster diagonally than just f/b/l/r
+		targetSpeed *= Mathf.Max( _cc.moveSpeed, 2f);
+		_cc.moveSpeed = Mathf.Lerp(_cc.moveSpeed, targetSpeed, curSmooth);
+		_cc.inputMoveDirection = transform.forward * _cc.moveSpeed;
 
+		_cc.movement.updateVelocity = _cc.movement.velocity;
+		_cc.movement.updateVelocity = _cc.ApplyInputVelocityChange( _cc.movement.updateVelocity );
+		_cc.movement.updateVelocity = _cc.ApplyGravity( _cc.movement.updateVelocity );
 	}
 	
 	
 	private void ApplyJump ()
 	{
-		if( !_Player.doubleJumping )
+		if( !_cc.jumping.doubleJumping )
 		{
-			_Player.verticalSpeed = _Player.CalculateJumpVerticalSpeed (_Player.doubleJumpHeight);
-			_Player.SetCurrentState("double_jump");
-			_Player.jumpingReachedApex = false;
-			_Player.doubleJumping = true;
+			_cc.verticalSpeed = _cc.CalculateJumpVerticalSpeed (_cc.doubleJumpHeight);
+			_cc.jumping.lastButtonDownTime = Time.time;
+			_cc.movement.velocity = _cc.ApplyJumping( _cc.movement.velocity, _cc.doubleJumpHeight );
+			_cc.SetCurrentState("double_jump");
+			_cc.jumpingReachedApex = false;
+			_cc.jumping.doubleJumping = true;
 		}
 	}
 	
 	
 	public override void CollisionHandler(ControllerColliderHit hit)
 	{
-		if(_Player.IsGrounded())
+		if(_cc.IsGrounded())
 		{
-			_Player.rotationModifier = 1f;
+			_cc.rotationModifier = 1f;
 			stateChange("idle");
 		}
-		/*else if( _Player.sTrigger.vertical && Vector3.Angle(hit.normal, transform.forward) > _Player.maxWallInteractAngle && Mathf.Abs(hit.normal.y) <= 0.1f)
+		/*else if( _cc.sTrigger.vertical && Vector3.Angle(hit.normal, transform.forward) > _cc.maxWallInteractAngle && Mathf.Abs(hit.normal.y) <= 0.1f)
 		{
-			_Player.wallFacing = hit.normal;
-			_Player.wallRight = Vector3.Cross( _Player.wallFacing, transform.up );
-			_Player.wallLeft = Quaternion.LookRotation(_Player.wallRight, transform.up) * Vector3.back;
+			_cc.wallFacing = hit.normal;
+			_cc.wallRight = Vector3.Cross( _cc.wallFacing, transform.up );
+			_cc.wallLeft = Quaternion.LookRotation(_cc.wallRight, transform.up) * Vector3.back;
 			wallInteract( );
 		}*/
-		else if (_Player.hangContact && _Player.verticalSpeed > 0f && Vector3.Angle(hit.normal, transform.up) > 100f) {// If player is within hang triggerBox;
+		else if (_cc.hangContact && _cc.verticalSpeed > 0f && Vector3.Angle(hit.normal, transform.up) > 100f) {// If player is within hang triggerBox;
 				stateChange("hang_idle");
-				_Player.inAirVelocity = Vector3.zero;
+				_cc.inAirVelocity = Vector3.zero;
 		}
 	}
 	
@@ -169,26 +180,26 @@ public class JumpState : StateClass
 
 	private void wallInteract( )
 	{
-		if (_Player.verticalSpeed < -0.1f && Vector3.Angle( _Player.moveDirection, _Player.wallFacing ) > 89f )	// If we aren't going around an outside corner
+		if (_cc.movement.velocity.y < -0.1f && Vector3.Angle( _cc.moveDirection, _cc.wallFacing ) > 89f )	// If we aren't going around an outside corner
 		{
-			if (_Player.climbContact) {// If player is within climb triggerBox
-				transform.rotation = Quaternion.LookRotation(_Player.wallBack, _Player.wallUp);
+			if (_cc.climbContact) {// If player is within climb triggerBox
+				transform.rotation = Quaternion.LookRotation(_cc.wallBack, _cc.wallUp);
 				stateChange("climb_wall_idle");
 			}
 			else
 			{
-				float rightDiff = Mathf.Abs(Vector3.Angle( _Player.moveDirection, _Player.wallRight));
-				float leftDiff = Mathf.Abs(Vector3.Angle( _Player.moveDirection, _Player.wallLeft));
+				float rightDiff = Mathf.Abs(Vector3.Angle( _cc.moveDirection, _cc.wallRight));
+				float leftDiff = Mathf.Abs(Vector3.Angle( _cc.moveDirection, _cc.wallLeft));
 				if( leftDiff < rightDiff )
 				{
-					_Player.moveDirection = _Player.wallLeft;
-					_Player.wallSlideDirection = (int)WallDirections.left;
+					_cc.moveDirection = _cc.wallLeft;
+					_cc.wallSlideDirection = (int)WallDirections.left;
 					setWallMovement();
 				}
 				else
 				{
-					_Player.moveDirection = _Player.wallRight;
-					_Player.wallSlideDirection = (int)WallDirections.right;
+					_cc.moveDirection = _cc.wallRight;
+					_cc.wallSlideDirection = (int)WallDirections.right;
 					setWallMovement();
 				}
 			}
@@ -197,18 +208,18 @@ public class JumpState : StateClass
 	
 	void setWallMovement()
 	{
-		_Player.moveSpeed *= (90f - Mathf.Abs(Vector3.Angle( _Player.moveDirection, transform.forward ))) / 90f;
-		transform.rotation = Quaternion.LookRotation(_Player.wallFacing);
+		_cc.moveSpeed *= (90f - Mathf.Abs(Vector3.Angle( _cc.moveDirection, transform.forward ))) / 90f;
+		transform.rotation = Quaternion.LookRotation(_cc.wallFacing);
 		
-		_Player.inAirVelocity = Vector3.zero;
+		_cc.inAirVelocity = Vector3.zero;
 		stateChange("wall_slide");
-		_Player.wallSliding = true;
+		_cc.wallSliding = true;
 	}
 
 
 	void OnDisable()
 	{
-		_Player.jumping = false;
-		_Player.doubleJumping = false;
+		_cc.jumping.jumping = false;
+		_cc.jumping.doubleJumping = false;
 	}
 }

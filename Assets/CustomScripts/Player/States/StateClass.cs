@@ -2,7 +2,7 @@ using UnityEngine;
 
 public abstract class StateClass : MonoBehaviour
 {
-	protected CharacterClass _Player;
+	protected CharacterClass _cc;
 	new protected bool enabled;
 	public stateChangeEvent stateChange;
 	public abstract void Run();
@@ -14,7 +14,7 @@ public abstract class StateClass : MonoBehaviour
 	
 	protected virtual void Awake()
 	{
-		_Player = GetComponent<CharacterClass>();
+		_cc = GetComponent<CharacterClass>();
 	}
 }
 

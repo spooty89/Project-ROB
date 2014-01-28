@@ -44,7 +44,7 @@ public class movingPlatformBehavior : MonoBehaviour {
 		this.movingPlatform.playerContact = false;
 	}
 	
-	IEnumerator OnCollisionStay(Collision collision)
+	/*IEnumerator OnCollisionStay(Collision collision)
 	{
 		if(collision.collider.gameObject.transform.parent.gameObject.CompareTag( "Player" ))
 		{
@@ -69,5 +69,5 @@ public class movingPlatformBehavior : MonoBehaviour {
 		}
 		
 		yield return new WaitForFixedUpdate();
-	}
+	}*/
 }

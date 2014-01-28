@@ -4,8 +4,8 @@ public class HangState : StateClass
 {
 	private bool isMoving;
 	private float v, h;
-	private float walkSpeed = 4.0f;	// The speed when walking
-	private float runSpeed = 8.0f;	// When pressing Shift button we start running
+	private float walkSpeed = 2.0f;	// The speed when walking
+	private float runSpeed = 3.0f;	// When pressing Shift button we start running
 	private Vector3 surfaceUp = Vector3.up;
 
 	
@@ -19,13 +19,15 @@ public class HangState : StateClass
 		v = 0;
 		h = 0;
 		isMoving = false;
-		_Player.hanging = true;
+		_cc.movement.updateVelocity = Vector3.zero;
+		_cc.moveSpeed = 0f;
+		_cc.hanging = true;
 	}
 
 
 	public override void Run()
 	{
-		if( _Player.getInput )
+		if( _cc.getInput )
 			InputHandler();
 		MovementHandler();
 	}
@@ -42,10 +44,10 @@ public class HangState : StateClass
 		{
 			if( Input.GetButtonDown( "Interact" ) )
 			{
-				_Player.verticalSpeed = -0.1f;
+				_cc.verticalSpeed = -0.1f;
 				stateChange("jump_after_apex");
-				_Player.hanging = false;							// Set climbing to false
-				_Player.jumpingReachedApex = true;
+				_cc.hanging = false;							// Set climbing to false
+				_cc.jumpingReachedApex = true;
 			}
 		}
 	}
@@ -53,11 +55,11 @@ public class HangState : StateClass
 	
 	private void MovementHandler()
 	{
-		/*if(_Player.transitioning){
+		/*if(_cc.transitioning){
 			stateChange("transition");
 			return;
 		}*/		
-		_Player.inAirVelocity = Vector3.zero;
+		_cc.inAirVelocity = Vector3.zero;
 		Transform cameraTransform = Camera.main.transform;
 		
 		Vector3 forward = cameraTransform.TransformDirection(Vector3.forward);		// Forward vector relative to the camera along the x-z plane	
@@ -75,21 +77,21 @@ public class HangState : StateClass
 		// moveDirection is always normalized, and we only update it if there is user input.
 		if (targetDirection != Vector3.zero)
 		{
-			_Player.moveDirection = Vector3.RotateTowards(_Player.moveDirection, targetDirection, 			// Smoothly turn towards the target direction
-															_Player.rotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
-			_Player.moveDirection = _Player.moveDirection.normalized;
+			_cc.moveDirection = Vector3.RotateTowards(_cc.moveDirection, targetDirection, 			// Smoothly turn towards the target direction
+															_cc.rotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
+			_cc.moveDirection = _cc.moveDirection.normalized;
 		}
 		
-		float curSmooth = _Player.speedSmoothing * Time.deltaTime;			// Smooth the speed based on the current target direction
+		float curSmooth = _cc.speedSmoothing * Time.deltaTime;			// Smooth the speed based on the current target direction
 		float targetSpeed = Mathf.Min(targetDirection.magnitude, 1.0f);	//* Support analog input but insure you cant walk faster diagonally than just f/b/l/r
 	
 		if (!isMoving)
 		{
-			_Player.SetCurrentState("hang_idle");
-			_Player.moveSpeed = 0;
+			_cc.SetCurrentState("hang_idle");
+			_cc.moveSpeed = 0;
 		}
 		else{
-			_Player.SetCurrentState("hang_move");
+			_cc.SetCurrentState("hang_move");
 			// Pick speed modifier
 			if (Input.GetButton("Shift"))
 			{
@@ -99,27 +101,33 @@ public class HangState : StateClass
 			{
 				targetSpeed *= walkSpeed;
 			}
-			_Player.moveSpeed = Mathf.Lerp(_Player.moveSpeed, targetSpeed, curSmooth);
+			_cc.moveSpeed = Mathf.Lerp(_cc.moveSpeed, targetSpeed, curSmooth);
 		}
 
 		
-		transform.rotation = Quaternion.LookRotation(new Vector3(_Player.moveDirection.x, 0.0f, _Player.moveDirection.z));
+		transform.rotation = Quaternion.LookRotation(new Vector3(_cc.moveDirection.x, 0.0f, _cc.moveDirection.z));
+		
+		_cc.moveSpeed = Mathf.Lerp(_cc.moveSpeed, targetSpeed, curSmooth);
+		
+		_cc.inputMoveDirection = transform.forward * _cc.moveSpeed;
+		_cc.movement.updateVelocity = _cc.movement.velocity;
+		_cc.movement.updateVelocity = _cc.ApplyInputVelocityChange( _cc.movement.updateVelocity );
 	}
 	
 	
 	public override void CollisionHandler(ControllerColliderHit hit)
 	{
-		if((_Player.controller.collisionFlags & CollisionFlags.CollidedAbove) != 0)
+		if((_cc.controller.collisionFlags & CollisionFlags.CollidedAbove) != 0)
 			surfaceUp = -hit.normal;
 	}
 	
 	
 	public override void surroundingCollisionHandler()
 	{
-		if (_Player.getInput && _Player.climbContact && Vector3.Angle( _Player.moveDirection, _Player.wallFacing ) > 100f ) {// If player is within climb triggerBox
-			transform.rotation = Quaternion.Euler( _Player.wallBack );
+		if (_cc.getInput && _cc.climbContact && Vector3.Angle( _cc.moveDirection, _cc.wallFacing ) > 100f ) {// If player is within climb triggerBox
+			transform.rotation = Quaternion.Euler( _cc.wallBack );
 
-			_Player.delayInput( 0.5f );
+			_cc.delayInput( 0.5f );
 			stateChange("climb_wall_idle");
 		}
 	}
@@ -139,17 +147,17 @@ public class HangState : StateClass
 	
 	public override void TriggerExitHandler(Collider other)
 	{
-		if (_Player.numHangContacts <= 0) {				// If the player is not in any climb boxes
-			_Player.verticalSpeed = -0.1f;
-			_Player.stateChange("jump_after_apex");
-			_Player.numHangContacts = 0;
-			_Player.hangContact = false;						// Set climb contact to false
+		if (_cc.numHangContacts <= 0) {				// If the player is not in any climb boxes
+			_cc.verticalSpeed = -0.1f;
+			_cc.stateChange("jump_after_apex");
+			_cc.numHangContacts = 0;
+			_cc.hangContact = false;						// Set climb contact to false
 		}
 	}
 
 	void OnDisable()
 	{
-		_Player.hanging = false;
+		_cc.hanging = false;
 	}
 }
 

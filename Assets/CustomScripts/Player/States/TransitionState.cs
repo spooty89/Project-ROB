@@ -13,9 +13,9 @@ public class TransitionState : StateClass {
 	
 	protected override void Awake()
 	{
-		if( _Player == null )
+		if( _cc == null )
 		{
-			_Player = GetComponent<CharacterClass>();
+			_cc = GetComponent<CharacterClass>();
 		}
 	}
 
@@ -27,8 +27,8 @@ public class TransitionState : StateClass {
 	public override void Run(){		
 		if(!initialized){
 			// set initial states
-			_Player.jumping = false;
-			_Player.climbing = false;
+			_cc.jumping.jumping = false;
+			_cc.climbing = false;
 			timer = 0;
 			initialized = true;
 		}
@@ -36,13 +36,13 @@ public class TransitionState : StateClass {
 			// step the transition
 			timer++;
 		}
-		if(timer > _Player.curTransitionBox.curCond.duration){
+		if(timer > _cc.curTransitionBox.curCond.duration){
 				// exit transition
-			_Player.transform.Translate(_Player.curTransitionBox.curCond.displacement);
-			_Player.transitioning = false;
+			_cc.transform.Translate(_cc.curTransitionBox.curCond.displacement);
+			_cc.transitioning = false;
 			timer = 0;
 			initialized = false;
-			stateChange(_Player.curTransitionBox.curCond.finalState);
+			stateChange(_cc.curTransitionBox.curCond.finalState);
 			return;
 		}
 		InputHandler();
@@ -54,7 +54,7 @@ public class TransitionState : StateClass {
 	}
 	
 	private void MovementHandler(){
-		_Player.moveSpeed = 0;
+		_cc.moveSpeed = 0;
 	}
 	
 	

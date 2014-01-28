@@ -13,8 +13,8 @@ public class AimState : StateClass
 
 	private bool isMoving;
 	private float v, h;
-	private float walkSpeed = 3.0f;	// The speed when walking
-	private float runSpeed = 6.0f;	// When pressing Shift button we start running
+	public float walkSpeed = 3.0f;	// The speed when walking
+	public float runSpeed = 6.0f;	// When pressing Shift button we start running
 	private Vector3 surfaceUp = Vector3.up;
 	private CustomCameraController camController;
 	
@@ -60,8 +60,8 @@ public class AimState : StateClass
 
 		if( Input.GetButtonUp( "Aim" ) )
 		{
-			_Player.moveDirection = Camera.main.transform.TransformDirection(Vector3.forward).normalized;
-			_Player.stateChange( "idle" );
+			_cc.moveDirection = Camera.main.transform.TransformDirection(Vector3.forward).normalized;
+			_cc.stateChange( "idle" );
 		}
 
 		if( Input.GetButtonUp( "fire" ) )
@@ -101,11 +101,11 @@ public class AimState : StateClass
 	
 	private void MovementHandler()
 	{
-		if(_Player.transitioning){
+		if(_cc.transitioning){
 			stateChange("transition");
 			return;
 		}		
-		_Player.inAirVelocity = Vector3.zero;
+		_cc.inAirVelocity = Vector3.zero;
 		Transform cameraTransform = Camera.main.transform;
 		
 		Vector3 forward = cameraTransform.TransformDirection(Vector3.forward);		// Forward vector relative to the camera along the x-z plane	
@@ -123,27 +123,28 @@ public class AimState : StateClass
 		// moveDirection is always normalized, and we only update it if there is user input.
 		if (targetDirection != Vector3.zero)
 		{
-			_Player.moveDirection = targetDirection; 			// Smoothly turn towards the target direction
-			_Player.moveDirection = _Player.moveDirection.normalized;
+			_cc.moveDirection = targetDirection; 			// Smoothly turn towards the target direction
+			_cc.moveDirection = _cc.moveDirection.normalized;
 		}
 		
-		float curSmooth = _Player.speedSmoothing * Time.deltaTime;			// Smooth the speed based on the current target direction
+		float curSmooth = _cc.speedSmoothing * Time.deltaTime;			// Smooth the speed based on the current target direction
 		float targetSpeed = Mathf.Min(targetDirection.magnitude, 1.0f);		// Support analog input but insure you cant walk faster diagonally than just f/b/l/r
 		
 		if (!isMoving)
 		{
-			_Player.SetCurrentState("aim_idle");
+			_cc.SetCurrentState("aim_idle");
 		}
 		else{
+			transform.rotation = Quaternion.LookRotation(new Vector3(forward.x, 0.0f, forward.z));
 			if( Mathf.Abs( h ) > Mathf.Abs( v ) )
 			{
-				if( h > 0 ) { _Player.SetCurrentState( rightAnim ); }
-				else { _Player.SetCurrentState( leftAnim ); }
+				if( h > 0 ) { _cc.SetCurrentState( rightAnim ); }
+				else { _cc.SetCurrentState( leftAnim ); }
 			}
 			else
 			{
-				if( v > 0 ) { _Player.SetCurrentState( forwardAnim ); }
-				else { _Player.SetCurrentState( backwardAnim ); }
+				if( v > 0 ) { _cc.SetCurrentState( forwardAnim ); }
+				else { _cc.SetCurrentState( backwardAnim ); }
 			}
 			// Pick speed modifier
 			if (Input.GetButton("Shift"))
@@ -156,11 +157,15 @@ public class AimState : StateClass
 			}
 		}
 		
-		_Player.moveSpeed = Mathf.Lerp(_Player.moveSpeed, targetSpeed, curSmooth);
+		_cc.moveSpeed = Mathf.Lerp(_cc.moveSpeed, targetSpeed, curSmooth);
+		//_cc.inputMoveDirection = _cc.moveDirection * _cc.moveSpeed;
+
+
+		_cc.inputMoveDirection = _cc.moveDirection * _cc.moveSpeed;
+		_cc.movement.updateVelocity = _cc.movement.velocity;
+		_cc.movement.updateVelocity = _cc.ApplyInputVelocityChange( _cc.movement.updateVelocity );
 		
-		transform.rotation = Quaternion.LookRotation(new Vector3(forward.x, 0.0f, forward.z));
-		
-		if (!_Player.IsGrounded())
+		if (!_cc.IsGrounded())
 		{
 			stateChange("jump_after_apex");
 		}
@@ -181,7 +186,7 @@ public class AimState : StateClass
 	
 	public override void CollisionHandler(ControllerColliderHit hit)
 	{
-		if(_Player.IsGrounded())
+		if(_cc.IsGrounded())
 		{
 			surfaceUp = hit.normal;
 		}

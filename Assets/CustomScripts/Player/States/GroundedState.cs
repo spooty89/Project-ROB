@@ -4,8 +4,8 @@ public class GroundedState : StateClass
 {
 	private bool isMoving;//, sliding = false;
 	private float v, h;
-	private float walkSpeed = 4.0f;	// The speed when walking
-	private float runSpeed = 8.0f;	// When pressing Shift button we start running
+	public float walkSpeed = 4.0f;	// The speed when walking
+	public float runSpeed = 8.0f;	// When pressing Shift button we start running
 	private Vector3 surfaceUp = Vector3.up;
 
 	// Get necessary information right away
@@ -18,7 +18,8 @@ public class GroundedState : StateClass
 	void OnEnable()
 	{
 		enabled = true;
-		_Player.inAirVelocity = Vector3.zero;
+		_cc.inAirVelocity = Vector3.zero;
+		_cc.jumping.lastButtonDownTime = -100;
 	}
 
 	// While this class is running, perform these tasks every frame
@@ -26,7 +27,7 @@ public class GroundedState : StateClass
 	{
 		if( enabled )
 		{
-			if( _Player.getInput )
+			if( _cc.getInput )
 				InputHandler();
 			if( enabled )				// Check again, in case input disabled this script
 				MovementHandler();
@@ -43,8 +44,11 @@ public class GroundedState : StateClass
 
 		if( Input.GetButtonDown( "Jump" ) )
 			ApplyJump();
+		else
+			_cc.inputJump = false;
+
 		if( Input.GetButton( "Aim" ) )
-			_Player.stateChange( "aim_idle" );
+			_cc.stateChange( "aim_idle" );
 	}
 	
 	
@@ -67,39 +71,41 @@ public class GroundedState : StateClass
 		// moveDirection is always normalized, and we only update it if there is user input.
 		if (targetDirection != Vector3.zero)
 		{
-			_Player.moveDirection = Vector3.RotateTowards(_Player.moveDirection, targetDirection, 			// Smoothly turn towards the target direction
-															_Player.rotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
-			_Player.moveDirection = _Player.moveDirection.normalized;
+			_cc.moveDirection = Vector3.RotateTowards(_cc.moveDirection, targetDirection, 			// Smoothly turn towards the target direction
+															_cc.rotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
+			_cc.moveDirection = _cc.moveDirection.normalized;
 		}
 		
-		float curSmooth = _Player.speedSmoothing * Time.deltaTime;			// Smooth the speed based on the current target direction
+		float curSmooth = _cc.speedSmoothing * Time.deltaTime;			// Smooth the speed based on the current target direction
 		float targetSpeed = Mathf.Min(targetDirection.magnitude, 1.0f);	//* Support analog input but insure you cant walk faster diagonally than just f/b/l/r
 	
 		if (!isMoving)
 		{
-			_Player.SetCurrentState("idle");
+			_cc.SetCurrentState("idle");
 		}
 		else{
+			transform.rotation = Quaternion.LookRotation(new Vector3(_cc.moveDirection.x, 0.0f, _cc.moveDirection.z));
 			// Pick speed modifier
 			if (Input.GetButton("Shift"))
 			{
 				targetSpeed *= runSpeed;
-				_Player.SetCurrentState("run");
+				_cc.SetCurrentState("run");
 			}
 			else
 			{
 				targetSpeed *= walkSpeed;
-				_Player.SetCurrentState("walk");
+				_cc.SetCurrentState("walk");
 			}
 		}
 		
-		_Player.moveSpeed = Mathf.Lerp(_Player.moveSpeed, targetSpeed, curSmooth);
+		_cc.moveSpeed = Mathf.Lerp(_cc.moveSpeed, targetSpeed, curSmooth);
+
+		_cc.inputMoveDirection = transform.forward * _cc.moveSpeed;
+		_cc.movement.updateVelocity = _cc.movement.velocity;
+		_cc.movement.updateVelocity = _cc.ApplyInputVelocityChange( _cc.movement.updateVelocity );
 		
-		transform.rotation = Quaternion.LookRotation(new Vector3(_Player.moveDirection.x, 0.0f, _Player.moveDirection.z));
-		
-		if (!_Player.IsGrounded())
+		if (!_cc.IsGrounded())
 		{
-			Debug.Log("here");
 			stateChange("jump_after_apex");
 		}
 	}
@@ -108,15 +114,19 @@ public class GroundedState : StateClass
 	
 	private void ApplyJump ()
 	{
+		Debug.Log(_cc.jumping.lastButtonDownTime);
 		enabled = false;
-		_Player.verticalSpeed = _Player.CalculateJumpVerticalSpeed (_Player.jumpHeight);
+		_cc.inputJump = true;
+		_cc.jumping.lastButtonDownTime = Time.time;
+		_cc.movement.updateVelocity = _cc.ApplyJumping( _cc.movement.velocity );
+		//_cc.verticalSpeed = _cc.CalculateJumpVerticalSpeed (_cc.jumpHeight);
 		stateChange("jump");
 	}
 	
 	
 	public override void CollisionHandler(ControllerColliderHit hit)
 	{
-		if(_Player.IsGrounded())
+		if(_cc.IsGrounded())
 		{
 			RaycastHit rcHit;
 			if( Physics.Raycast( transform.position, (hit.point - transform.position).normalized,
@@ -137,8 +147,8 @@ public class GroundedState : StateClass
 	
 	public override void surroundingCollisionHandler()
 	{
-		if (_Player.climbContact && Vector3.Angle( _Player.moveDirection, _Player.wallFacing ) > 100f ) {// If player is within climb triggerBox
-			transform.rotation = Quaternion.Euler( Quaternion.Euler(_Player.wallFacing) * Vector3.back );
+		if (_cc.climbContact && Vector3.Angle( _cc.moveDirection, _cc.wallFacing ) > 100f ) {// If player is within climb triggerBox
+			transform.rotation = Quaternion.Euler( Quaternion.Euler(_cc.wallFacing) * Vector3.back );
 			stateChange("climb_wall_idle");
 		}
 	}
