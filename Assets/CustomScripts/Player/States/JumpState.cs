@@ -96,9 +96,9 @@ public class JumpState : StateClass
 		if (targetDirection != Vector3.zero)
 		{
 			// Smoothly turn towards the target direction
-			_cc.moveDirection = Vector3.RotateTowards(_cc.moveDirection, targetDirection, _cc.rotationModifier * _cc.inAirRotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
-			_cc.moveDirection = _cc.moveDirection.normalized;
-			transform.rotation = Quaternion.LookRotation(_cc.moveDirection);
+			//_cc.moveDirection = Vector3.RotateTowards(transform.forward, targetDirection, _cc.rotationModifier * _cc.inAirRotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
+			//_cc.moveDirection = _cc.moveDirection.normalized;
+			transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(transform.forward, targetDirection, _cc.rotationModifier * _cc.inAirRotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000));
 		}
 		
 		if (isMoving) {
@@ -180,7 +180,7 @@ public class JumpState : StateClass
 
 	private void wallInteract( )
 	{
-		if (_cc.movement.velocity.y < -0.1f && Vector3.Angle( _cc.moveDirection, _cc.wallFacing ) > 89f )	// If we aren't going around an outside corner
+		if (_cc.movement.velocity.y < -0.1f && Vector3.Angle( _cc.movement.velocity, _cc.wallFacing ) > 89f )	// If we aren't going around an outside corner
 		{
 			if (_cc.climbContact) {// If player is within climb triggerBox
 				transform.rotation = Quaternion.LookRotation(_cc.wallBack, _cc.wallUp);
@@ -188,17 +188,17 @@ public class JumpState : StateClass
 			}
 			else
 			{
-				float rightDiff = Mathf.Abs(Vector3.Angle( _cc.moveDirection, _cc.wallRight));
-				float leftDiff = Mathf.Abs(Vector3.Angle( _cc.moveDirection, _cc.wallLeft));
+				float rightDiff = Mathf.Abs(Vector3.Angle( _cc.movement.velocity, _cc.wallRight));
+				float leftDiff = Mathf.Abs(Vector3.Angle( _cc.movement.velocity, _cc.wallLeft));
 				if( leftDiff < rightDiff )
 				{
-					_cc.moveDirection = _cc.wallLeft;
+					_cc.movement.updateVelocity = _cc.wallLeft;
 					_cc.wallSlideDirection = (int)WallDirections.left;
 					setWallMovement();
 				}
 				else
 				{
-					_cc.moveDirection = _cc.wallRight;
+					_cc.movement.updateVelocity = _cc.wallRight;
 					_cc.wallSlideDirection = (int)WallDirections.right;
 					setWallMovement();
 				}
@@ -208,7 +208,7 @@ public class JumpState : StateClass
 	
 	void setWallMovement()
 	{
-		_cc.moveSpeed *= (90f - Mathf.Abs(Vector3.Angle( _cc.moveDirection, transform.forward ))) / 90f;
+		_cc.moveSpeed *= (90f - Mathf.Abs(Vector3.Angle( _cc.movement.updateVelocity.normalized, transform.forward ))) / 90f;
 		transform.rotation = Quaternion.LookRotation(_cc.wallFacing);
 		
 		_cc.inAirVelocity = Vector3.zero;

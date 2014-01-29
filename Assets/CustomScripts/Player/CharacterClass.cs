@@ -202,7 +202,7 @@ public class CharacterClass : MonoBehaviour
 		// Find out how much we need to push towards the ground to avoid loosing grouning
 		// when walking down a step or over a sharp change in slope.
 		float pushDownOffset = Mathf.Max(controller.stepOffset, new Vector3(currentMovementOffset.x, 0, currentMovementOffset.z).magnitude);
-		if (grounded)
+		if (grounded && !climbing)
 			currentMovementOffset -= pushDownOffset * Vector3.up;
 		
 		// Reset variables that will be set by collision function
@@ -298,7 +298,7 @@ public class CharacterClass : MonoBehaviour
 			inputMoveDirection = Vector3.zero;
 		
 		// Find desired velocity
-		Vector3 desiredVelocity;
+		Vector3 desiredVelocity = velocity;
 		if (grounded && TooSteep()) {
 			// The direction we're sliding in
 			desiredVelocity = new Vector3(groundNormal.x, 0, groundNormal.z).normalized;
