@@ -42,23 +42,14 @@ public class WallslideState : StateClass
 	
 	private void InputHandler()
 	{	
-		if (Input.anyKey)
-		{
-			v = Input.GetAxisRaw("Vertical");
-			h = Input.GetAxisRaw("Horizontal");
-			
-			isMoving = Mathf.Abs (h) > 0.05f || Mathf.Abs (v) > 0.05f;
+		v = Input.GetAxisRaw("Vertical");
+		h = Input.GetAxisRaw("Horizontal");
+		
+		isMoving = Mathf.Abs (h) > 0.05f || Mathf.Abs (v) > 0.05f;
 
-			if( Input.GetButtonDown( "Jump" ) )
-			{
-				ApplyJump();
-			}
-		}
-		else
+		if( Input.GetButtonDown( "Jump" ) )
 		{
-			v = 0f;
-			h = 0f;
-			isMoving = false;
+			ApplyJump();
 		}
 	}
 	
@@ -80,43 +71,43 @@ public class WallslideState : StateClass
 			Vector3 right = new Vector3(forward.z, 0, -forward.x);		// Right vector relative to the camera
 			Vector3 targetDirection = forward;				// Always orthogonal to the forward vector
 			targetDirection = h * right + v * forward;
-			
-			if(Vector3.Angle(_cc.wallFacing, targetDirection) > 60f)
+
+			Debug.Log(targetDirection);
+
+			if(Vector3.Angle(_cc.wallRight, targetDirection) < 90f)
 			{
-				if(Vector3.Angle(_cc.wallRight, targetDirection) < 30f)
-				{
-					Debug.Log("here");
-					_cc.movement.updateVelocity = _cc.wallRight;
-					//_cc.movement.updateVelocity.y = _cc.movement.velocity.y;
-				}
-				else if(Vector3.Angle(_cc.wallLeft, targetDirection) < 30f)
-				{
-					_cc.movement.updateVelocity = _cc.wallLeft;
-					//_cc.movement.updateVelocity.y = _cc.movement.velocity.y;
-				}
-				else
-					_cc.movement.updateVelocity = _cc.movement.velocity;
-					//_cc.inputMoveDirection = new Vector3( _cc.movement.velocity.x, 0, _cc.movement.velocity.z );
+				_cc.wallSlideDirection = (int)WallDirections.right;
+				_cc.movement.updateVelocity = _cc.wallRight;
+				//_cc.movement.updateVelocity.y = _cc.movement.velocity.y;
+			}
+			else// if(Vector3.Angle(_cc.wallLeft, targetDirection) < 60f)
+			{
+				_cc.wallSlideDirection = (int)WallDirections.left;
+				_cc.movement.updateVelocity = _cc.wallLeft;
+				//_cc.movement.updateVelocity.y = _cc.movement.velocity.y;
+			}
+			/*else
+				_cc.movement.updateVelocity = Vector3.Cross(_cc.wallFacing, _cc.wallRight).normalized;
+			*/		//_cc.inputMoveDirection = new Vector3( _cc.movement.velocity.x, 0, _cc.movement.velocity.z );
 					
 				//_cc.movement.updateVelocity -= _cc.wallFacing;
 				jumpBoost = 0f;
-			}
-			else
+			
+			if(Vector3.Angle(_cc.wallFacing, targetDirection) < 60f)
 			{
-					_cc.movement.updateVelocity = _cc.movement.velocity;
 				//_cc.inputMoveDirection = new Vector3( _cc.movement.velocity.x, 0, _cc.movement.velocity.z );
 				jumpBoost = Vector3.Angle(_cc.wallFacing, targetDirection) / 90f;
 			}
 		}
-		else
+		/*else
 		{
-					_cc.movement.updateVelocity = _cc.movement.velocity;
+			_cc.movement.updateVelocity = Vector3.Cross(_cc.wallFacing, _cc.wallRight).normalized;
 			//_cc.inputMoveDirection = new Vector3( _cc.movement.velocity.x, 0, _cc.movement.velocity.z );
 			if(_cc.inAirVelocity.magnitude > 0f)
 			{
 				_cc.inAirVelocity += _cc.movement.updateVelocity.normalized * Time.deltaTime * _cc.jumpAcceleration;
 			}
-		}
+		}*/
 		/*
 		if( Mathf.Abs(Vector3.Angle( _cc.moveDirection, _cc.wallRight)) > 90f )
 		{
@@ -138,7 +129,8 @@ public class WallslideState : StateClass
 			_cc.verticalSpeed = -5.0f;
 		}*/
 		
-		_cc.inputMoveDirection = new Vector3( _cc.movement.updateVelocity.x, 0, _cc.movement.updateVelocity.z ).normalized * _cc.moveSpeed;
+		_cc.inputMoveDirection = new Vector3( _cc.movement.updateVelocity.x, 0, _cc.movement.updateVelocity.z ).normalized * Mathf.Max(_cc.moveSpeed, 2f);
+		Debug.Log(_cc.inputMoveDirection);
 		_cc.movement.updateVelocity = _cc.movement.velocity;
 		_cc.movement.updateVelocity = _cc.ApplyInputVelocityChange( _cc.movement.updateVelocity );
 		_cc.movement.updateVelocity = _cc.ApplyGravity( _cc.movement.updateVelocity, _cc.movement.gravity, 5f );
@@ -182,34 +174,31 @@ public class WallslideState : StateClass
 	
 	public override void surroundingCollisionHandler()
 	{
-		float y = _cc.movement.velocity.y;
-		_cc.movement.velocity.y = 0;
+		Vector3 dir = new Vector3( _cc.movement.velocity.x, 0, _cc.movement.velocity.z );
 		if(!_cc.vCollider.vertical)
 		{
 			stateChange("jump_after_apex");
 		}
-		else if( Vector3.Angle( _cc.movement.velocity, _cc.wallFacing ) > 89f )		// If we aren't going around outside corners
+		else if( Vector3.Angle( dir, _cc.wallFacing ) > 89f )		// If we aren't going around outside corners
 		{
 			if( _cc.wallSlideDirection == (int)WallDirections.left )
 			{
-				setDirection( _cc.wallLeft, y );
+				setDirection( _cc.wallLeft );
 			}
 			else if( _cc.wallSlideDirection == (int)WallDirections.right )
 			{
-				setDirection( _cc.wallRight, y );
+				setDirection( _cc.wallRight );
 			}
 			else
 			{
-				float rightDiff = Mathf.Abs(Vector3.Angle( _cc.movement.velocity, _cc.wallRight));
-				float leftDiff = Mathf.Abs(Vector3.Angle( _cc.movement.velocity, _cc.wallLeft));
+				float rightDiff = Mathf.Abs(Vector3.Angle( dir, _cc.wallRight));
+				float leftDiff = Mathf.Abs(Vector3.Angle( dir, _cc.wallLeft));
 				if( leftDiff < rightDiff )
 				{
 					if( leftDiff < 90f )
 					{
 						Debug.Log("left");
 						_cc.movement.updateVelocity = _cc.wallLeft;
-						_cc.movement.updateVelocity.y = y;
-						_cc.movement.velocity.y = y;
 						_cc.wallSlideDirection = (int)WallDirections.left;
 					}
 				}
@@ -219,8 +208,6 @@ public class WallslideState : StateClass
 					{
 						Debug.Log("right");
 						_cc.movement.updateVelocity = _cc.wallRight;
-						_cc.movement.updateVelocity.y = y;
-						_cc.movement.velocity.y = y;
 						_cc.wallSlideDirection = (int)WallDirections.right;
 					}
 				}
@@ -235,13 +222,11 @@ public class WallslideState : StateClass
     }
     
     
-    void setDirection( Vector3 wallDir, float y )
+    void setDirection( Vector3 wallDir )
 	{
 		if( Mathf.Abs(Vector3.Angle( _cc.movement.velocity, wallDir)) < 89f)
 		{
 			_cc.movement.updateVelocity = wallDir;
-			_cc.movement.updateVelocity.y = y;
-			_cc.movement.velocity.y = y;
 		}
 		else
 		{
