@@ -19,7 +19,8 @@ public class HangState : StateClass
 		v = 0;
 		h = 0;
 		isMoving = false;
-		_cc.movement.updateVelocity = Vector3.zero;
+		//_cc.movement.updateVelocity = Vector3.zero;
+		enabled = true;
 		_cc.moveSpeed = 0f;
 		_cc.hanging = true;
 	}
@@ -29,7 +30,8 @@ public class HangState : StateClass
 	{
 		if( _cc.getInput )
 			InputHandler();
-		MovementHandler();
+		if( enabled )
+			MovementHandler();
 	}
 	
 	
@@ -44,7 +46,9 @@ public class HangState : StateClass
 		{
 			if( Input.GetButtonDown( "Interact" ) )
 			{
-				_cc.verticalSpeed = -0.1f;
+				enabled = false;
+				_cc.movement.velocity.y = -0.1f;
+				_cc.movement.updateVelocity.y = -0.1f;
 				stateChange("jump_after_apex");
 				_cc.hanging = false;							// Set climbing to false
 				_cc.jumpingReachedApex = true;
@@ -68,22 +72,21 @@ public class HangState : StateClass
 	
 
 		Vector3 right = new Vector3(forward.z, 0, -forward.x);		// Right vector relative to the camera
-		Vector3 targetDirection = transform.forward;				// Always orthogonal to the forward vector
-		targetDirection = h * right + v * forward;					// Target direction relative to the camera
+		_cc.targetDirection = h * right + v * forward;					// Target direction relative to the camera
 		
 	
 		// We store speed and direction seperately,
 		// so that when the character stands still we still have a valid forward direction
 		// moveDirection is always normalized, and we only update it if there is user input.
-		if (targetDirection != Vector3.zero)
+		if (_cc.targetDirection != Vector3.zero)
 		{
-			_cc.moveDirection = Vector3.RotateTowards(_cc.moveDirection, targetDirection, 			// Smoothly turn towards the target direction
+			_cc.moveDirection = Vector3.RotateTowards(transform.forward, _cc.targetDirection, 			// Smoothly turn towards the target direction
 															_cc.rotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
 			_cc.moveDirection = _cc.moveDirection.normalized;
 		}
 		
 		float curSmooth = _cc.speedSmoothing * Time.deltaTime;			// Smooth the speed based on the current target direction
-		float targetSpeed = Mathf.Min(targetDirection.magnitude, 1.0f);	//* Support analog input but insure you cant walk faster diagonally than just f/b/l/r
+		float targetSpeed = Mathf.Min(_cc.targetDirection.magnitude, 1.0f);	//* Support analog input but insure you cant walk faster diagonally than just f/b/l/r
 	
 		if (!isMoving)
 		{
@@ -91,6 +94,7 @@ public class HangState : StateClass
 			_cc.moveSpeed = 0;
 		}
 		else{
+			transform.rotation = Quaternion.LookRotation(new Vector3(_cc.moveDirection.x, 0.0f, _cc.moveDirection.z));
 			_cc.SetCurrentState("hang_move");
 			// Pick speed modifier
 			if (Input.GetButton("Shift"))
@@ -104,8 +108,7 @@ public class HangState : StateClass
 			_cc.moveSpeed = Mathf.Lerp(_cc.moveSpeed, targetSpeed, curSmooth);
 		}
 
-		
-		transform.rotation = Quaternion.LookRotation(new Vector3(_cc.moveDirection.x, 0.0f, _cc.moveDirection.z));
+
 		
 		_cc.moveSpeed = Mathf.Lerp(_cc.moveSpeed, targetSpeed, curSmooth);
 		
@@ -124,8 +127,8 @@ public class HangState : StateClass
 	
 	public override void surroundingCollisionHandler()
 	{
-		if (_cc.getInput && _cc.climbContact && Vector3.Angle( _cc.moveDirection, _cc.wallFacing ) > 100f ) {// If player is within climb triggerBox
-			transform.rotation = Quaternion.Euler( _cc.wallBack );
+		if (_cc.getInput && _cc.climbContact && Vector3.Angle( new Vector3(_cc.targetDirection.x, 0, _cc.targetDirection.z), new Vector3(_cc.wallFacing.x, 0, _cc.wallFacing.z) ) > 100f ) {// If player is within climb triggerBox
+			transform.rotation = Quaternion.LookRotation(_cc.wallBack, _cc.wallUp);
 
 			_cc.delayInput( 0.5f );
 			stateChange("climb_wall_idle");
@@ -157,6 +160,7 @@ public class HangState : StateClass
 
 	void OnDisable()
 	{
+		enabled = false;
 		_cc.hanging = false;
 	}
 }

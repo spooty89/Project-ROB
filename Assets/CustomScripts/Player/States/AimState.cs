@@ -115,20 +115,20 @@ public class AimState : StateClass
 		
 		Vector3 right = new Vector3(forward.z, 0, -forward.x);		// Right vector relative to the camera
 		transform.forward = forward;
-		Vector3 targetDirection = h * right + v * forward;					// Target direction relative to the camera
+		_cc.targetDirection = h * right + v * forward;					// Target direction relative to the camera
 		
 		
 		// We store speed and direction seperately,
 		// so that when the character stands still we still have a valid forward direction
 		// moveDirection is always normalized, and we only update it if there is user input.
-		if (targetDirection != Vector3.zero)
+		if (_cc.targetDirection != Vector3.zero)
 		{
-			_cc.moveDirection = targetDirection; 			// Smoothly turn towards the target direction
+			_cc.moveDirection = _cc.targetDirection; 			// Smoothly turn towards the target direction
 			_cc.moveDirection = _cc.moveDirection.normalized;
 		}
 		
 		float curSmooth = _cc.speedSmoothing * Time.deltaTime;			// Smooth the speed based on the current target direction
-		float targetSpeed = Mathf.Min(targetDirection.magnitude, 1.0f);		// Support analog input but insure you cant walk faster diagonally than just f/b/l/r
+		float targetSpeed = Mathf.Min(_cc.targetDirection.magnitude, 1.0f);		// Support analog input but insure you cant walk faster diagonally than just f/b/l/r
 		
 		if (!isMoving)
 		{

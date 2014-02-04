@@ -9,7 +9,7 @@ public class WallslideState : StateClass
 	private bool isMoving,
 				 getInput = false,
 				 justJumped = false;
-	private float v, h, jumpBoost;
+	private float v, h;
 
 	
 	protected override void Awake()
@@ -20,7 +20,7 @@ public class WallslideState : StateClass
 
 	void OnEnable()
 	{
-		jumpBoost = 0f;
+		_cc.jumping.jumpBoost = 0f;
 		_cc.wallSliding = true;
 		justJumped = false;
 		getInput = false;
@@ -66,80 +66,34 @@ public class WallslideState : StateClass
 			Vector3 forward = cameraTransform.TransformDirection(Vector3.forward);		// Forward vector relative to the camera along the x-z plane
 			forward = forward.normalized;
 		
-			transform.rotation = Quaternion.LookRotation(_cc.wallFacing);
+			transform.rotation = Quaternion.LookRotation(_cc.wallFacing, _cc.wallUp);
 	
 			Vector3 right = new Vector3(forward.z, 0, -forward.x);		// Right vector relative to the camera
-			Vector3 targetDirection = forward;				// Always orthogonal to the forward vector
-			targetDirection = h * right + v * forward;
+			_cc.targetDirection = h * right + v * forward;
 
-			Debug.Log(targetDirection);
-
-			if(Vector3.Angle(_cc.wallRight, targetDirection) < 90f)
+			if(Vector3.Angle(_cc.wallRight, _cc.targetDirection) < 90f)
 			{
 				_cc.wallSlideDirection = (int)WallDirections.right;
 				_cc.movement.updateVelocity = _cc.wallRight;
-				//_cc.movement.updateVelocity.y = _cc.movement.velocity.y;
 			}
 			else// if(Vector3.Angle(_cc.wallLeft, targetDirection) < 60f)
 			{
 				_cc.wallSlideDirection = (int)WallDirections.left;
 				_cc.movement.updateVelocity = _cc.wallLeft;
-				//_cc.movement.updateVelocity.y = _cc.movement.velocity.y;
 			}
-			/*else
-				_cc.movement.updateVelocity = Vector3.Cross(_cc.wallFacing, _cc.wallRight).normalized;
-			*/		//_cc.inputMoveDirection = new Vector3( _cc.movement.velocity.x, 0, _cc.movement.velocity.z );
-					
-				//_cc.movement.updateVelocity -= _cc.wallFacing;
-				jumpBoost = 0f;
+			_cc.jumping.jumpBoost = 0f;
 			
-			if(Vector3.Angle(_cc.wallFacing, targetDirection) < 60f)
+			if(Vector3.Angle(_cc.wallFacing, _cc.targetDirection) < 60f)
 			{
-				//_cc.inputMoveDirection = new Vector3( _cc.movement.velocity.x, 0, _cc.movement.velocity.z );
-				jumpBoost = Vector3.Angle(_cc.wallFacing, targetDirection) / 90f;
+				_cc.jumping.jumpBoost = (90f - Vector3.Angle(_cc.wallFacing, _cc.targetDirection)) / 90f;
 			}
 		}
-		/*else
-		{
-			_cc.movement.updateVelocity = Vector3.Cross(_cc.wallFacing, _cc.wallRight).normalized;
-			//_cc.inputMoveDirection = new Vector3( _cc.movement.velocity.x, 0, _cc.movement.velocity.z );
-			if(_cc.inAirVelocity.magnitude > 0f)
-			{
-				_cc.inAirVelocity += _cc.movement.updateVelocity.normalized * Time.deltaTime * _cc.jumpAcceleration;
-			}
-		}*/
-		/*
-		if( Mathf.Abs(Vector3.Angle( _cc.moveDirection, _cc.wallRight)) > 90f )
-		{
-			_cc.moveDirection = _cc.wallLeft;
-			_cc.wallSlideDirection = WallDirections.left;
-		}
-		else
-		{
-			_cc.moveDirection = _cc.wallRight;
-			_cc.wallSlideDirection = WallDirections.right;
-		}*/
-
-		/*if (_cc.verticalSpeed > -5.0f)
-		{
-			_cc.verticalSpeed -= (_cc.gravity/2f) * Time.deltaTime;
-		}
-		else
-		{
-			_cc.verticalSpeed = -5.0f;
-		}*/
 		
 		_cc.inputMoveDirection = new Vector3( _cc.movement.updateVelocity.x, 0, _cc.movement.updateVelocity.z ).normalized * Mathf.Max(_cc.moveSpeed, 2f);
 		Debug.Log(_cc.inputMoveDirection);
 		_cc.movement.updateVelocity = _cc.movement.velocity;
 		_cc.movement.updateVelocity = _cc.ApplyInputVelocityChange( _cc.movement.updateVelocity );
 		_cc.movement.updateVelocity = _cc.ApplyGravity( _cc.movement.updateVelocity, _cc.movement.gravity, 5f );
-
-		/*if( _cc.controller.collisionFlags == 0 && !_cc.sTrigger.vertical)
-		{
-			//Debug.Log("here");
-			stateChange("jump_after_apex");
-		}*/
 	}
 	
 	
@@ -149,7 +103,7 @@ public class WallslideState : StateClass
 		transform.rotation = Quaternion.LookRotation( _cc.wallFacing );
 		_cc.movement.velocity = Vector3.zero;
 		_cc.movement.updateVelocity = _cc.wallFacing;
-		_cc.moveSpeed = ( walljumpSpeed * (1 + jumpBoost) );
+		_cc.moveSpeed = ( walljumpSpeed * (1 + _cc.jumping.jumpBoost) );
 		_cc.inputMoveDirection = transform.forward * _cc.moveSpeed;
 		//_cc.verticalSpeed = _cc.CalculateJumpVerticalSpeed (_cc.doubleJumpHeight);
 		_cc.setRotationModiferAndBuild( walljumpRotationModifier, walljumpRotModBuildTime );
@@ -163,7 +117,7 @@ public class WallslideState : StateClass
 	
 	public override void CollisionHandler(ControllerColliderHit hit)
 	{
-		if(_cc.IsGrounded() && _cc.verticalSpeed < 0.0f)
+		if(_cc.IsGrounded())
 		{
 			_cc.moveSpeed = Vector3.Magnitude( _cc.inAirVelocity );
 			_cc.wallSlideDirection = (int)WallDirections.neither;

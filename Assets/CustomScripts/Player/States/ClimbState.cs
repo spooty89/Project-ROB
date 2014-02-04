@@ -7,7 +7,7 @@ public class ClimbState : StateClass
 					walljumpSpeed = 5f;
 	private bool isMoving;
 	private float v, h;
-	public Vector3 targetDirection;
+	private Vector3 wallTargetDirection = Vector3.zero;
 
 	protected override void Awake()
 	{
@@ -17,9 +17,10 @@ public class ClimbState : StateClass
 	void OnEnable()
 	{
 		transform.rotation = Quaternion.LookRotation(_cc.wallBack, _cc.wallUp);
-
-		targetDirection = Vector3.zero;
+		_cc.jumping.jumpBoost = 0f;
+		_cc.targetDirection = Vector3.zero;
 		_cc.movement.updateVelocity = Vector3.zero;
+		wallTargetDirection = Vector3.zero;
 		_cc.moveDirection.y = 0f;
 		_cc.verticalSpeed = 0f;
 		_cc.moveSpeed = 0f;
@@ -52,26 +53,12 @@ public class ClimbState : StateClass
 			
 		if (Input.GetButtonDown("Jump"))
 		{
-			enabled = false;
-			transform.rotation = Quaternion.LookRotation( _cc.wallFacing, transform.up );
-			_cc.moveDirection = _cc.wallFacing;
-			_cc.moveSpeed = walljumpSpeed;
-			_cc.setRotationModiferAndBuild( walljumpRotationModifier, walljumpRotModBuildTime );
-			_cc.verticalSpeed = _cc.CalculateJumpVerticalSpeed( _cc.jumpHeight );
-			_cc.jumping.lastButtonDownTime = Time.time;
-			_cc.movement.updateVelocity = _cc.ApplyJumping( _cc.movement.velocity, _cc.jumpHeight );
-			_cc.jumping.doubleJumping = true;
-			_cc.climbing = false;
-			stateChange("double_jump");
+			ApplyJump();
 		}
 
 		if( Input.GetButtonDown( "Interact" ) )
 		{
-			_cc.verticalSpeed = -0.1f;
-			transform.rotation = Quaternion.LookRotation( _cc.wallFacing, transform.up );
-			_cc.climbing = false;
-			_cc.moveDirection = _cc.wallFacing;
-			//_cc.transform.position += new Vector3(_cc.wallFacing.x * 0.25f, _cc.wallFacing.y * 0.25f, _cc.wallFacing.z * 0.25f);
+			_cc.movement.velocity = Vector3.down;
 			enabled = false;
 			stateChange("jump_after_apex");
 			_cc.jumpingReachedApex = true;
@@ -82,13 +69,26 @@ public class ClimbState : StateClass
 	{
 		if ( isMoving )
 		{
-			targetDirection = h * _cc.wallRight + v * _cc.wallUp;					// Target direction relative to the camera
-			if( targetDirection != Vector3.zero )
+			Transform cameraTransform = Camera.main.transform;
+			
+			// Forward vector relative to the camera along the x-z plane	
+			Vector3 forward = cameraTransform.TransformDirection(Vector3.forward);
+			forward.y = 0.0f;
+			forward = forward.normalized;
+			// Right vector relative to the camera
+			// Always orthogonal to the forward vector
+			Vector3 right = new Vector3(forward.z, 0, -forward.x);
+			_cc.targetDirection = h * right + v * forward;
+			
+			if( Vector3.Angle( cameraTransform.forward, transform.forward) > 110f )
+				h *= -1;
+			wallTargetDirection = h * _cc.wallRight + v * _cc.wallUp;
+			if( wallTargetDirection != Vector3.zero )
 			{
-				_cc.moveSpeed = 2.0f * Mathf.Min( targetDirection.magnitude, 1f );
+				_cc.moveSpeed = 2.0f * Mathf.Min( wallTargetDirection.magnitude, 1f );
 				if (Input.GetButton("Shift"))
 					_cc.moveSpeed *= 1.5f;
-				_cc.movement.updateVelocity = targetDirection * _cc.moveSpeed;
+				_cc.movement.updateVelocity = wallTargetDirection * _cc.moveSpeed;
 			}
 			if ( v != 0f) {			// If one of the up/down buttons is pressed
 				if( v > 0)
@@ -109,13 +109,23 @@ public class ClimbState : StateClass
 						_cc.SetCurrentState("climb_wall_left");
 				}
 			}
+			
+			if(Vector3.Angle(_cc.wallFacing, _cc.targetDirection) < 60f)
+			{
+				_cc.jumping.jumpBoost = (90f - Vector3.Angle(_cc.wallFacing, _cc.targetDirection)) / 90f;
+			}
+			else
+				_cc.jumping.jumpBoost = 0f;
 		}
 		else
 		{
+			_cc.targetDirection = Vector3.zero;
+			wallTargetDirection = Vector3.zero;
 			_cc.movement.updateVelocity = Vector3.zero;
 			_cc.moveSpeed = 0.0f;
 			_cc.moveDirection = transform.forward;
 			_cc.SetCurrentState("climb_wall_idle");
+			_cc.jumping.jumpBoost = 0f;
 		}
 		/*if(_cc.transitioning){
 			stateChange("transition");
@@ -128,10 +138,9 @@ public class ClimbState : StateClass
 	{
 		if( _cc.getInput )
 		{
-			if(_cc.IsGrounded() && targetDirection.y < -0.1f)
+			if(_cc.IsGrounded() && wallTargetDirection.y < -0.1f)
 			{
 				_cc.moveDirection = _cc.wallFacing;
-				targetDirection = Vector3.zero;
 				stateChange("idle");
 			}
 		}
@@ -159,8 +168,28 @@ public class ClimbState : StateClass
 	{
 		
 	}
+
 	
-	
+	public void ApplyJump ()
+	{
+		enabled = false;
+		if( wallTargetDirection != Vector3.zero )
+			transform.rotation = Quaternion.LookRotation( _cc.targetDirection );
+		else
+			transform.rotation = Quaternion.LookRotation( _cc.wallFacing );
+		_cc.movement.velocity.y = 0f;
+		_cc.movement.updateVelocity = transform.forward;
+		_cc.moveSpeed = ( walljumpSpeed * (1 + _cc.jumping.jumpBoost) );
+		_cc.inputMoveDirection = transform.forward * _cc.moveSpeed;
+		_cc.setRotationModiferAndBuild( walljumpRotationModifier, walljumpRotModBuildTime );
+		_cc.jumping.lastButtonDownTime = Time.time;
+		_cc.movement.updateVelocity = _cc.ApplyInputVelocityChange( _cc.movement.updateVelocity );
+		_cc.movement.updateVelocity = _cc.ApplyJumping( _cc.movement.updateVelocity, _cc.doubleJumpHeight );
+		_cc.wallSlideDirection = (int)WallDirections.neither;
+		stateChange("double_jump");
+	}
+
+
 	public override void TriggerExitHandler(Collider other)
 	{
 		if (_cc.numClimbContacts <= 0) {				// If the player is not in any climb boxes
@@ -188,7 +217,8 @@ public class ClimbState : StateClass
 	{
 		isMoving = false;
 		_cc.climbing = false;
-		targetDirection = Vector3.zero;
+		wallTargetDirection = Vector3.zero;
+		//_cc.targetDirection = Vector3.zero;
 	}
 }
 

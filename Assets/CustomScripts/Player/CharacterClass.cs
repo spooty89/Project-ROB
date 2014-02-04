@@ -93,6 +93,9 @@ public class CharacterClass : MonoBehaviour
 		
 		[HideInInspector]
 		public Vector3 jumpDir = Vector3.up;
+		
+		[HideInInspector]
+		public float jumpBoost = 0f;
 	}
 	
 	[System.Serializable]
@@ -156,7 +159,8 @@ public class CharacterClass : MonoBehaviour
 	public bool grounded = true,
 				inputJump = false;
 	[HideInInspector]
-	public Vector3 inputMoveDirection = Vector3.zero,
+	public Vector3 targetDirection = Vector3.zero,
+				   inputMoveDirection = Vector3.zero,
 				   groundNormal = Vector3.zero;
 	
 	private Vector3 lastGroundNormal = Vector3.zero;
@@ -367,7 +371,6 @@ public class CharacterClass : MonoBehaviour
 		// When jumping up we don't apply gravity for some time when the user is holding the jump button.
 		// This gives more control over jump height by pressing the button longer.
 		if (jumping.jumping && jumping.holdingJumpButton) {
-			Debug.Log("h");
 			// Calculate the duration that the extra jump force should have effect.
 			// If we're still less than that duration after the jumping time, apply the force.
 			if (Time.time < jumping.lastStartTime + jumping.extraHeight / CalculateJumpVerticalSpeed(jumping.baseHeight)) {
@@ -402,9 +405,8 @@ public class CharacterClass : MonoBehaviour
 			jumping.holdingJumpButton = true;
 			
 			// Calculate the jumping direction
-			if (TooSteep() && !wallSliding && !jumping.doubleJumping && !climbing)
+			if (TooSteep() && !(wallSliding || jumping.doubleJumping || climbing) )
 			{
-				Debug.Log("her");
 				jumping.jumpDir = Vector3.Slerp(Vector3.up, groundNormal, jumping.steepPerpAmount);
 			}
 			else
@@ -460,8 +462,6 @@ public class CharacterClass : MonoBehaviour
 				Transform platform = movingPlatform.activePlatform;
 				yield return new WaitForFixedUpdate();
 				yield return new WaitForFixedUpdate();
-				//if (grounded && platform == movingPlatform.activePlatform)
-					//yield 1;
 			}
 			movement.velocity -= movingPlatform.platformVelocity;
 		}
@@ -478,7 +478,7 @@ public class CharacterClass : MonoBehaviour
 	private Vector3 GetDesiredHorizontalVelocity() {
 		// Find desired velocity
 		Vector3 desiredLocalDirection = tr.InverseTransformDirection(inputMoveDirection);
-		float maxSpeed = MaxSpeedInDirection(desiredLocalDirection);
+		float maxSpeed = desiredLocalDirection == Vector3.zero ? 0 : moveSpeed;
 		if (grounded) {
 			// Modify max speed on slopes based on slope speed multiplier curve
 			var movementSlopeAngle = Mathf.Asin(movement.velocity.normalized.y)  * Mathf.Rad2Deg;
@@ -536,16 +536,6 @@ public class CharacterClass : MonoBehaviour
 	
 	void SetControllable (bool controllable) {
 		canControl = controllable;
-	}
-	
-	// Project a direction onto elliptical quater segments based on forward, sideways, and backwards speed.
-	// The function returns the length of the resulting vector.
-	float MaxSpeedInDirection (Vector3 desiredMovementDirection) {
-		if (desiredMovementDirection == Vector3.zero)
-			return 0;
-		else {
-			return moveSpeed;
-		}
 	}
 	
 	void SetVelocity (Vector3 velocity) {
