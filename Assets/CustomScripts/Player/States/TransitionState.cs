@@ -4,8 +4,7 @@ using System.Collections;
 public class TransitionState : StateClass {
 	[HideInInspector]
 	public int timer = 0;
-	[HideInInspector]
-	private int curStage = -1;	
+	//private int curStage = -1;	
 	private Vector3 curDirection;
 	private float curVelocity;
 	[HideInInspector]

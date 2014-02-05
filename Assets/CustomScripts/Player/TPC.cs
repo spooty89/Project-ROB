@@ -49,11 +49,8 @@ public class TPC: MonoBehaviour
 			if (_cc.movingPlatform.activePlatform != null) {
 				if (!_cc.movingPlatform.newPlatform) {
 					Vector3 lastVelocity = _cc.movingPlatform.platformVelocity;
-					
-					_cc.movingPlatform.platformVelocity = (
-						_cc.movingPlatform.activePlatform.localToWorldMatrix.MultiplyPoint3x4(_cc.movingPlatform.activeLocalPoint)
-						- _cc.movingPlatform.lastMatrix.MultiplyPoint3x4(_cc.movingPlatform.activeLocalPoint)
-						) / Time.deltaTime;
+					_cc.movingPlatform.platformVelocity = ( _cc.movingPlatform.activePlatform.localToWorldMatrix.MultiplyPoint3x4(_cc.movingPlatform.activeLocalPoint)
+															- _cc.movingPlatform.lastMatrix.MultiplyPoint3x4(_cc.movingPlatform.activeLocalPoint) ) / Time.deltaTime;
 				}
 				_cc.movingPlatform.lastMatrix = _cc.movingPlatform.activePlatform.localToWorldMatrix;
 				_cc.movingPlatform.newPlatform = false;
@@ -62,7 +59,6 @@ public class TPC: MonoBehaviour
 				_cc.movingPlatform.platformVelocity = Vector3.zero;	
 			}
 		}
-		
 		if (useFixedUpdate)
 			UpdateFunction();
 	}
@@ -81,7 +77,6 @@ public class TPC: MonoBehaviour
 			sc.stateChange = stateChangeHandler;
 		}
 		_cc.surroundingCollision = surroundingCollisionHandler;
-		//_cc.topCollision = topCollisionHandler;
 		_cc.stateChange = stateChangeHandler;
 	}
 	
@@ -113,12 +108,6 @@ public class TPC: MonoBehaviour
 	{
 		((StateClass)GetComponent( _animations[_cc.GetCurrentState()].state )).surroundingCollisionHandler();
 	}
-	
-	
-	/*private void topCollisionHandler()
-	{
-		((StateClass)GetComponent( _animations[_cc.GetCurrentState()].state )).topCollisionHandler();
-    }*/
 	
 	
 	public void OnTriggerEnter(Collider other)

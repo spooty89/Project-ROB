@@ -10,21 +10,21 @@ public class AnimationClass
 	public List<GameObject> affectedJoints;
 	public float speed = 1f, 
 				 weight = 1f, 
-				 time = 0f,
+				 time = 0f;/*,
 				 toWeightStartTime = 0f,
 				 toWeightDuration = 0f,
 				 fromWeightStartTime = 0f,
 				 fromWeightDuration = 0f,
 				 parentingTime = 0f;
-	public ParentingClass parent;
+	public ParentingClass parent;*/
 	public AnimationBlendMode animationBlendMode = AnimationBlendMode.Blend;
 	public WrapMode wrapMode = WrapMode.Default;
 	public float crossfade = 0f;
 	public int layer = 1;
-	[HideInInspector]
+	/*[HideInInspector]
 	public bool blend = false;
 	[HideInInspector]
-	public float delta = 0;
+	public float delta = 0;*/
 	
 	public void Setup( Animation animatedCharacter )
 	{

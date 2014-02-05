@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class JumpState : StateClass
 {
-	private bool isMoving, verticalCollision;
+	private bool isMoving;
 	private float v, h;
 
 
@@ -115,15 +115,7 @@ public class JumpState : StateClass
 	
 	public override void surroundingCollisionHandler()
 	{
-		if( _cc.vCollider.vertical )
-		{
-			verticalCollision = true;
-			wallInteract( );
-		}
-		else
-		{
-			verticalCollision = false;
-		}
+		wallInteract( );
 	}
     
     
