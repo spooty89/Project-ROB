@@ -125,12 +125,6 @@ public class JumpState : StateClass
 			verticalCollision = false;
 		}
 	}
-	
-	
-	public override void topCollisionHandler()
-	{
-        
-    }
     
     
     public override void TriggerEnterHandler(Collider other)

@@ -27,7 +27,6 @@ public class WallslideState : StateClass
 		_cc.jumping.jumping = true;
 		_cc.wallSlideDirection = (int)WallDirections.neither;
 		CoRoutine.AfterWait(inputDelay, () => getInput = true);
-			//Debug.Log("wallslideState");
 	}
 
 	public override void Run()
@@ -90,7 +89,6 @@ public class WallslideState : StateClass
 		}
 		
 		_cc.inputMoveDirection = new Vector3( _cc.movement.updateVelocity.x, 0, _cc.movement.updateVelocity.z ).normalized * Mathf.Max(_cc.moveSpeed, 2f);
-		Debug.Log(_cc.inputMoveDirection);
 		_cc.movement.updateVelocity = _cc.movement.velocity;
 		_cc.movement.updateVelocity = _cc.ApplyInputVelocityChange( _cc.movement.updateVelocity );
 		_cc.movement.updateVelocity = _cc.ApplyGravity( _cc.movement.updateVelocity, _cc.movement.gravity, 5f );
@@ -105,9 +103,9 @@ public class WallslideState : StateClass
 		_cc.movement.updateVelocity = _cc.wallFacing;
 		_cc.moveSpeed = ( walljumpSpeed * (1 + _cc.jumping.jumpBoost) );
 		_cc.inputMoveDirection = transform.forward * _cc.moveSpeed;
-		//_cc.verticalSpeed = _cc.CalculateJumpVerticalSpeed (_cc.doubleJumpHeight);
 		_cc.setRotationModiferAndBuild( walljumpRotationModifier, walljumpRotModBuildTime );
 		_cc.jumping.lastButtonDownTime = Time.time;
+		_cc.jumping.doubleJumping = true;
 		_cc.movement.updateVelocity = _cc.ApplyInputVelocityChange( _cc.movement.updateVelocity );
 		_cc.movement.updateVelocity = _cc.ApplyJumping( _cc.movement.updateVelocity, _cc.doubleJumpHeight );
 		_cc.wallSlideDirection = (int)WallDirections.neither;
@@ -151,7 +149,6 @@ public class WallslideState : StateClass
 				{
 					if( leftDiff < 90f )
 					{
-						Debug.Log("left");
 						_cc.movement.updateVelocity = _cc.wallLeft;
 						_cc.wallSlideDirection = (int)WallDirections.left;
 					}
@@ -160,7 +157,6 @@ public class WallslideState : StateClass
 				{
 					if( rightDiff < 90f )
 					{
-						Debug.Log("right");
 						_cc.movement.updateVelocity = _cc.wallRight;
 						_cc.wallSlideDirection = (int)WallDirections.right;
 					}
@@ -168,12 +164,6 @@ public class WallslideState : StateClass
 			}
 		}
 	}
-	
-	
-	public override void topCollisionHandler()
-	{
-        
-    }
     
     
     void setDirection( Vector3 wallDir )

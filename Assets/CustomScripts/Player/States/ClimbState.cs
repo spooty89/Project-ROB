@@ -157,11 +157,6 @@ public class ClimbState : StateClass
 			}
 		}
 	}
-	
-	
-	public override void topCollisionHandler()
-	{
-    }
     
     
     public override void TriggerEnterHandler(Collider other)
@@ -172,21 +167,26 @@ public class ClimbState : StateClass
 	
 	public void ApplyJump ()
 	{
-		enabled = false;
-		if( wallTargetDirection != Vector3.zero )
-			transform.rotation = Quaternion.LookRotation( _cc.targetDirection );
-		else
-			transform.rotation = Quaternion.LookRotation( _cc.wallFacing );
-		_cc.movement.velocity.y = 0f;
-		_cc.movement.updateVelocity = transform.forward;
-		_cc.moveSpeed = ( walljumpSpeed * (1 + _cc.jumping.jumpBoost) );
-		_cc.inputMoveDirection = transform.forward * _cc.moveSpeed;
-		_cc.setRotationModiferAndBuild( walljumpRotationModifier, walljumpRotModBuildTime );
-		_cc.jumping.lastButtonDownTime = Time.time;
-		_cc.movement.updateVelocity = _cc.ApplyInputVelocityChange( _cc.movement.updateVelocity );
-		_cc.movement.updateVelocity = _cc.ApplyJumping( _cc.movement.updateVelocity, _cc.doubleJumpHeight );
-		_cc.wallSlideDirection = (int)WallDirections.neither;
-		stateChange("double_jump");
+		if(!CheckAbove())
+		{
+			enabled = false;
+			if( wallTargetDirection != Vector3.zero )
+				transform.rotation = Quaternion.LookRotation( _cc.targetDirection );
+			else
+				transform.rotation = Quaternion.LookRotation( _cc.wallFacing );
+			_cc.jumping.jumping = true;
+			_cc.jumping.doubleJumping = true;
+			_cc.movement.velocity.y = 0f;
+			_cc.movement.updateVelocity = transform.forward;
+			_cc.moveSpeed = ( walljumpSpeed * (1 + _cc.jumping.jumpBoost) );
+			_cc.inputMoveDirection = transform.forward * _cc.moveSpeed;
+			_cc.setRotationModiferAndBuild( walljumpRotationModifier, walljumpRotModBuildTime );
+			_cc.jumping.lastButtonDownTime = Time.time;
+			_cc.movement.updateVelocity = _cc.ApplyInputVelocityChange( _cc.movement.updateVelocity );
+			_cc.movement.updateVelocity = _cc.ApplyJumping( _cc.movement.updateVelocity, _cc.doubleJumpHeight );
+			_cc.wallSlideDirection = (int)WallDirections.neither;
+			stateChange("double_jump");
+		}
 	}
 
 
@@ -200,17 +200,19 @@ public class ClimbState : StateClass
 		}
 	}
 
-	void CheckAbove()
+	bool CheckAbove()
 	{
-		if( _cc.tCollider.horizontal && _cc.numHangContacts > 0)
+		if( _cc.IsTouchingCeiling() && _cc.numHangContacts > 0)
 		{
 			enabled = false;
 			transform.rotation = Quaternion.LookRotation( _cc.wallFacing, transform.up );
-			Debug.Log( _cc.wallFacing );
 			_cc.moveDirection = _cc.wallFacing;
 			_cc.delayInput( .5f );
 			stateChange("hang_idle");
+			return true;
 		}
+		else
+			return false;
 	}
 
 	void OnDisable()

@@ -178,12 +178,6 @@ public class AimState : StateClass
 	}
 	
 	
-	public override void topCollisionHandler()
-    {
-        
-	}
-	
-	
 	public override void CollisionHandler(ControllerColliderHit hit)
 	{
 		if(_cc.IsGrounded())

@@ -18,7 +18,4 @@ public interface MovingObjectInterface{
 	/* Move the object to a step towards its waypoint.
 	 * If no waypoint is defined the object will not move */
 	void move();
-	
-	/* Returns the difference between the current position and the previous position */
-	Vector3 getDeltaPos();
 }

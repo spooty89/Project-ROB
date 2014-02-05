@@ -81,7 +81,7 @@ public class TPC: MonoBehaviour
 			sc.stateChange = stateChangeHandler;
 		}
 		_cc.surroundingCollision = surroundingCollisionHandler;
-		_cc.topCollision = topCollisionHandler;
+		//_cc.topCollision = topCollisionHandler;
 		_cc.stateChange = stateChangeHandler;
 	}
 	
@@ -115,10 +115,10 @@ public class TPC: MonoBehaviour
 	}
 	
 	
-	private void topCollisionHandler()
+	/*private void topCollisionHandler()
 	{
 		((StateClass)GetComponent( _animations[_cc.GetCurrentState()].state )).topCollisionHandler();
-    }
+    }*/
 	
 	
 	public void OnTriggerEnter(Collider other)

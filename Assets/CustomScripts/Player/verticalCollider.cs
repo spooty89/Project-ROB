@@ -38,7 +38,7 @@ public class verticalCollider : MonoBehaviour
 					stay = true;
 					free = false;
 					numContacts++;
-					Debug.DrawRay( contact.point, hit.normal, Color.white, testLineDuration );
+					//Debug.DrawRay( contact.point, hit.normal, Color.white, testLineDuration );
 					break;
 				}
 			}

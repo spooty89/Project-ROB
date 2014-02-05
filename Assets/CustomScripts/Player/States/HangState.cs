@@ -134,12 +134,6 @@ public class HangState : StateClass
 			stateChange("climb_wall_idle");
 		}
 	}
-	
-	
-	public override void topCollisionHandler()
-	{
-
-    }
     
     
     public override void TriggerEnterHandler(Collider other)

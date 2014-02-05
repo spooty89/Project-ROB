@@ -173,8 +173,8 @@ public class CharacterClass : MonoBehaviour
 		tr = transform;
 		vCollider = transform.GetComponentInChildren<verticalCollider>();
 		vCollider.wallNormal = wallNormalChangeHandler;
-		tCollider = transform.GetComponentInChildren<topCollider>();
-		tCollider.ceilingNormal = ceilingNormalChangeHandler;
+		/*tCollider = transform.GetComponentInChildren<topCollider>();
+		tCollider.ceilingNormal = ceilingNormalChangeHandler;*/
 	}
 	
 	public void UpdateFunction () {
@@ -518,7 +518,7 @@ public class CharacterClass : MonoBehaviour
 		return (grounded && sliding.enabled && TooSteep());
 	}
 	
-	bool IsTouchingCeiling () {
+	public bool IsTouchingCeiling () {
 		return (movement.collisionFlags & CollisionFlags.CollidedAbove) != 0;
 	}
 	
@@ -598,8 +598,8 @@ public class CharacterClass : MonoBehaviour
 	[HideInInspector]
 	public verticalCollider vCollider;
 	public collisionEvent surroundingCollision;
-	public topCollider tCollider;
-	public collisionEvent topCollision;
+	//public topCollider tCollider;
+	//public collisionEvent topCollision;
 	
 	public string GetCurrentState()
 	{
@@ -644,10 +644,10 @@ public class CharacterClass : MonoBehaviour
 		wallBack = oldwallBack;
 	}
 
-	public void ceilingNormalChangeHandler( Vector3 newCeilingNormal )
+	/*public void ceilingNormalChangeHandler( Vector3 newCeilingNormal )
 	{
 		topCollision();
-	}
+	}*/
 
 	public void delayInput( float delay )
 	{

@@ -29,7 +29,6 @@ public class ROBgui : MonoBehaviour
 						"1-Ups: " + tokens + "/" + totalTokens, tokenStyle);
 			}
 			//if (messagePresent) {
-			//	Debug.Log("here");
 				GUI.Label (new Rect (0, (Screen.height - (Screen.height / 10)), Screen.width, (Screen.height / 10)), message, messageStyle); //(Screen.width/4, (Screen.height - (Screen.height / 10)), Screen.width / 2, (Screen.height / 10)), message, messageStyle);
 			//}
 			if (aiming) {

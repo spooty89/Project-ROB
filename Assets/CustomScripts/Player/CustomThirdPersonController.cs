@@ -74,7 +74,6 @@ public class CustomThirdPersonController : MonoBehaviour
 	
 	void OnCollisionEnter(Collision hit)
 	{
-		//Debug.Log("here");
 		//((StateClass)GetComponent( animations[_Player.GetCurrentState()].state )).CollisionHandler( hit );
 	}
 	

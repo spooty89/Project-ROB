@@ -113,12 +113,10 @@ public class GroundedState : StateClass
 	
 	private void ApplyJump ()
 	{
-		Debug.Log(_cc.jumping.lastButtonDownTime);
 		enabled = false;
 		_cc.inputJump = true;
 		_cc.jumping.lastButtonDownTime = Time.time;
 		_cc.movement.updateVelocity = _cc.ApplyJumping( _cc.movement.velocity );
-		//_cc.verticalSpeed = _cc.CalculateJumpVerticalSpeed (_cc.jumpHeight);
 		stateChange("jump");
 	}
 	
@@ -129,17 +127,12 @@ public class GroundedState : StateClass
 		{
 			RaycastHit rcHit;
 			if( Physics.Raycast( transform.position, (hit.point - transform.position).normalized,
-			                    out rcHit, Vector3.Distance(hit.point, transform.position) + .5f ) )
+			                    out rcHit, Vector3.Distance(hit.point, transform.position) + .5f ) &&
+			   					rcHit.normal.y > 0.8f )
 			{
-				if( rcHit.normal.y > 0.8f)
-				{
-					surfaceUp = hit.normal;
-					Debug.DrawRay( hit.point, rcHit.normal, Color.white, 5 );
-				}
+				surfaceUp = hit.normal;
+				//Debug.DrawRay( hit.point, rcHit.normal, Color.white, 5 );
 			}
-
-			//surfaceUp = hit.normal;
-
 		}
 	}
 	
@@ -151,12 +144,6 @@ public class GroundedState : StateClass
 			stateChange("climb_wall_idle");
 		}
 	}
-	
-	
-	public override void topCollisionHandler()
-	{
-        
-    }
     
     
     public override void TriggerEnterHandler(Collider other)
