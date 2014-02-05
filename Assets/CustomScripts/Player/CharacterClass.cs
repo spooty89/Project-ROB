@@ -11,6 +11,7 @@ public enum WallDirections : int
 public class CharacterClass : MonoBehaviour
 {
 	public bool canControl = true,
+				useController = false,
 				useFixedUpdate = true;
 	
 	[System.Serializable]

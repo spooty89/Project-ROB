@@ -85,15 +85,26 @@ public class GroundedState : StateClass
 		else{
 			transform.rotation = Quaternion.LookRotation(new Vector3(_cc.moveDirection.x, 0.0f, _cc.moveDirection.z));
 			// Pick speed modifier
-			if (Input.GetButton("Shift"))
+			if( _cc.useController )
 			{
-				targetSpeed *= runSpeed;
-				_cc.SetCurrentState("run");
+				targetSpeed *= Mathf.Lerp(walkSpeed, runSpeed, targetSpeed);
+				if( targetSpeed <= walkSpeed )
+					_cc.SetCurrentState("walk");
+				else
+					_cc.SetCurrentState("run");
 			}
 			else
 			{
-				targetSpeed *= walkSpeed;
-				_cc.SetCurrentState("walk");
+				if (Input.GetButton("Shift"))
+				{
+					targetSpeed *= runSpeed;
+					_cc.SetCurrentState("run");
+				}
+				else
+				{
+					targetSpeed *= walkSpeed;
+					_cc.SetCurrentState("walk");
+				}
 			}
 		}
 		

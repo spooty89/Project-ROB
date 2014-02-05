@@ -86,8 +86,15 @@ public class ClimbState : StateClass
 			if( wallTargetDirection != Vector3.zero )
 			{
 				_cc.moveSpeed = 2.0f * Mathf.Min( wallTargetDirection.magnitude, 1f );
-				if (Input.GetButton("Shift"))
-					_cc.moveSpeed *= 1.5f;
+				if( _cc.useController )
+				{
+					_cc.moveSpeed *= Mathf.Lerp(1f, 1.5f, _cc.moveSpeed / 2f);
+                }
+                else
+				{
+					if (Input.GetButton("Shift"))
+						_cc.moveSpeed *= 1.5f;
+				}
 				_cc.movement.updateVelocity = wallTargetDirection * _cc.moveSpeed;
 			}
 			if ( v != 0f) {			// If one of the up/down buttons is pressed

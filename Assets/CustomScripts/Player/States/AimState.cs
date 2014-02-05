@@ -147,13 +147,20 @@ public class AimState : StateClass
 				else { _cc.SetCurrentState( backwardAnim ); }
 			}
 			// Pick speed modifier
-			if (Input.GetButton("Shift"))
+			if( _cc.useController )
 			{
-				targetSpeed *= runSpeed;
-			}
-			else
-			{
-				targetSpeed *= walkSpeed;
+				targetSpeed *= Mathf.Lerp(walkSpeed, runSpeed, targetSpeed);
+            }
+            else
+            {
+				if (Input.GetButton("Shift"))
+				{
+					targetSpeed *= runSpeed;
+				}
+				else
+				{
+					targetSpeed *= walkSpeed;
+				}
 			}
 		}
 		

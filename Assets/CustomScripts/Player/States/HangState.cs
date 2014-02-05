@@ -4,8 +4,8 @@ public class HangState : StateClass
 {
 	private bool isMoving;
 	private float v, h;
-	private float walkSpeed = 2.0f;	// The speed when walking
-	private float runSpeed = 3.0f;	// When pressing Shift button we start running
+	public float walkSpeed = 2.0f,	// The speed when walking
+				 runSpeed = 3.0f;	// When pressing Shift button we start running
 	private Vector3 surfaceUp = Vector3.up;
 
 	
@@ -97,13 +97,20 @@ public class HangState : StateClass
 			transform.rotation = Quaternion.LookRotation(new Vector3(_cc.moveDirection.x, 0.0f, _cc.moveDirection.z));
 			_cc.SetCurrentState("hang_move");
 			// Pick speed modifier
-			if (Input.GetButton("Shift"))
+			if( _cc.useController )
 			{
-				targetSpeed *= runSpeed;
-			}
-			else
-			{
-				targetSpeed *= walkSpeed;
+				targetSpeed *= Mathf.Lerp(walkSpeed, runSpeed, targetSpeed);
+            }
+            else
+            {
+				if (Input.GetButton("Shift"))
+				{
+					targetSpeed *= runSpeed;
+				}
+				else
+				{
+					targetSpeed *= walkSpeed;
+				}
 			}
 			_cc.moveSpeed = Mathf.Lerp(_cc.moveSpeed, targetSpeed, curSmooth);
 		}
