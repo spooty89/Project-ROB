@@ -6,6 +6,7 @@ public class GroundedState : StateClass
 	private float v, h;
 	public float walkSpeed = 4.0f;	// The speed when walking
 	public float runSpeed = 8.0f;	// When pressing Shift button we start running
+	public float slopeJumpRotationModifier, slopeJumpRotModBuildTime;
 	private Vector3 surfaceUp = Vector3.up;
 
 	// Get necessary information right away
@@ -17,6 +18,11 @@ public class GroundedState : StateClass
 	// Every time this class is enabled, run this
 	void OnEnable()
 	{
+		if( _cc.TooSteep() )
+		{
+			_cc.movement.velocity = Vector3.zero;
+			transform.forward = new Vector3(_cc.groundNormal.x, 0, _cc.groundNormal.z);
+		}
 		enabled = true;
 		_cc.inAirVelocity = Vector3.zero;
 		_cc.jumping.lastButtonDownTime = -100;
@@ -127,8 +133,19 @@ public class GroundedState : StateClass
 		enabled = false;
 		_cc.inputJump = true;
 		_cc.jumping.lastButtonDownTime = Time.time;
-		_cc.movement.updateVelocity = _cc.ApplyJumping( _cc.movement.velocity );
-		stateChange("jump");
+		if( _cc.TooSteep() )
+		{
+			_cc.setRotationModiferAndBuild( slopeJumpRotationModifier, slopeJumpRotModBuildTime );
+			//transform.forward = new Vector3( _cc.groundNormal.x, 0, _cc.groundNormal.z );
+			_cc.movement.updateVelocity = _cc.ApplyJumping( _cc.groundNormal * _cc.moveSpeed/2, _cc.doubleJumpHeight/2 );
+			stateChange("double_jump");
+			_cc.jumping.doubleJumping = true;
+		}
+		else
+		{
+			_cc.movement.updateVelocity = _cc.ApplyJumping( _cc.movement.velocity );
+			stateChange("jump");
+		}
 	}
 	
 	

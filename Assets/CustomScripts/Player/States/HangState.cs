@@ -151,8 +151,7 @@ public class HangState : StateClass
 	
 	public override void TriggerExitHandler(Collider other)
 	{
-		if (_cc.numHangContacts <= 0) {				// If the player is not in any climb boxes
-			_cc.verticalSpeed = -0.1f;
+		if (_cc.numHangContacts <= 0) {
 			_cc.stateChange("jump_after_apex");
 			_cc.numHangContacts = 0;
 			_cc.hangContact = false;						// Set climb contact to false

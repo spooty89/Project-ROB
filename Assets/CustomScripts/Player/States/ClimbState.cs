@@ -22,7 +22,6 @@ public class ClimbState : StateClass
 		_cc.movement.updateVelocity = Vector3.zero;
 		wallTargetDirection = Vector3.zero;
 		_cc.moveDirection.y = 0f;
-		_cc.verticalSpeed = 0f;
 		_cc.moveSpeed = 0f;
 		_cc.climbing = true;
 		_cc.inAirVelocity = Vector3.zero;

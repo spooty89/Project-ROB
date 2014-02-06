@@ -174,8 +174,6 @@ public class CharacterClass : MonoBehaviour
 		tr = transform;
 		vCollider = transform.GetComponentInChildren<verticalCollider>();
 		vCollider.wallNormal = wallNormalChangeHandler;
-		/*tCollider = transform.GetComponentInChildren<topCollider>();
-		tCollider.ceilingNormal = ceilingNormalChangeHandler;*/
 	}
 	
 	public void UpdateFunction () {
@@ -277,6 +275,7 @@ public class CharacterClass : MonoBehaviour
 		}
 		// We were not grounded but just landed on something
 		else if (!grounded && IsGroundedTest()) {
+			Debug.Log("here");
 			grounded = true;
 			jumping.jumping = false;
 			jumping.doubleJumping = false;
@@ -305,14 +304,36 @@ public class CharacterClass : MonoBehaviour
 		// Find desired velocity
 		Vector3 desiredVelocity = velocity;
 		if (grounded && TooSteep()) {
-			// The direction we're sliding in
-			desiredVelocity = new Vector3(groundNormal.x, 0, groundNormal.z).normalized;
-			// Find the input movement direction projected onto the sliding direction
-			var projectedMoveDir = Vector3.Project(inputMoveDirection, desiredVelocity);
-			// Add the sliding direction, the spped control, and the sideways control vectors
-			desiredVelocity = desiredVelocity + projectedMoveDir * sliding.speedControl + (inputMoveDirection - projectedMoveDir) * sliding.sidewaysControl;
-			// Multiply with the sliding speed
-			desiredVelocity *= sliding.slidingSpeed;
+			if( Vector3.Angle( new Vector3( transform.forward.x, 0f, transform.forward.z ), new Vector3(groundNormal.x, 0, groundNormal.z) ) > 90f )
+			{
+				if( desiredVelocity.magnitude < 0.0001f )
+				{
+					movement.velocity = Vector3.zero;
+					// The direction we're sliding in
+					desiredVelocity = new Vector3(groundNormal.x, 0, groundNormal.z).normalized;
+					transform.forward = desiredVelocity;
+					//desiredVelocity *= sliding.slidingSpeed;
+					movement.updateVelocity = desiredVelocity;
+				}
+			}
+			else
+			{
+				// The direction we're sliding in
+				inputMoveDirection += new Vector3(groundNormal.x, 0, groundNormal.z).normalized;
+				inputMoveDirection.Normalize();
+				if(inputMoveDirection == Vector3.zero)
+					inputMoveDirection = new Vector3(groundNormal.x, 0, groundNormal.z).normalized;
+				transform.forward = inputMoveDirection;
+
+				float magnitude = desiredVelocity.magnitude;
+				desiredVelocity = inputMoveDirection;
+				// Find the input movement direction projected onto the sliding direction
+				var projectedMoveDir = Vector3.Project(inputMoveDirection, desiredVelocity);
+				// Add the sliding direction, the spped control, and the sideways control vectors
+				desiredVelocity = desiredVelocity + projectedMoveDir * sliding.speedControl + (inputMoveDirection - projectedMoveDir) * sliding.sidewaysControl;
+				// Multiply with the sliding speed
+				desiredVelocity *= Mathf.Lerp(magnitude, sliding.slidingSpeed, speedSmoothing * Time.deltaTime);
+			}
 		}
 		else
 			desiredVelocity = GetDesiredHorizontalVelocity();
@@ -436,7 +457,7 @@ public class CharacterClass : MonoBehaviour
 	}
 	
 	void OnControllerColliderHit(ControllerColliderHit hit) {
-		if (hit.normal.y > 0 && hit.normal.y > groundNormal.y && hit.moveDirection.y < 0) {
+		if (hit.normal.y > 0 && hit.normal.y > groundNormal.y && (hit.moveDirection.y < 0 || jumping.jumping )) {
 			if ((hit.point - movement.lastHitPoint).sqrMagnitude > 0.001 || lastGroundNormal == Vector3.zero)
 			{
 				groundNormal = hit.normal;
@@ -527,8 +548,8 @@ public class CharacterClass : MonoBehaviour
 		return grounded;
 	}
 	
-	bool TooSteep () {
-		return (groundNormal.y <= Mathf.Cos(controller.slopeLimit * Mathf.Deg2Rad));
+	public bool TooSteep () {
+		return (groundNormal.y <= Mathf.Cos( Mathf.Min(controller.slopeLimit-15, 60f) * Mathf.Deg2Rad));
 	}
 	
 	Vector3 GetDirection () {
@@ -541,24 +562,19 @@ public class CharacterClass : MonoBehaviour
 	
 	void SetVelocity (Vector3 velocity) {
 		grounded = false;
-		movement.velocity = velocity;
+		movement.velocity = Vector3.zero;
+		movement.updateVelocity = velocity;
 		movement.frameVelocity = Vector3.zero;
 		SendMessage("OnExternalVelocity");
 	}
 
 
-	public float    gravity = 17.0f,
-					rotateSpeed = (float)900.0,
+	public float    rotateSpeed = (float)900.0,
 					inAirRotateSpeed = (float)450.0,
 					speedSmoothing = (float)10.0,
-					jumpHeight = (float)1.5,				// How high we jump when pressing jump and letting go immediately
-					jumpAcceleration = (float)2.0,			// Acceleration from jumping
-					doubleJumpHeight = (float)1.5,			// How high we jump when we double jump
-					doubleJumpAcceleration = (float)1.0,	// from double jumping
-					maxWallInteractAngle = 90f;
+					doubleJumpHeight = (float)1.5;			// How high we jump when we double jump
 	[HideInInspector]
-	public float    verticalSpeed = (float)0.0,		// The current vertical speed
-					moveSpeed = (float)0.0,			// The current x-z move speed
+	public float    moveSpeed = (float)0.0,			// The current x-z move speed
 					rotationModifier = (float)1.0,
 					rotationModifierBuildTime = (float)0.0f;
 	[HideInInspector]
@@ -575,17 +591,13 @@ public class CharacterClass : MonoBehaviour
 					oldwallUp = Vector3.zero,
 					oldwallBack = Vector3.zero;			
 	[HideInInspector]
-	public bool //jumping = false,
-				//doubleJumping = false,
-				jumpingReachedApex = false,
+	public bool jumpingReachedApex = false,
 				climbContact = false,
 				climbing = false,
 				hangContact = false,
 				hanging = false,
 				wallSliding = false,
-				wallSlideRight = false,
 				transitioning = false,
-				build = false,
 				getInput = true;
 	[HideInInspector]
 	public int  numHangContacts = 0,
@@ -599,8 +611,8 @@ public class CharacterClass : MonoBehaviour
 	[HideInInspector]
 	public verticalCollider vCollider;
 	public collisionEvent surroundingCollision;
-	//public topCollider tCollider;
-	//public collisionEvent topCollision;
+
+	private CoRoutine buildRotation;
 	
 	public string GetCurrentState()
 	{
@@ -615,7 +627,23 @@ public class CharacterClass : MonoBehaviour
 	{
 		rotationModifier = buildFrom;
 		rotationModifierBuildTime = duration / (1f - buildFrom);
-		build = true;
+		if(buildRotation != null)
+			buildRotation.Stop();
+		buildRotation = new CoRoutine( buildRotationModifier() );
+	}
+
+	private IEnumerator buildRotationModifier()
+	{
+		while( rotationModifier < 1f )
+		{
+			rotationModifier += Time.deltaTime/rotationModifierBuildTime;
+			if( rotationModifier >= 1f )
+			{
+				rotationModifier = 1f;
+				break;
+			}
+			yield return null;
+		}
 	}
 
 	// Get wall contact information based on the contact point's normal vector
@@ -644,11 +672,6 @@ public class CharacterClass : MonoBehaviour
 		wallUp = oldwallUp;
 		wallBack = oldwallBack;
 	}
-
-	/*public void ceilingNormalChangeHandler( Vector3 newCeilingNormal )
-	{
-		topCollision();
-	}*/
 
 	public void delayInput( float delay )
 	{

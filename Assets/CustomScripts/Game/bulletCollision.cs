@@ -6,7 +6,6 @@ using System.Linq;
 
 public class bulletCollision : MonoBehaviour
 {
-	public List<int> layerMask;
 	void OnTriggerEnter(Collider hit) {
 		if(hit.gameObject.CompareTag( "bulletTrigger" ))
 		{
