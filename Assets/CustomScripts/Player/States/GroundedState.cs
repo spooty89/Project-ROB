@@ -18,7 +18,7 @@ public class GroundedState : StateClass
 	// Every time this class is enabled, run this
 	void OnEnable()
 	{
-		if( _cc.TooSteep() )
+		if( _cc.TooSteep() && _cc.sliding.onSlideSurface && _cc.groundNormal != Vector3.zero )
 		{
 			_cc.movement.velocity = Vector3.zero;
 			transform.forward = new Vector3(_cc.groundNormal.x, 0, _cc.groundNormal.z);
@@ -137,6 +137,7 @@ public class GroundedState : StateClass
 		{
 			_cc.setRotationModiferAndBuild( slopeJumpRotationModifier, slopeJumpRotModBuildTime );
 			//transform.forward = new Vector3( _cc.groundNormal.x, 0, _cc.groundNormal.z );
+			_cc.jumping.actualJumpSpeedBuffer = .0f;
 			_cc.movement.updateVelocity = _cc.ApplyJumping( _cc.groundNormal * _cc.moveSpeed/2, _cc.doubleJumpHeight/2 );
 			stateChange("double_jump");
 			_cc.jumping.doubleJumping = true;

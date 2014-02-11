@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public delegate void wallNormalChangeEvent( Vector3 wallNormal );
+public delegate void wallNormalChangeEvent( Vector3 wallNormal, Vector3 point, GameObject obj );
 
 public class verticalCollider : MonoBehaviour
 {
@@ -33,7 +33,7 @@ public class verticalCollider : MonoBehaviour
 				if( Mathf.Abs( hit.normal.y ) < 0.2f)
 				{
 					vertical = true;
-					wallNormal( hit.normal );
+					wallNormal( hit.normal, contact.point, contact.otherCollider.gameObject );
 					normal = hit.normal;
 					stay = true;
 					free = false;
@@ -55,7 +55,7 @@ public class verticalCollider : MonoBehaviour
 				if( numContacts == 0 && !free )
 				{
 					vertical = false;
-					wallNormal( transform.forward );
+					wallNormal( transform.forward, Vector3.zero, null );
 				}
 				free = true;
 			}

@@ -11,8 +11,7 @@ public enum WallDirections : int
 public class CharacterClass : MonoBehaviour
 {
 	public bool canControl = true,
-				useController = false,
-				useFixedUpdate = true;
+				useController = false;
 	
 	[System.Serializable]
 	public class CharacterMovement {
@@ -73,6 +72,8 @@ public class CharacterClass : MonoBehaviour
 		// How much does the character jump out perpendicular to the surface on too steep surfaces?
 		// 0 means a fully vertical jump and 1 means fully perpendicular.
 		public float steepPerpAmount = 0.5f;
+
+		public float minJumpSpeedBuffer = 1.0f;
 		
 		// Are we jumping? (Initiated with jump button and not grounded yet)
 		// To see if we are just in the air (initiated by jumping OR falling) see the grounded variable.
@@ -97,6 +98,12 @@ public class CharacterClass : MonoBehaviour
 		
 		[HideInInspector]
 		public float jumpBoost = 0f;
+
+		[HideInInspector]
+		public float actualJumpSpeedBuffer = 1.0f;
+
+		[HideInInspector]
+		public bool justJumped = false;
 	}
 	
 	[System.Serializable]
@@ -108,7 +115,7 @@ public class CharacterClass : MonoBehaviour
 		[HideInInspector]
 		public Transform hitPlatform;
 		
-		[HideInInspector]
+		//[HideInInspector]
 		public Transform activePlatform;
 		
 		[HideInInspector]
@@ -131,6 +138,12 @@ public class CharacterClass : MonoBehaviour
 		
 		[HideInInspector]
 		public bool newPlatform;
+
+		[HideInInspector]
+		public bool overRide;
+		
+		[HideInInspector]
+		public bool overRideTrigger;
 	}
 	
 	[System.Serializable]
@@ -148,6 +161,12 @@ public class CharacterClass : MonoBehaviour
 		// How much can the player influence the sliding speed?
 		// If the value is 0.5 the player can speed the sliding up to 150% or slow it down to 50%.
 		public float speedControl = 0.4f;
+		
+		[HideInInspector]
+		public float slopeMultiplier = 1f;
+
+		[HideInInspector]
+		public bool onSlideSurface;
 	}
 
 	public CharacterMovement movement;
@@ -223,6 +242,8 @@ public class CharacterClass : MonoBehaviour
 				movingPlatform.activePlatform = movingPlatform.hitPlatform;
 				movingPlatform.lastMatrix = movingPlatform.hitPlatform.localToWorldMatrix;
 				movingPlatform.newPlatform = true;
+				if(movingPlatform.overRide)
+					movingPlatform.overRideTrigger = true;
 			}
 		}
 		
@@ -264,8 +285,11 @@ public class CharacterClass : MonoBehaviour
 			    (movingPlatform.movementTransfer == MovementTransferOnJump.InitTransfer ||
 			 movingPlatform.movementTransfer == MovementTransferOnJump.PermaTransfer)
 			    ) {
+				Debug.Log("#");
 				movement.frameVelocity = movingPlatform.platformVelocity;
 				movement.velocity += movingPlatform.platformVelocity;
+				movingPlatform.activePlatform = null;
+				movingPlatform.overRide = true;
 			}
 			
 			SendMessage("OnFall", SendMessageOptions.DontRequireReceiver);
@@ -279,9 +303,21 @@ public class CharacterClass : MonoBehaviour
 			grounded = true;
 			jumping.jumping = false;
 			jumping.doubleJumping = false;
+			movingPlatform.overRide = false;
+			movingPlatform.overRideTrigger = false;
 			new CoRoutine( SubtractNewPlatformVelocity() );
 			
 			SendMessage("OnLand", SendMessageOptions.DontRequireReceiver);
+		}
+		else if( movingPlatform.overRide && movingPlatform.overRideTrigger )
+		{
+			Debug.Log("!");
+			movingPlatform.overRideTrigger = false;
+			//movingPlatform.activePlatform = movingPlatform.hitPlatform;
+			//movingPlatform.lastMatrix = movingPlatform.hitPlatform.localToWorldMatrix;
+			new CoRoutine( SubtractNewPlatformVelocity(), () => {
+				movingPlatform.overRide = false;
+			});
 		}
 		
 		// Moving platforms support
@@ -303,17 +339,24 @@ public class CharacterClass : MonoBehaviour
 		
 		// Find desired velocity
 		Vector3 desiredVelocity = velocity;
-		if (grounded && TooSteep()) {
+		if (grounded && TooSteep() && sliding.enabled) {
 			if( Vector3.Angle( new Vector3( transform.forward.x, 0f, transform.forward.z ), new Vector3(groundNormal.x, 0, groundNormal.z) ) > 90f )
 			{
-				if( desiredVelocity.magnitude < 0.0001f )
+				var movementSlopeAngle = Mathf.Asin(movement.velocity.normalized.y)  * Mathf.Rad2Deg;
+				sliding.slopeMultiplier -= Time.deltaTime * ( 1 - groundNormal.y );
+				if( desiredVelocity.magnitude < 0.1f || sliding.slopeMultiplier < 0f)
 				{
+					sliding.slopeMultiplier = 1f;
 					movement.velocity = Vector3.zero;
 					// The direction we're sliding in
 					desiredVelocity = new Vector3(groundNormal.x, 0, groundNormal.z).normalized;
 					transform.forward = desiredVelocity;
 					//desiredVelocity *= sliding.slidingSpeed;
 					movement.updateVelocity = desiredVelocity;
+				}
+				else
+				{
+					desiredVelocity = inputMoveDirection * sliding.slopeMultiplier;
 				}
 			}
 			else
@@ -336,7 +379,10 @@ public class CharacterClass : MonoBehaviour
 			}
 		}
 		else
+		{
+			sliding.slopeMultiplier = 1f;
 			desiredVelocity = GetDesiredHorizontalVelocity();
+		}
 		
 		if (movingPlatform.enabled && movingPlatform.movementTransfer == MovementTransferOnJump.PermaTransfer) {
 			desiredVelocity += movement.frameVelocity;
@@ -416,6 +462,7 @@ public class CharacterClass : MonoBehaviour
 		// because players will often try to jump in the exact moment when hitting the ground after a jump
 		// and if they hit the button a fraction of a second too soon and no new jump happens as a consequence,
 		// it's confusing and it feels like the game is buggy.
+		jumping.justJumped = true;
 		if (jumping.enabled && canControl && (Time.time - jumping.lastButtonDownTime < 0.2)) {
 			grounded = false;
 			if( !jumping.jumping )
@@ -441,10 +488,15 @@ public class CharacterClass : MonoBehaviour
 			// Apply inertia from platform
 			if (movingPlatform.enabled &&
 			    (movingPlatform.movementTransfer == MovementTransferOnJump.InitTransfer ||
-			 movingPlatform.movementTransfer == MovementTransferOnJump.PermaTransfer)
+			 	movingPlatform.movementTransfer == MovementTransferOnJump.PermaTransfer)
 			    ) {
-				movement.frameVelocity = movingPlatform.platformVelocity;
-				velocity += movingPlatform.platformVelocity;
+					if( !jumping.doubleJumping )
+					{
+						movement.frameVelocity = movingPlatform.platformVelocity;
+						velocity += movingPlatform.platformVelocity;
+						movingPlatform.activePlatform = null;
+						movingPlatform.overRide = true;
+					}
 			}
 			
 			SendMessage("OnJump", SendMessageOptions.DontRequireReceiver);
@@ -457,14 +509,27 @@ public class CharacterClass : MonoBehaviour
 	}
 	
 	void OnControllerColliderHit(ControllerColliderHit hit) {
-		if (hit.normal.y > 0 && hit.normal.y > groundNormal.y && (hit.moveDirection.y < 0 || jumping.jumping )) {
+		if ((hit.normal.y > 0 && hit.normal.y > groundNormal.y && (hit.moveDirection.y < 0)) && !movingPlatform.overRide) {
+			//Debug.Log("-");
 			if ((hit.point - movement.lastHitPoint).sqrMagnitude > 0.001 || lastGroundNormal == Vector3.zero)
 			{
+				//Debug.Log("1");
 				groundNormal = hit.normal;
 			}
 			else
+			{
+				//Debug.Log("2");
 				groundNormal = lastGroundNormal;
+			}
 			
+			sliding.onSlideSurface = hit.collider.gameObject.CompareTag( "slide" );
+			movingPlatform.hitPlatform = hit.collider.transform;
+			movement.hitPoint = hit.point;
+			movement.frameVelocity = Vector3.zero;
+		}
+		else if( hit.collider != null && hit.collider.gameObject != vCollider.gameObject) {
+			//Debug.Log("+");
+			sliding.onSlideSurface = hit.collider.gameObject.CompareTag( "slide" );
 			movingPlatform.hitPlatform = hit.collider.transform;
 			movement.hitPoint = hit.point;
 			movement.frameVelocity = Vector3.zero;
@@ -492,7 +557,7 @@ public class CharacterClass : MonoBehaviour
 	private bool MoveWithPlatform() {
 		return (
 			movingPlatform.enabled
-			&& (grounded || movingPlatform.movementTransfer == MovementTransferOnJump.PermaLocked)
+			//&& (movingPlatform.platformPush || grounded || movingPlatform.movementTransfer == MovementTransferOnJump.PermaLocked)
 			&& movingPlatform.activePlatform != null
 			);
 	}
@@ -537,7 +602,7 @@ public class CharacterClass : MonoBehaviour
 	}
 	
 	bool IsSliding () {
-		return (grounded && sliding.enabled && TooSteep());
+		return (grounded && sliding.enabled && TooSteep() && sliding.onSlideSurface);
 	}
 	
 	public bool IsTouchingCeiling () {
@@ -549,7 +614,7 @@ public class CharacterClass : MonoBehaviour
 	}
 	
 	public bool TooSteep () {
-		return (groundNormal.y <= Mathf.Cos( Mathf.Min(controller.slopeLimit-15, 60f) * Mathf.Deg2Rad));
+		return (groundNormal.y <= Mathf.Cos( Mathf.Min(controller.slopeLimit-15, 60f) * Mathf.Deg2Rad) && sliding.onSlideSurface);
 	}
 	
 	Vector3 GetDirection () {
@@ -568,7 +633,7 @@ public class CharacterClass : MonoBehaviour
 		SendMessage("OnExternalVelocity");
 	}
 
-
+	public LayerMask layerMask;
 	public float    rotateSpeed = (float)900.0,
 					inAirRotateSpeed = (float)450.0,
 					speedSmoothing = (float)10.0,
@@ -647,7 +712,7 @@ public class CharacterClass : MonoBehaviour
 	}
 
 	// Get wall contact information based on the contact point's normal vector
-	public void wallNormalChangeHandler( Vector3 newWallNormal )
+	public void wallNormalChangeHandler( Vector3 newWallNormal, Vector3 point, GameObject obj )
 	{
 		oldWallFacing = wallFacing;			// Store the old values in case you need to revert back to them
 		oldwallLeft = wallLeft;

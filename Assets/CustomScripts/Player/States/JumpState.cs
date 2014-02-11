@@ -40,6 +40,9 @@ public class JumpState : StateClass
 				_cc.inputJump = true;
 			else
 				_cc.inputJump = false;
+		
+		if( Input.GetButton( "Aim" ) )
+			_cc.stateChange( "aim_idle" );
 	}
 	
 	
@@ -78,6 +81,7 @@ public class JumpState : StateClass
 		float curSmooth = _cc.speedSmoothing * Time.deltaTime /2;			// Smooth the speed based on the current target direction
 		float targetSpeed = Mathf.Min(_cc.targetDirection.magnitude, 1.0f);		//* Support analog input but insure you cant walk faster diagonally than just f/b/l/r
 		targetSpeed *= Mathf.Max( _cc.moveSpeed, 2f);
+		targetSpeed *= _cc.jumping.actualJumpSpeedBuffer;
 		_cc.moveSpeed = Mathf.Lerp(_cc.moveSpeed, targetSpeed, curSmooth);
 		_cc.inputMoveDirection = transform.forward * _cc.moveSpeed;
 
@@ -175,6 +179,7 @@ public class JumpState : StateClass
 
 	void OnDisable()
 	{
+		_cc.jumping.actualJumpSpeedBuffer = _cc.jumping.minJumpSpeedBuffer;
 		_cc.jumping.jumping = false;
 		_cc.jumping.doubleJumping = false;
 	}
