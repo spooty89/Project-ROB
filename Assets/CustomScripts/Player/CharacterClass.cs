@@ -139,7 +139,7 @@ public class CharacterClass : MonoBehaviour
 		[HideInInspector]
 		public bool newPlatform;
 
-		[HideInInspector]
+		//[HideInInspector]
 		public bool overRide;
 		
 		[HideInInspector]
@@ -242,8 +242,13 @@ public class CharacterClass : MonoBehaviour
 				movingPlatform.activePlatform = movingPlatform.hitPlatform;
 				movingPlatform.lastMatrix = movingPlatform.hitPlatform.localToWorldMatrix;
 				movingPlatform.newPlatform = true;
-				if(movingPlatform.overRide)
-					movingPlatform.overRideTrigger = true;
+				/*if(movingPlatform.overRide && movingPlatform.overRideTrigger)
+				{
+					movingPlatform.overRideTrigger = false;
+					new CoRoutine( SubtractNewPlatformVelocity(), () => {
+						//movingPlatform.overRide = false;
+					});
+				}*/
 			}
 		}
 		
@@ -276,8 +281,18 @@ public class CharacterClass : MonoBehaviour
 			}
 		}
 		
+		/*if( movingPlatform.overRide && movingPlatform.overRideTrigger )
+		{
+			Debug.Log("!");
+			//movingPlatform.activePlatform = movingPlatform.hitPlatform;
+			//movingPlatform.lastMatrix = movingPlatform.hitPlatform.localToWorldMatrix;
+			movingPlatform.overRideTrigger = false;
+			new CoRoutine( SubtractNewPlatformVelocity(), () => {
+				movingPlatform.overRide = false;
+			});
+		}
 		// We were grounded but just lost grounding
-		if (grounded && !IsGroundedTest()) {
+		else*/ if (grounded && !IsGroundedTest()) {
 			grounded = false;
 			
 			// Apply inertia from platform
@@ -289,7 +304,7 @@ public class CharacterClass : MonoBehaviour
 				movement.frameVelocity = movingPlatform.platformVelocity;
 				movement.velocity += movingPlatform.platformVelocity;
 				movingPlatform.activePlatform = null;
-				movingPlatform.overRide = true;
+				//movingPlatform.overRide = true;
 			}
 			
 			SendMessage("OnFall", SendMessageOptions.DontRequireReceiver);
@@ -299,25 +314,13 @@ public class CharacterClass : MonoBehaviour
 		}
 		// We were not grounded but just landed on something
 		else if (!grounded && IsGroundedTest()) {
-			Debug.Log("here");
 			grounded = true;
 			jumping.jumping = false;
 			jumping.doubleJumping = false;
-			movingPlatform.overRide = false;
-			movingPlatform.overRideTrigger = false;
+			//movingPlatform.overRide = false;
 			new CoRoutine( SubtractNewPlatformVelocity() );
 			
 			SendMessage("OnLand", SendMessageOptions.DontRequireReceiver);
-		}
-		else if( movingPlatform.overRide && movingPlatform.overRideTrigger )
-		{
-			Debug.Log("!");
-			movingPlatform.overRideTrigger = false;
-			//movingPlatform.activePlatform = movingPlatform.hitPlatform;
-			//movingPlatform.lastMatrix = movingPlatform.hitPlatform.localToWorldMatrix;
-			new CoRoutine( SubtractNewPlatformVelocity(), () => {
-				movingPlatform.overRide = false;
-			});
 		}
 		
 		// Moving platforms support
@@ -495,7 +498,7 @@ public class CharacterClass : MonoBehaviour
 						movement.frameVelocity = movingPlatform.platformVelocity;
 						velocity += movingPlatform.platformVelocity;
 						movingPlatform.activePlatform = null;
-						movingPlatform.overRide = true;
+						//movingPlatform.overRide = true;
 					}
 			}
 			
@@ -521,19 +524,22 @@ public class CharacterClass : MonoBehaviour
 				//Debug.Log("2");
 				groundNormal = lastGroundNormal;
 			}
+		}
 			
 			sliding.onSlideSurface = hit.collider.gameObject.CompareTag( "slide" );
 			movingPlatform.hitPlatform = hit.collider.transform;
 			movement.hitPoint = hit.point;
 			movement.frameVelocity = Vector3.zero;
-		}
-		else if( hit.collider != null && hit.collider.gameObject != vCollider.gameObject) {
-			//Debug.Log("+");
+		/*}
+		else if( hit.collider.gameObject != vCollider.gameObject ) {
+			Debug.Log("+");
+			if( movingPlatform.overRide )
+				movingPlatform.overRideTrigger = true;
 			sliding.onSlideSurface = hit.collider.gameObject.CompareTag( "slide" );
 			movingPlatform.hitPlatform = hit.collider.transform;
 			movement.hitPoint = hit.point;
 			movement.frameVelocity = Vector3.zero;
-		}
+		}*/
 	}
 	
 	IEnumerator SubtractNewPlatformVelocity () {
@@ -663,7 +669,8 @@ public class CharacterClass : MonoBehaviour
 				hanging = false,
 				wallSliding = false,
 				transitioning = false,
-				getInput = true;
+				getInput = true,
+				aimEnabled = true;
 	[HideInInspector]
 	public int  numHangContacts = 0,
 				numClimbContacts = 0,

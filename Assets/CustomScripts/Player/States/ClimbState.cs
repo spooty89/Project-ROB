@@ -192,6 +192,11 @@ public class ClimbState : StateClass
 			_cc.movement.updateVelocity = _cc.ApplyJumping( _cc.movement.updateVelocity, _cc.doubleJumpHeight );
 			_cc.wallSlideDirection = (int)WallDirections.neither;
 			stateChange("double_jump");
+			_cc.aimEnabled = false;
+			CoRoutine.AfterWait( GetComponent<AnimationSetup>().animations.Find( a => a.name == "double_jump" ).animationClip.length,() => 
+			                    {
+				_cc.aimEnabled = true;
+			});
 		}
 	}
 

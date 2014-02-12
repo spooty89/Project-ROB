@@ -28,19 +28,22 @@ public class AimState : StateClass
 
 	private void OnEnable()
 	{
+		enabled = true;
 		animation[aimUpDown.name].layer = 2;
 		camController.targetHeight = Mathf.Max( targetHeight * (camController.desiredDistance/normalDistance), normalHeight );
 	}
 
 	private void OnDisable()
 	{
+		enabled = false;
 		animation[aimUpDown.name].layer = 0;
 		camController.targetHeight = normalHeight;
 	}
 
 	public void OnGUI () 
 	{
-		GUI.Label (new Rect (Screen.width/2, Screen.height/2, 3, 3), "+", aimStyle);
+		if( _cc.aimEnabled )
+			GUI.Label (new Rect (Screen.width/2, Screen.height/2, 3, 3), "+", aimStyle);
 	}
 
 	public override void Run()
@@ -60,7 +63,7 @@ public class AimState : StateClass
 
 		if( Input.GetButtonUp( "Aim" ) )
 		{
-			if( _cc.jumping.jumping )
+			if( !_cc.grounded )
 			{
 				_cc.stateChange("jump");
 			}
@@ -71,7 +74,7 @@ public class AimState : StateClass
 			}
 		}
 
-		if( Input.GetButtonUp( "fire" ) )
+		if( Input.GetButtonUp( "fire" ) && _cc.aimEnabled )
 		{
 			GameObject bulletInstance = (GameObject)Resources.Load( "Prefab/" + bullet.name );
 			bulletInstance.GetComponent<bullet>().speed = bulletSpeed;
@@ -190,7 +193,7 @@ public class AimState : StateClass
 			_cc.movement.updateVelocity = _cc.movement.velocity;
 			_cc.movement.updateVelocity = _cc.ApplyInputVelocityChange( _cc.movement.updateVelocity );
 		}
-		else
+		else if( _cc.aimEnabled )
 		{
 			_cc.jumping.jumping = true;
 			_cc.SetCurrentState("aim_jump");
@@ -221,10 +224,30 @@ public class AimState : StateClass
 			_cc.movement.updateVelocity = _cc.ApplyInputVelocityChange( _cc.movement.updateVelocity );
 			_cc.movement.updateVelocity = _cc.ApplyGravity( _cc.movement.updateVelocity );
 		}
-		/*if (!_cc.IsGrounded())
+		else
 		{
-			stateChange("jump_after_apex");
-		}*/
+			forward.y = 0.0f;
+			forward = forward.normalized;
+			// Right vector relative to the camera
+			// Always orthogonal to the forward vector
+			Vector3 right = new Vector3(forward.z, 0, -forward.x);
+			_cc.targetDirection = h * right + v * forward;
+			
+			if (_cc.targetDirection != Vector3.zero) { // If there is any input, smoothly turn towards the target direction
+				transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(transform.forward, _cc.targetDirection, _cc.rotationModifier * _cc.inAirRotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000));
+			}
+			
+			float curSmooth = _cc.speedSmoothing * Time.deltaTime /2;			// Smooth the speed based on the current target direction
+			float targetSpeed = Mathf.Min(_cc.targetDirection.magnitude, 1.0f);		//* Support analog input but insure you cant walk faster diagonally than just f/b/l/r
+			targetSpeed *= Mathf.Max( _cc.moveSpeed, 2f);
+			targetSpeed *= _cc.jumping.actualJumpSpeedBuffer;
+			_cc.moveSpeed = Mathf.Lerp(_cc.moveSpeed, targetSpeed, curSmooth);
+			_cc.inputMoveDirection = transform.forward * _cc.moveSpeed;
+			
+			_cc.movement.updateVelocity = _cc.movement.velocity;
+			_cc.movement.updateVelocity = _cc.ApplyInputVelocityChange( _cc.movement.updateVelocity );
+			_cc.movement.updateVelocity = _cc.ApplyGravity( _cc.movement.updateVelocity );
+		}
 	}
 	
 	
@@ -236,6 +259,22 @@ public class AimState : StateClass
 			_cc.movement.velocity = _cc.ApplyJumping( _cc.movement.velocity );
 			_cc.SetCurrentState("aim_jump");
 			_cc.jumpingReachedApex = false;
+		}
+		else if( !_cc.jumping.doubleJumping )
+		{
+			_cc.jumping.lastButtonDownTime = Time.time;
+			_cc.jumpingReachedApex = false;
+			_cc.movement.velocity = _cc.ApplyJumping( _cc.movement.velocity );
+			OnDisable();
+			enabled = true;
+			_cc.aimEnabled = false;
+			CoRoutine.AfterWait( GetComponent<AnimationSetup>().animations.Find( a => a.name == "double_jump" ).animationClip.length,() => 
+		    {
+				if(enabled)
+					OnEnable();
+				_cc.aimEnabled = true;
+			});
+			_cc.SetCurrentState("double_jump");
 		}
 	}
 
@@ -251,6 +290,8 @@ public class AimState : StateClass
 		if(_cc.IsGrounded())
 		{
 			surfaceUp = hit.normal;
+			_cc.jumping.jumping = false;
+			_cc.jumping.doubleJumping = false;
 		}
 	}
 

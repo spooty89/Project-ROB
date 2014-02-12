@@ -25,7 +25,10 @@ public class GroundedState : StateClass
 		}
 		enabled = true;
 		_cc.inAirVelocity = Vector3.zero;
+		_cc.jumping.jumping = false;
+		_cc.jumping.doubleJumping = false;
 		_cc.jumping.lastButtonDownTime = -100;
+		_cc.aimEnabled = true;
 	}
 
 	// While this class is running, perform these tasks every frame

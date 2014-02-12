@@ -32,17 +32,19 @@ public class JumpState : StateClass
 		
 		isMoving = Mathf.Abs (h) > 0.05f || Mathf.Abs (v) > 0.05f;
 
-			if( Input.GetButtonDown( "Jump" ) )
-			{
-				ApplyJump();
-			}
-			if( Input.GetButton( "Jump" ) )
-				_cc.inputJump = true;
-			else
-				_cc.inputJump = false;
+		if( Input.GetButtonDown( "Jump" ) )
+		{
+			ApplyJump();
+		}
+		if( Input.GetButton( "Jump" ) )
+			_cc.inputJump = true;
+		else
+			_cc.inputJump = false;
 		
-		if( Input.GetButton( "Aim" ) )
-			_cc.stateChange( "aim_idle" );
+		if( Input.GetButton( "Aim" ) && _cc.aimEnabled )
+		{
+			_cc.stateChange( "aim_jump" );
+		}
 	}
 	
 	
@@ -88,6 +90,9 @@ public class JumpState : StateClass
 		_cc.movement.updateVelocity = _cc.movement.velocity;
 		_cc.movement.updateVelocity = _cc.ApplyInputVelocityChange( _cc.movement.updateVelocity );
 		_cc.movement.updateVelocity = _cc.ApplyGravity( _cc.movement.updateVelocity );
+
+		if( _cc.IsGrounded() )
+			_cc.stateChange( "idle" );
 	}
 	
 	
@@ -100,6 +105,11 @@ public class JumpState : StateClass
 			_cc.SetCurrentState("double_jump");
 			_cc.jumpingReachedApex = false;
 			_cc.jumping.doubleJumping = true;
+			_cc.aimEnabled = false;
+			CoRoutine.AfterWait( GetComponent<AnimationSetup>().animations.Find( a => a.name == "double_jump" ).animationClip.length,() => 
+			{
+				_cc.aimEnabled = true;
+			});
 		}
 	}
 	
@@ -109,10 +119,11 @@ public class JumpState : StateClass
 		if(_cc.IsGrounded())
 		{
 			_cc.rotationModifier = 1f;
-			stateChange("idle");
+			_cc.stateChange("idle");
 		}
 		else if (_cc.hangContact && _cc.movement.velocity.y > 0f && Vector3.Angle(hit.normal, transform.up) > 100f) {// If player is within hang triggerBox;
-				stateChange("hang_idle");
+			_cc.jumping.doubleJumping = false;
+			_cc.stateChange("hang_idle");
 		}
 	}
 	
@@ -180,7 +191,5 @@ public class JumpState : StateClass
 	void OnDisable()
 	{
 		_cc.jumping.actualJumpSpeedBuffer = _cc.jumping.minJumpSpeedBuffer;
-		_cc.jumping.jumping = false;
-		_cc.jumping.doubleJumping = false;
 	}
 }
