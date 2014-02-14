@@ -670,7 +670,8 @@ public class CharacterClass : MonoBehaviour
 				wallSliding = false,
 				transitioning = false,
 				getInput = true,
-				aimEnabled = true;
+				aimEnabled = true,
+				rolling = false;
 	[HideInInspector]
 	public int  numHangContacts = 0,
 				numClimbContacts = 0,

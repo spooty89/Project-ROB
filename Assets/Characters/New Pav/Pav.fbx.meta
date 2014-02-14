@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: b07464284d6379b4fb2e394cacaa7acb
 ModelImporter:
-  serializedVersion: 15
+  serializedVersion: 16
   fileIDToRecycleName:
     100000: jaw
     100002: joint2
@@ -394,7 +394,7 @@ ModelImporter:
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
   tangentSpace:
-    normalSmoothAngle: 180
+    normalSmoothAngle: 0
     splitTangentsAcrossUV: 1
     normalImportMode: 0
     tangentImportMode: 0
@@ -413,4 +413,5 @@ ModelImporter:
     rootMotionBoneName: 
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   animationType: 1
+  additionalBone: 0
   userData: 

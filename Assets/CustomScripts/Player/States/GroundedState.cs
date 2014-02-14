@@ -6,6 +6,7 @@ public class GroundedState : StateClass
 	private float v, h;
 	public float walkSpeed = 4.0f;	// The speed when walking
 	public float runSpeed = 8.0f;	// When pressing Shift button we start running
+	public float minRollSpeed = 0.5f;
 	public float slopeJumpRotationModifier, slopeJumpRotModBuildTime;
 	private Vector3 surfaceUp = Vector3.up;
 
@@ -50,14 +51,24 @@ public class GroundedState : StateClass
 		h = Input.GetAxisRaw("Horizontal");
 		
 		isMoving = Mathf.Abs (h) > 0.05f || Mathf.Abs (v) > 0.05f;
+		if( !_cc.rolling )
+		{
+			if( Input.GetButtonDown( "Jump" ) )
+				ApplyJump();
+			else
+				_cc.inputJump = false;
 
-		if( Input.GetButtonDown( "Jump" ) )
-			ApplyJump();
-		else
-			_cc.inputJump = false;
+			if( Input.GetButtonDown( "Interact" ) )
+			{
+				animation[ "roll" ].time = 0f;
+				_cc.SetCurrentState( "roll" );
+				_cc.rolling = true;
+				CoRoutine.AfterWait( animation[ "roll" ].length/animation[ "roll" ].speed, () => _cc.rolling = false );
+			}
 
-		if( Input.GetButton( "Aim" ) )
-			_cc.stateChange( "aim_idle" );
+			if( Input.GetButton( "Aim" ) )
+				_cc.stateChange( "aim_idle" );
+		}
 	}
 	
 	
@@ -87,7 +98,29 @@ public class GroundedState : StateClass
 		float curSmooth = _cc.speedSmoothing * Time.deltaTime;			// Smooth the speed based on the current target direction
 		float targetSpeed = Mathf.Min(_cc.targetDirection.magnitude, 1.0f);	//* Support analog input but insure you cant walk faster diagonally than just f/b/l/r
 	
-		if (!isMoving)
+		if( _cc.rolling )
+		{
+			transform.rotation = Quaternion.LookRotation(new Vector3(_cc.moveDirection.x, 0.0f, _cc.moveDirection.z));
+			// Pick speed modifier
+			if (!isMoving)
+				targetSpeed = minRollSpeed;
+			if( _cc.useController )
+			{
+				targetSpeed *= Mathf.Lerp(walkSpeed, runSpeed, targetSpeed);
+			}
+			else
+			{
+				if (Input.GetButton("Shift"))
+				{
+					targetSpeed *= runSpeed;
+				}
+				else
+				{
+					targetSpeed *= walkSpeed;
+				}
+			}
+		}
+		else if (!isMoving)
 		{
 			_cc.SetCurrentState("idle");
 		}
@@ -133,22 +166,25 @@ public class GroundedState : StateClass
 	
 	private void ApplyJump ()
 	{
-		enabled = false;
-		_cc.inputJump = true;
-		_cc.jumping.lastButtonDownTime = Time.time;
-		if( _cc.TooSteep() )
+		if( !_cc.rolling )
 		{
-			_cc.setRotationModiferAndBuild( slopeJumpRotationModifier, slopeJumpRotModBuildTime );
-			//transform.forward = new Vector3( _cc.groundNormal.x, 0, _cc.groundNormal.z );
-			_cc.jumping.actualJumpSpeedBuffer = .0f;
-			_cc.movement.updateVelocity = _cc.ApplyJumping( _cc.groundNormal * _cc.moveSpeed/2, _cc.doubleJumpHeight/2 );
-			stateChange("double_jump");
-			_cc.jumping.doubleJumping = true;
-		}
-		else
-		{
-			_cc.movement.updateVelocity = _cc.ApplyJumping( _cc.movement.velocity );
-			stateChange("jump");
+			enabled = false;
+			_cc.inputJump = true;
+			_cc.jumping.lastButtonDownTime = Time.time;
+			if( _cc.TooSteep() )
+			{
+				_cc.setRotationModiferAndBuild( slopeJumpRotationModifier, slopeJumpRotModBuildTime );
+				//transform.forward = new Vector3( _cc.groundNormal.x, 0, _cc.groundNormal.z );
+				_cc.jumping.actualJumpSpeedBuffer = .0f;
+				_cc.movement.updateVelocity = _cc.ApplyJumping( _cc.groundNormal * _cc.moveSpeed/2, _cc.doubleJumpHeight/2 );
+				stateChange("double_jump");
+				_cc.jumping.doubleJumping = true;
+			}
+			else
+			{
+				_cc.movement.updateVelocity = _cc.ApplyJumping( _cc.movement.velocity );
+				stateChange("jump");
+			}
 		}
 	}
 	

@@ -49,8 +49,11 @@ public class AimState : StateClass
 	public override void Run()
 	{
 		InputHandler();
-		AimHandler();
-		MovementHandler();
+		if( enabled )
+		{
+			AimHandler();
+			MovementHandler();
+		}
 	}
 	
 	
@@ -61,53 +64,64 @@ public class AimState : StateClass
 			
 		isMoving = Mathf.Abs (h) > 0.05f || Mathf.Abs (v) > 0.05f;
 
-		if( Input.GetButtonUp( "Aim" ) )
+		if( !_cc.jumping.jumping && Input.GetButtonDown( "Interact" ) )
 		{
-			if( !_cc.grounded )
+			enabled = false;
+			_cc.rolling = true;
+			animation[ "roll" ].time = 0f;
+			_cc.stateChange( "roll" );
+			CoRoutine.AfterWait( animation[ "roll" ].length/animation[ "roll" ].speed, () => _cc.rolling = false );
+		}
+		if( !_cc.rolling )
+		{
+			if( Input.GetButtonUp( "Aim" ) )
 			{
-				_cc.stateChange("jump");
+				if( !_cc.grounded )
+				{
+					_cc.stateChange("jump");
+				}
+				else
+				{
+					_cc.moveDirection = Camera.main.transform.TransformDirection(Vector3.forward).normalized;
+					_cc.stateChange( "idle" );
+				}
 			}
+
+			if( Input.GetButtonUp( "fire" ) && _cc.aimEnabled )
+			{
+				GameObject bulletInstance = (GameObject)Resources.Load( "Prefab/" + bullet.name );
+				bulletInstance.GetComponent<bullet>().speed = bulletSpeed;
+				bulletInstance.GetComponent<bullet>().maxTime = maxDistance/bulletSpeed;
+
+				RaycastHit hit;
+				Ray r = Camera.main.ViewportPointToRay (new Vector3(0.5f,0.5f, 0f));
+				Physics.Raycast( r.origin, r.direction, out hit, maxDistance, layerMask );
+				if( hit.point != Vector3.zero)
+				{
+					r = new Ray( bulletOrigin.transform.position, hit.point - bulletOrigin.transform.position );
+				}
+				else
+				{
+					r = new Ray( bulletOrigin.transform.position, r.GetPoint(maxDistance) - bulletOrigin.transform.position );
+				}
+				
+				bulletInstance.GetComponent<bullet>().direction = r.direction;
+				Instantiate( bulletInstance, bulletOrigin.transform.position, Quaternion.LookRotation(r.direction) );
+			}
+			if( Input.GetButton( "Mouse ScrollWheel" ) )
+			{
+				camController.targetHeight = Mathf.Max( targetHeight * (camController.desiredDistance/normalDistance), normalHeight );
+			}
+
+			if( Input.GetButtonDown( "Jump" ) )
+			{
+				ApplyJump();
+			}
+			if( Input.GetButton( "Jump" ) )
+				_cc.inputJump = true;
 			else
-			{
-				_cc.moveDirection = Camera.main.transform.TransformDirection(Vector3.forward).normalized;
-				_cc.stateChange( "idle" );
-			}
+				_cc.inputJump = false;
 		}
-
-		if( Input.GetButtonUp( "fire" ) && _cc.aimEnabled )
-		{
-			GameObject bulletInstance = (GameObject)Resources.Load( "Prefab/" + bullet.name );
-			bulletInstance.GetComponent<bullet>().speed = bulletSpeed;
-			bulletInstance.GetComponent<bullet>().maxTime = maxDistance/bulletSpeed;
-
-			RaycastHit hit;
-			Ray r = Camera.main.ViewportPointToRay (new Vector3(0.5f,0.5f, 0f));
-			Physics.Raycast( r.origin, r.direction, out hit, maxDistance, layerMask );
-			if( hit.point != Vector3.zero)
-			{
-				r = new Ray( bulletOrigin.transform.position, hit.point - bulletOrigin.transform.position );
-			}
-			else
-			{
-				r = new Ray( bulletOrigin.transform.position, r.GetPoint(maxDistance) - bulletOrigin.transform.position );
-			}
-			
-			bulletInstance.GetComponent<bullet>().direction = r.direction;
-			Instantiate( bulletInstance, bulletOrigin.transform.position, Quaternion.LookRotation(r.direction) );
-		}
-		if( Input.GetButton( "Mouse ScrollWheel" ) )
-		{
-			camController.targetHeight = Mathf.Max( targetHeight * (camController.desiredDistance/normalDistance), normalHeight );
-		}
-
-		if( Input.GetButtonDown( "Jump" ) )
-		{
-			ApplyJump();
-		}
-		if( Input.GetButton( "Jump" ) )
-			_cc.inputJump = true;
-		else
-			_cc.inputJump = false;
 	}
 	
 	
@@ -196,7 +210,8 @@ public class AimState : StateClass
 		else if( _cc.aimEnabled )
 		{
 			_cc.jumping.jumping = true;
-			_cc.SetCurrentState("aim_jump");
+			if( _cc.jumpingReachedApex )
+				_cc.SetCurrentState("aim_jump");
 			forward.y = 0.0f;
 			forward = forward.normalized;
 			transform.forward = forward;
@@ -224,7 +239,7 @@ public class AimState : StateClass
 			_cc.movement.updateVelocity = _cc.ApplyInputVelocityChange( _cc.movement.updateVelocity );
 			_cc.movement.updateVelocity = _cc.ApplyGravity( _cc.movement.updateVelocity );
 		}
-		else
+		/*else
 		{
 			forward.y = 0.0f;
 			forward = forward.normalized;
@@ -247,34 +262,37 @@ public class AimState : StateClass
 			_cc.movement.updateVelocity = _cc.movement.velocity;
 			_cc.movement.updateVelocity = _cc.ApplyInputVelocityChange( _cc.movement.updateVelocity );
 			_cc.movement.updateVelocity = _cc.ApplyGravity( _cc.movement.updateVelocity );
-		}
+		}*/
 	}
 	
 	
 	private void ApplyJump ()
 	{
-		if( !_cc.jumping.jumping )
+		if( !_cc.rolling )
 		{
-			_cc.jumping.lastButtonDownTime = Time.time;
-			_cc.movement.velocity = _cc.ApplyJumping( _cc.movement.velocity );
-			_cc.SetCurrentState("aim_jump");
-			_cc.jumpingReachedApex = false;
-		}
-		else if( !_cc.jumping.doubleJumping )
-		{
-			_cc.jumping.lastButtonDownTime = Time.time;
-			_cc.jumpingReachedApex = false;
-			_cc.movement.velocity = _cc.ApplyJumping( _cc.movement.velocity );
-			OnDisable();
-			enabled = true;
-			_cc.aimEnabled = false;
-			CoRoutine.AfterWait( GetComponent<AnimationSetup>().animations.Find( a => a.name == "double_jump" ).animationClip.length,() => 
-		    {
-				if(enabled)
-					OnEnable();
-				_cc.aimEnabled = true;
-			});
-			_cc.SetCurrentState("double_jump");
+			if( !_cc.jumping.jumping )
+			{
+				_cc.jumping.lastButtonDownTime = Time.time;
+				_cc.movement.velocity = _cc.ApplyJumping( _cc.movement.velocity );
+				_cc.SetCurrentState("aim_jump");
+				_cc.jumpingReachedApex = false;
+			}
+			else if( !_cc.jumping.doubleJumping )
+			{
+				_cc.jumping.lastButtonDownTime = Time.time;
+				_cc.jumpingReachedApex = false;
+				_cc.movement.velocity = _cc.ApplyJumping( _cc.movement.velocity );
+				/*OnDisable();
+				enabled = true;
+				_cc.aimEnabled = false;
+				CoRoutine.AfterWait( GetComponent<AnimationSetup>().animations.Find( a => a.name == "double_jump" ).animationClip.length,() => 
+			    {
+					if(enabled)
+						OnEnable();
+					_cc.aimEnabled = true;
+				});*/
+				_cc.SetCurrentState("aim_doublejump");
+			}
 		}
 	}
 

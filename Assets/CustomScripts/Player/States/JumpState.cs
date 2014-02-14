@@ -59,6 +59,7 @@ public class JumpState : StateClass
 		{
 			_cc.jumpingReachedApex = true;
 			_cc.SetCurrentState("jump_after_apex");
+			_cc.aimEnabled = true;
 			/*if( _cc.movement.velocity.y == _cc.movement.maxFallSpeed){
 				_cc.SetCurrentState("free_fall");
 			}*/
