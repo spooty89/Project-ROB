@@ -300,7 +300,7 @@ public class CharacterClass : MonoBehaviour
 			    (movingPlatform.movementTransfer == MovementTransferOnJump.InitTransfer ||
 			 movingPlatform.movementTransfer == MovementTransferOnJump.PermaTransfer)
 			    ) {
-				Debug.Log("#");
+				//Debug.Log("#");
 				movement.frameVelocity = movingPlatform.platformVelocity;
 				movement.velocity += movingPlatform.platformVelocity;
 				movingPlatform.activePlatform = null;
@@ -750,5 +750,21 @@ public class CharacterClass : MonoBehaviour
 	{
 		getInput = false;
 		CoRoutine.AfterWait(delay, () => getInput = true);
+	}
+
+	public IEnumerator adjustControllerHeight( float height, float changeDuration )
+	{
+		float timePassed = 0f;
+		float centerOffset = controller.center.y - (controller.height/2);
+		float amount = (height - controller.height)/changeDuration;
+		while( timePassed < changeDuration )
+		{
+			controller.height += amount * Time.fixedDeltaTime;
+			controller.center = new Vector3( controller.center.x, centerOffset + controller.height/2, controller.center.z );
+			timePassed += Time.fixedDeltaTime;
+			yield return null;
+		}
+		controller.height = height;
+		controller.center = new Vector3( controller.center.x, centerOffset + height/2, controller.center.z );
 	}
 }

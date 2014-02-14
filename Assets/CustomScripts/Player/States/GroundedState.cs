@@ -63,7 +63,11 @@ public class GroundedState : StateClass
 				animation[ "roll" ].time = 0f;
 				_cc.SetCurrentState( "roll" );
 				_cc.rolling = true;
-				CoRoutine.AfterWait( animation[ "roll" ].length/animation[ "roll" ].speed, () => _cc.rolling = false );
+				float currentHeight = _cc.controller.height;
+				float duration = animation[ "roll" ].length/animation[ "roll" ].speed;
+				new CoRoutine( _cc.adjustControllerHeight( _cc.controller.height/2, duration/2 ), () =>
+					new CoRoutine(_cc.adjustControllerHeight( currentHeight, duration/2 )) );
+				CoRoutine.AfterWait( duration, () => _cc.rolling = false );
 			}
 
 			if( Input.GetButton( "Aim" ) )
