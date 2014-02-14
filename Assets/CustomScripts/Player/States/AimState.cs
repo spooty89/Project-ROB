@@ -214,7 +214,7 @@ public class AimState : StateClass
 		else if( _cc.aimEnabled )
 		{
 			_cc.jumping.jumping = true;
-			if( _cc.jumpingReachedApex )
+			if( !_cc.jumping.doubleJumping || _cc.jumpingReachedApex )
 				_cc.SetCurrentState("aim_jump");
 			forward.y = 0.0f;
 			forward = forward.normalized;
