@@ -7,19 +7,8 @@ using System.Collections;
 public class CustomCameraController : MonoBehaviour {  
 
     public GameObject target;                           // Target to follow
-	
-	//public GameObject normalTarget;
-	
-	//public GameObject aimTarget;
-	
-	//private bool aim = false;
-	
-	//public float aimDistance = 0.0f;
-	
 	public float normalDistance = 4.5f;
     public float targetHeight = 0.7f;                         // Vertical offset adjustment
-	public float normalHeight = 0.7f;
-	public float aimHeight = 1.7f;
     public float distance = 4.5f;                            // Default Distance
     public float offsetFromWall = 0.1f;                       // Bring camera away from any colliding objects
     public float maxDistance = 4.5f;                       // Maximum zoom Distance

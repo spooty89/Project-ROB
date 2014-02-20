@@ -110,7 +110,7 @@ public class GroundedState : StateClass
 				targetSpeed = minRollSpeed;
 			if( _cc.useController )
 			{
-				targetSpeed *= Mathf.Lerp(walkSpeed, runSpeed, targetSpeed);
+				targetSpeed *= Mathf.Lerp(walkSpeed*1.1f, runSpeed*1.1f, targetSpeed);
 			}
 			else
 			{

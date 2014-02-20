@@ -7,7 +7,7 @@ namespace AssemblyCSharp
 	public class activate_move : MonoBehaviour
 	{
 		public List <GameObject> targets;
-		public void activate ()
+		public void playerBulletHit ()
 		{
 			for(int i = 0; i < targets.Count; i++){
 				targets[i].GetComponent<movingPlatformBehavior>().enabled = !targets[i].GetComponent<movingPlatformBehavior>().enabled;
