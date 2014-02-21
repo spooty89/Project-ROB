@@ -33,10 +33,10 @@ public class EnemyAI_Base : MonoBehaviour
 		public float moveSpeed = 0f,
 					 maxSpeed = 1f,
 					 speedSmoothing = 10f,
-					 rotateSpeed;
+					 rotateSpeed = 300f;
 		[HideInInspector]
 		public Vector3 destination;
-		public Range2D idleTime = new Range2D( 0.5f, 2f );
+		public Range2D idleTime = new Range2D( 1.5f, 2.5f );
 		[HideInInspector]
 		public CollisionFlags collisionFlags; 
 	}
@@ -48,7 +48,8 @@ public class EnemyAI_Base : MonoBehaviour
 					defending,
 					stunned,
 					rangedAttack;
-		public Vector3 target;
+		public Transform target;
+		public Vector3 attackPoint;
 		public Range2D attackDistance = new Range2D( 1f, 2f );
 		public float attackDamage = 1f;
 		public Range2D cooldownTime = new Range2D( 2f, 4f );
@@ -63,7 +64,7 @@ public class EnemyAI_Base : MonoBehaviour
 	
 	protected CharacterController controller;
 	private delegate void updateFunction();
-	private updateFunction uFunction;
+	private updateFunction moveFunction, attackFunction;
 	
 	
 	
@@ -79,40 +80,40 @@ public class EnemyAI_Base : MonoBehaviour
 		{
 			if( movement.canFly )
 			{
-				uFunction += () => airMovement();
+				movement.maxSpeed *= 2f/3f;
+				moveFunction += () => airMovement();
 			}
 			else
 			{
-				uFunction += () => groundedMovement();
+				moveFunction += () => groundedMovement();
 			}
-		}
-		else
-		{
-			
+		
+			if( !movement.idle )
+			{
+				Vector3 nextPosition = Random.insideUnitSphere;
+				nextPosition.Scale( domain.localScale/2 );
+				nextPosition += domain.position;
+				movement.destination = nextPosition;
+				movement.move = true;
+			}
 		}
 			
 		if( attack.rangedAttack )
 		{
-			uFunction += () => rangedAttack();
+			attackFunction += () => rangedAttack();
 		}
 		else
 		{
-			
-		}
-		
-		if( !movement.idle )
-		{
-			Vector3 nextPosition = Random.insideUnitSphere;
-			nextPosition.Scale( domain.localScale/2 );
-			nextPosition += domain.position;
-			movement.destination = nextPosition;
-			movement.move = true;
+			attackFunction += () => hitAttack();
 		}
 	}
 	
 	void Update()
 	{
-		uFunction();
+		if( attack.enabled )
+			attackFunction();
+		else if( movement.canMove )
+			moveFunction();
 	}
 	
 	
@@ -128,6 +129,7 @@ public class EnemyAI_Base : MonoBehaviour
 			float curSmooth = movement.speedSmoothing * Time.deltaTime;
 			
 			movement.moveSpeed = Mathf.Lerp(movement.moveSpeed, movement.maxSpeed, curSmooth);
+			currentMovementOffset = transform.forward;
 			currentMovementOffset *= movement.moveSpeed;
 			
 			movement.collisionFlags = controller.Move(currentMovementOffset);
@@ -142,10 +144,7 @@ public class EnemyAI_Base : MonoBehaviour
 			{
 				movement.moveSpeed = 0f;
 				movement.idle = true;
-				Vector3 nextPosition = Random.insideUnitSphere;
-				nextPosition.Scale( domain.localScale/2 );
-				nextPosition = domain.rotation * nextPosition;
-				nextPosition += domain.position;
+				Vector3 nextPosition = getRandomDestination();
 				nextPosition.y = transform.position.y;
 				CoRoutine.AfterWait( (movement.idleTime.range * Random.value) + movement.idleTime.low, () => 
 				{
@@ -183,10 +182,7 @@ public class EnemyAI_Base : MonoBehaviour
 			{
 				movement.moveSpeed = 0f;
 				movement.idle = true;
-				Vector3 nextPosition = Random.insideUnitSphere;
-				nextPosition.Scale( domain.localScale/2 );
-				nextPosition = domain.rotation * nextPosition;
-				nextPosition += domain.position;
+				Vector3 nextPosition = getRandomDestination();
 				CoRoutine.AfterWait( (movement.idleTime.range * Random.value) + movement.idleTime.low, () => 
 				{
 					movement.destination = nextPosition;
@@ -201,17 +197,29 @@ public class EnemyAI_Base : MonoBehaviour
 	
 	void rangedAttack()
 	{
-		if(attack.enabled)
-		{
-			
-		}
+
 	}
 	
 	
-	public void playerBulletHit()
+	void hitAttack()
 	{
-		if(!attack.defending)
+		
+	}
+	
+	
+	public void playerBulletHit( GameObject shooter )
+	{
+		if(!attack.enabled)
+		{
+			attack.enabled = true;
+			attack.target = shooter.transform;
 			health -= damageAmount;
+		}
+		else
+		{
+			if(!attack.defending)
+				health -= damageAmount;
+		}
 	}
 	
 	
@@ -219,6 +227,16 @@ public class EnemyAI_Base : MonoBehaviour
 	{
 		if(hit.normal.y > 0.1f && movement.canFly)
 			movement.grounded = true;
+	}
+
+
+	public Vector3 getRandomDestination()
+	{
+		Vector3 randomDestination = Random.insideUnitSphere;
+		randomDestination.Scale( domain.localScale/2 );
+		randomDestination = domain.rotation * randomDestination;
+		randomDestination += domain.position;
+		return randomDestination;
 	}
 }
 

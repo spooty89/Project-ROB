@@ -109,6 +109,7 @@ public class AimState : StateClass
 					r = new Ray( bulletOrigin.transform.position, r.GetPoint(maxDistance) - bulletOrigin.transform.position );
 				}
 				
+				bulletInstance.GetComponent<bullet>().shooter = gameObject;
 				bulletInstance.GetComponent<bullet>().direction = r.direction;
 				Instantiate( bulletInstance, bulletOrigin.transform.position, Quaternion.LookRotation(r.direction) );
 			}

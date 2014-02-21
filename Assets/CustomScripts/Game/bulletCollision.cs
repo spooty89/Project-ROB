@@ -22,7 +22,7 @@ public class bulletCollision : MonoBehaviour
 	void Hit(GameObject hit)
 	{
 		gameObject.GetComponent<bullet>().destroyOnTime.Stop();
-		hit.SendMessage("playerBulletHit", SendMessageOptions.DontRequireReceiver);
+		hit.SendMessage("playerBulletHit", gameObject.GetComponent<bullet>().shooter, SendMessageOptions.DontRequireReceiver);
 		Destroy(gameObject);
 	}
 }
