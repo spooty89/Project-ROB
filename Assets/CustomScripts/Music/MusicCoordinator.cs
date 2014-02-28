@@ -4,8 +4,9 @@ using System.Collections.Generic;
 
 public class MusicCoordinator : MonoBehaviour
 {
-	public List<MusicClip> musicClips;
 	public bool playOnStart;
+	public List<MusicClip> musicClips;
+	public Vector2 currentVolume;
 
 	void Awake()
 	{
@@ -81,13 +82,13 @@ public class MusicCoordinator : MonoBehaviour
 
 	IEnumerator fadeToDesiredVolume( AudioSource source, MusicFade fade )
 	{
-		Vector2 currentVolume = new Vector2( source.volume, 0 );
+		currentVolume = new Vector2( source.volume, 0 );
 		Vector2 desiredVolume = new Vector2( fade.desiredVolume, 0 );
 
-		while( currentVolume.y != desiredVolume.y )
+		while( currentVolume.x != desiredVolume.x )
 		{
 			currentVolume = Vector2.MoveTowards( currentVolume, desiredVolume, fade.duration * Time.deltaTime );
-			source.volume = currentVolume.y;
+			source.volume = currentVolume.x;
 			yield return null;
 		}
 	}
