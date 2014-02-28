@@ -50,9 +50,11 @@ public class EnemyAI_Base : MonoBehaviour
 					rangedAttack;
 		public Transform target;
 		public Vector3 attackPoint;
-		public Range2D attackDistance = new Range2D( 1f, 2f );
+		public Range2D attackDistanceRange = new Range2D( 1f, 2f );
 		public float attackDamage = 1f;
 		public Range2D cooldownTime = new Range2D( 2f, 4f );
+		[HideInInspector]
+		public float attackDistance;
 	}
 	
 	public int	health,
@@ -76,6 +78,8 @@ public class EnemyAI_Base : MonoBehaviour
 		if(domain == null)
 			domain = new GameObject("domain").transform;
 		
+		attack.attackDistance = attack.attackDistanceRange.low + Random.value * (attack.attackDistanceRange.high - attack.attackDistanceRange.low);
+
 		if( movement.canMove )
 		{
 			if( movement.canFly )
@@ -203,7 +207,32 @@ public class EnemyAI_Base : MonoBehaviour
 	
 	void hitAttack()
 	{
+		if( Vector3.Distance( gameObject.transform.position, attack.target.transform.position ) > attack.attackDistance )
+		{
+			movement.destination = attack.target.transform.position;
+			movement.move = true;
+			movement.idle = false;
+		}
 		
+	}
+	
+	
+	public void detectZoneEntered( GameObject target )
+	{
+		if( target.CompareTag( "Player" ) )
+		{
+			attack.target = target.transform;
+			attack.enabled = true;
+		}
+	}
+	
+	
+	public void detectZoneExited( GameObject target )
+	{
+		if( target.CompareTag( "Player" ) )
+		{
+			attack.enabled = false;
+		}
 	}
 	
 	
