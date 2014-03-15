@@ -12,7 +12,15 @@ public class CharacterClass : MonoBehaviour
 {
 	public bool canControl = true,
 				useController = false;
-	
+
+	[System.Serializable]
+	public class Status
+	{
+		public int health, maxHealth;
+		public Transform lastCheckpoint;
+		public int activeShots, maxActiveShots;
+	}
+
 	[System.Serializable]
 	public class CharacterMovement {
 		// Curve for multiplying speed based on slope (negative = downwards)
@@ -171,6 +179,7 @@ public class CharacterClass : MonoBehaviour
 		public bool onSlideSurface;
 	}
 
+	public Status status;
 	public CharacterMovement movement;
 	public CharacterJumping jumping;
 	public CharacterMovingPlatform movingPlatform;
@@ -786,5 +795,32 @@ public class CharacterClass : MonoBehaviour
 		}
 		controller.height = height;
 		controller.center = new Vector3( controller.center.x, centerOffset + height/2, controller.center.z );
+	}
+
+	private void TakeDamage(int amount)
+	{
+		status.health -= amount;
+		if( status.health <= 0 )
+		{
+			canControl = false;
+		}
+	}
+
+	private void SetNewCheckpoint( Transform checkpoint )
+	{
+		GameObject newCheckpoint = new GameObject();
+		newCheckpoint.transform.rotation = checkpoint.rotation;
+		newCheckpoint.transform.position = checkpoint.position;
+		status.lastCheckpoint = newCheckpoint.transform;
+	}
+
+	private void ShotActivated()
+	{
+		status.activeShots++;
+	}
+
+	private void ShotDeactivated()
+	{
+		status.activeShots++;
 	}
 }

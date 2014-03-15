@@ -42,6 +42,7 @@ public class bullet : MonoBehaviour
 
 	void Awake()
 	{
+		shooter.SendMessage( "ShotActivated", SendMessageOptions.DontRequireReceiver );
 		destroyOnTime = CoRoutine.AfterWait( maxTime, () => Destroy( this.gameObject ) );
 	}
 	void Update ()
@@ -68,6 +69,11 @@ public class bullet : MonoBehaviour
 		destroyOnTime.Stop();
 		hit.SendMessage("playerBulletHit", gameObject.GetComponent<bullet>().shooter, SendMessageOptions.DontRequireReceiver);
 		Destroy(gameObject);
+	}
+
+	void OnDestroy()
+	{
+		shooter.SendMessage( "ShotDeactivated", SendMessageOptions.DontRequireReceiver );
 	}
 }
 
