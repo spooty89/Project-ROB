@@ -57,13 +57,15 @@ public class CharacterClass : MonoBehaviour
 	// We will contain all the jumping related variables in one helper class for clarity.
 	public class CharacterJumping {
 		// Can the character jump?
-		public bool enabled = true;
+		public bool jumpEnabled = true, doubleJumpEnabled = true;
 		
 		// How high do we jump when pressing jump and letting go immediately
-		public float baseHeight = 1.0f;
+		public float baseHeight = 1.0f,
+					 doubleJumpBaseHeight = (float)1.5;
 		
 		// We add extraHeight units (meters) on top when holding the button down longer while jumping
-		public float extraHeight = 4.1f;
+		public float extraHeight = 4.1f,
+					 doubleJumpExtraHeight = 1f;
 		
 		// How much does the character jump out perpendicular to the surface on walkable surfaces?
 		// 0 means a fully vertical jump and 1 means fully perpendicular.
@@ -444,7 +446,11 @@ public class CharacterClass : MonoBehaviour
 		if (jumping.jumping && jumping.holdingJumpButton) {
 			// Calculate the duration that the extra jump force should have effect.
 			// If we're still less than that duration after the jumping time, apply the force.
-			if (Time.time < jumping.lastStartTime + jumping.extraHeight / CalculateJumpVerticalSpeed(jumping.baseHeight)) {
+			if( jumping.doubleJumping && Time.time < jumping.lastStartTime + jumping.doubleJumpExtraHeight / CalculateJumpVerticalSpeed(jumping.doubleJumpBaseHeight) )
+			{
+				velocity += jumping.jumpDir * gravity * Time.deltaTime;
+			}
+			else if (Time.time < jumping.lastStartTime + jumping.extraHeight / CalculateJumpVerticalSpeed(jumping.baseHeight)) {
 				// Negate the gravity we just applied, except we push in jumpDir rather than jump upwards.
 				velocity += jumping.jumpDir * gravity * Time.deltaTime;
 			}
@@ -466,12 +472,9 @@ public class CharacterClass : MonoBehaviour
 		// and if they hit the button a fraction of a second too soon and no new jump happens as a consequence,
 		// it's confusing and it feels like the game is buggy.
 		jumping.justJumped = true;
-		if (jumping.enabled && canControl && (Time.time - jumping.lastButtonDownTime < 0.2)) {
+		if( VerifyJumping() )
+		{
 			grounded = false;
-			if( !jumping.jumping )
-				jumping.jumping = true;
-			else
-				jumping.doubleJumping = true;
 			jumping.lastStartTime = Time.time;
 			jumping.lastButtonDownTime = -100;
 			jumping.holdingJumpButton = true;
@@ -509,6 +512,24 @@ public class CharacterClass : MonoBehaviour
 		}
 
 		return velocity;
+	}
+
+	bool VerifyJumping()
+	{
+		if(canControl && (Time.time - jumping.lastButtonDownTime < 0.2))
+		{
+			if (jumping.jumpEnabled && !jumping.jumping)
+			{
+				jumping.jumping = true;
+				return true;
+			}
+			if( jumping.doubleJumpEnabled && !jumping.doubleJumping )
+			{
+				jumping.doubleJumping = true;
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	void OnControllerColliderHit(ControllerColliderHit hit) {
@@ -642,8 +663,7 @@ public class CharacterClass : MonoBehaviour
 	public LayerMask layerMask;
 	public float    rotateSpeed = (float)900.0,
 					inAirRotateSpeed = (float)450.0,
-					speedSmoothing = (float)10.0,
-					doubleJumpHeight = (float)1.5;			// How high we jump when we double jump
+					speedSmoothing = (float)10.0;
 	[HideInInspector]
 	public float    moveSpeed = (float)0.0,			// The current x-z move speed
 					rotationModifier = (float)1.0,

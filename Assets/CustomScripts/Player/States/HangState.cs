@@ -28,7 +28,7 @@ public class HangState : StateClass
 
 	public override void Run()
 	{
-		if( _cc.getInput )
+		if( _cc.getInput && _cc.canControl )
 			InputHandler();
 		if( enabled )
 			MovementHandler();

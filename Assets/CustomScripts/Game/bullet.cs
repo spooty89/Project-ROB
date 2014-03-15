@@ -48,5 +48,26 @@ public class bullet : MonoBehaviour
 	{
 		position = Vector3.MoveTowards( position, position + direction * speed, speed * Time.deltaTime );
 	}
+
+	void OnTriggerEnter(Collider hit) {
+		if(hit.gameObject.CompareTag( "bulletTrigger" ))
+		{
+			Hit( hit.gameObject );
+		}
+	}
+	
+	void OnCollisionEnter(Collision hit)
+	{
+		if( !hit.gameObject.CompareTag( "bulletIgnore" ) )
+			Hit( hit.gameObject );
+	}
+	
+	void Hit(GameObject hit)
+	{
+		Destroy(gameObject.GetComponent<Rigidbody>());
+		destroyOnTime.Stop();
+		hit.SendMessage("playerBulletHit", gameObject.GetComponent<bullet>().shooter, SendMessageOptions.DontRequireReceiver);
+		Destroy(gameObject);
+	}
 }
 

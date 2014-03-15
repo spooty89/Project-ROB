@@ -16,12 +16,6 @@ public class EnemyAI_Base : MonoBehaviour
 			this.range = this.high - this.low;
 		}
 	}
-	
-	public enum State
-	{
-		Idle, Moving, Attacking, Dying
-	}
-	
 	[System.Serializable]
 	public class Movement {
 		public bool canMove,
@@ -29,22 +23,22 @@ public class EnemyAI_Base : MonoBehaviour
 					alert,
 					move,
 					idle,
-					grounded;
+					bumped;
 		public float moveSpeed = 0f,
 					 maxSpeed = 1f,
 					 speedSmoothing = 10f,
-					 rotateSpeed = 300f;
+					 rotateSpeed = 300f,
+					 gravity = 10f;
 		[HideInInspector]
 		public Vector3 destination;
 		public Range2D idleTime = new Range2D( 1.5f, 2.5f );
 		[HideInInspector]
 		public CollisionFlags collisionFlags; 
 	}
-	
 	[System.Serializable]
 	public class Attack {
 		public bool enabled,
-					attacking,
+					cooling,
 					defending,
 					stunned,
 					rangedAttack;
@@ -54,17 +48,19 @@ public class EnemyAI_Base : MonoBehaviour
 		public float attackDamage = 1f;
 		public Range2D cooldownTime = new Range2D( 2f, 4f );
 		[HideInInspector]
-		public float attackDistance;
+		public float attackDistance,
+					 coolDown;
 	}
 	
 	public int	health,
 				damageAmount;
 	public Transform domain;
-	public State state;
 	public Movement movement;
 	public Attack attack;
 	
 	protected CharacterController controller;
+	public delegate void passGameObjectDelegate( GameObject gameobject );
+	public passGameObjectDelegate dieFunction;
 	private delegate void updateFunction();
 	private updateFunction moveFunction, attackFunction;
 	
@@ -79,12 +75,13 @@ public class EnemyAI_Base : MonoBehaviour
 			domain = new GameObject("domain").transform;
 		
 		attack.attackDistance = attack.attackDistanceRange.low + Random.value * (attack.attackDistanceRange.high - attack.attackDistanceRange.low);
+		attack.coolDown = attack.cooldownTime.low + Random.value * (attack.cooldownTime.high - attack.cooldownTime.low);
 
 		if( movement.canMove )
 		{
 			if( movement.canFly )
 			{
-				movement.maxSpeed *= 2f/3f;
+				movement.maxSpeed *= 1/2f;
 				moveFunction += () => airMovement();
 			}
 			else
@@ -95,7 +92,7 @@ public class EnemyAI_Base : MonoBehaviour
 			if( !movement.idle )
 			{
 				Vector3 nextPosition = Random.insideUnitSphere;
-				nextPosition.Scale( domain.localScale/2 );
+				nextPosition.Scale( domain.localScale/4 );
 				nextPosition += domain.position;
 				movement.destination = nextPosition;
 				movement.move = true;
@@ -116,7 +113,7 @@ public class EnemyAI_Base : MonoBehaviour
 	{
 		if( attack.enabled )
 			attackFunction();
-		else if( movement.canMove )
+		if( movement.canMove )
 			moveFunction();
 	}
 	
@@ -124,25 +121,24 @@ public class EnemyAI_Base : MonoBehaviour
 	void groundedMovement()
 	{
 		movement.destination.y = transform.position.y;
+
+		Vector3 currentMovementOffset = movement.destination - transform.position;
+		currentMovementOffset.Normalize();
 		if( movement.move )
 		{
-			Vector3 currentMovementOffset = movement.destination - transform.position;
-			currentMovementOffset.Normalize();
-			transform.rotation = Quaternion.LookRotation( Vector3.RotateTowards( transform.forward, new Vector3(currentMovementOffset.x, 0, currentMovementOffset.z), 			// Smoothly turn towards the target direction
-															movement.rotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000 ) );
 			float curSmooth = movement.speedSmoothing * Time.deltaTime;
 			
 			movement.moveSpeed = Mathf.Lerp(movement.moveSpeed, movement.maxSpeed, curSmooth);
-			currentMovementOffset = transform.forward;
 			currentMovementOffset *= movement.moveSpeed;
+			currentMovementOffset += Vector3.down * movement.gravity * Time.deltaTime;
 			
 			movement.collisionFlags = controller.Move(currentMovementOffset);
-			if( (transform.position - movement.destination).magnitude < movement.moveSpeed )
+			if( (transform.position - movement.destination).magnitude < movement.moveSpeed || movement.bumped )
 			{
 				movement.move = false;
 			}
 		}
-		else
+		else if( !attack.enabled )
 		{
 			if( !movement.idle )
 			{
@@ -158,29 +154,33 @@ public class EnemyAI_Base : MonoBehaviour
 				});
 			}
 		}
+		currentMovementOffset.Normalize();
+		transform.rotation = Quaternion.LookRotation( Vector3.RotateTowards( transform.forward, new Vector3(currentMovementOffset.x, 0, currentMovementOffset.z), 			// Smoothly turn towards the target direction
+		                                                                    movement.rotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000 ) );
 	}
 	
 	
 	void airMovement()
 	{
+		Vector3 currentMovementOffset = movement.destination - transform.position;
+		currentMovementOffset.Normalize();
+		transform.rotation = Quaternion.LookRotation( Vector3.RotateTowards( transform.forward, new Vector3(currentMovementOffset.x, 0, currentMovementOffset.z), 			// Smoothly turn towards the target direction
+		                                                                    movement.rotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000 ) );
 		if( movement.move )
 		{
-			Vector3 currentMovementOffset = movement.destination - transform.position;
-			currentMovementOffset.Normalize();
-			transform.rotation = Quaternion.LookRotation( Vector3.RotateTowards( transform.forward, new Vector3(currentMovementOffset.x, 0, currentMovementOffset.z), 			// Smoothly turn towards the target direction
-															movement.rotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000 ) );
 			float curSmooth = movement.speedSmoothing * Time.deltaTime;
 			
 			movement.moveSpeed = Mathf.Lerp(movement.moveSpeed, movement.maxSpeed, curSmooth);
 			currentMovementOffset *= movement.moveSpeed;
-			
+			/*if(attack.enabled)
+				Debug.Log("x: " + currentMovementOffset.x + ", y: " + currentMovementOffset.y + ", z: " + currentMovementOffset.z);*/
 			movement.collisionFlags = controller.Move(currentMovementOffset);
-			if( (transform.position - movement.destination).magnitude < movement.moveSpeed || movement.grounded )
+			if( (transform.position - movement.destination).magnitude < movement.moveSpeed || movement.bumped )
 			{
 				movement.move = false;
 			}
 		}
-		else
+		else if( !attack.enabled )
 		{
 			if( !movement.idle )
 			{
@@ -192,7 +192,7 @@ public class EnemyAI_Base : MonoBehaviour
 					movement.destination = nextPosition;
 					movement.move = true;
 					movement.idle = false;
-					movement.grounded = false;
+					movement.bumped = false;
 				});
 			}
 		}
@@ -201,61 +201,85 @@ public class EnemyAI_Base : MonoBehaviour
 	
 	void rangedAttack()
 	{
-
+		movement.destination = attack.target.transform.position + attack.target.GetComponent<CharacterController>().center;
+		if( !attack.cooling && Vector3.Distance( gameObject.transform.position, movement.destination ) > attack.attackDistance )
+		{
+			movement.move = true;
+			movement.idle = false;
+		}
+		else
+		{
+			movement.move = false;
+			if( !attack.cooling )
+			{
+				attack.cooling = true;
+				Debug.Log("i'm attacking you, asshole!");
+				CoRoutine.AfterWait( attack.coolDown, () => attack.cooling = false );
+			}
+		}
 	}
 	
 	
 	void hitAttack()
 	{
-		if( Vector3.Distance( gameObject.transform.position, attack.target.transform.position ) > attack.attackDistance )
+		movement.destination = attack.target.transform.position + attack.target.GetComponent<CharacterController>().center;
+		if( !attack.cooling && Vector3.Distance( gameObject.transform.position, movement.destination ) > attack.attackDistance )
 		{
-			movement.destination = attack.target.transform.position;
 			movement.move = true;
 			movement.idle = false;
 		}
-		
-	}
-	
-	
-	public void detectZoneEntered( GameObject target )
-	{
-		if( target.CompareTag( "Player" ) )
+		else
 		{
-			attack.target = target.transform;
-			attack.enabled = true;
+			movement.move = false;
+			if( !attack.cooling )
+			{
+				attack.cooling = true;
+				Debug.Log("i'm attacking you, asshole!");
+				CoRoutine.AfterWait( attack.coolDown, () => attack.cooling = false );
+			}
 		}
 	}
 	
 	
-	public void detectZoneExited( GameObject target )
+	public void DomainEntered( GameObject target )
 	{
-		if( target.CompareTag( "Player" ) )
-		{
-			attack.enabled = false;
-		}
+		attack.target = target.transform;
+		attack.enabled = true;
+	}
+	
+	
+	public void DomainExited( GameObject target )
+	{
+		attack.enabled = false;
+		movement.idle = false;
+		movement.move = false;
 	}
 	
 	
 	public void playerBulletHit( GameObject shooter )
 	{
+		if(!attack.defending)
+		{
+			health -= damageAmount;
+			if( health <= 0 )
+			{
+				dieFunction(gameObject);
+				Destroy(gameObject);
+			}
+		}
+
 		if(!attack.enabled)
 		{
 			attack.enabled = true;
 			attack.target = shooter.transform;
-			health -= damageAmount;
-		}
-		else
-		{
-			if(!attack.defending)
-				health -= damageAmount;
 		}
 	}
 	
 	
 	void OnControllerColliderHit(ControllerColliderHit hit)
 	{
-		if(hit.normal.y > 0.1f && movement.canFly)
-			movement.grounded = true;
+		if( !hit.gameObject.CompareTag( "Enemy" ) && (movement.canFly || CollisionFlags.CollidedSides == 0 ) )
+			movement.bumped = true;
 	}
 
 

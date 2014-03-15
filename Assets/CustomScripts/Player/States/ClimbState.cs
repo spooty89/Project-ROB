@@ -25,7 +25,7 @@ public class ClimbState : StateClass
 		_cc.moveSpeed = 0f;
 		_cc.climbing = true;
 		_cc.inAirVelocity = Vector3.zero;
-		_cc.jumping.jumping = false;
+		_cc.jumping.jumping = true;
 		_cc.jumping.doubleJumping = false;
 
 		enabled = true;
@@ -35,7 +35,7 @@ public class ClimbState : StateClass
 	{
 		if( enabled )
 		{
-			if( _cc.getInput )
+			if( _cc.getInput && _cc.canControl )
 				InputHandler();
 			if( enabled )
 				MovementHandler();
@@ -118,7 +118,7 @@ public class ClimbState : StateClass
 			
 			if(Vector3.Angle(_cc.wallFacing, _cc.targetDirection) < 60f)
 			{
-				_cc.jumping.jumpBoost = (90f - Vector3.Angle(_cc.wallFacing, _cc.targetDirection)) / 90f;
+				_cc.jumping.jumpBoost = (90f - Vector3.Angle(_cc.wallFacing, _cc.targetDirection)) / 180f;
 			}
 			else
 				_cc.jumping.jumpBoost = 0f;
@@ -180,8 +180,6 @@ public class ClimbState : StateClass
 				transform.rotation = Quaternion.LookRotation( _cc.targetDirection );
 			else
 				transform.rotation = Quaternion.LookRotation( _cc.wallFacing );
-			_cc.jumping.jumping = true;
-			_cc.jumping.doubleJumping = true;
 			_cc.movement.velocity.y = 0f;
 			_cc.movement.updateVelocity = transform.forward;
 			_cc.moveSpeed = ( walljumpSpeed * (1 + _cc.jumping.jumpBoost) );
@@ -189,7 +187,7 @@ public class ClimbState : StateClass
 			_cc.setRotationModiferAndBuild( walljumpRotationModifier, walljumpRotModBuildTime );
 			_cc.jumping.lastButtonDownTime = Time.time;
 			_cc.movement.updateVelocity = _cc.ApplyInputVelocityChange( _cc.movement.updateVelocity );
-			_cc.movement.updateVelocity = _cc.ApplyJumping( _cc.movement.updateVelocity, _cc.doubleJumpHeight );
+			_cc.movement.updateVelocity = _cc.ApplyJumping( _cc.movement.updateVelocity, _cc.jumping.baseHeight );
 			_cc.wallSlideDirection = (int)WallDirections.neither;
 			stateChange("double_jump");
 			_cc.aimEnabled = false;

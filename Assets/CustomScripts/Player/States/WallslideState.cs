@@ -25,13 +25,14 @@ public class WallslideState : StateClass
 		justJumped = false;
 		getInput = false;
 		_cc.jumping.jumping = true;
+		_cc.jumping.doubleJumping = false;
 		_cc.wallSlideDirection = (int)WallDirections.neither;
 		CoRoutine.AfterWait(inputDelay, () => getInput = true);
 	}
 
 	public override void Run()
 	{
-		if( getInput )
+		if( getInput && _cc.canControl )
 		{
 			InputHandler();
 		}
@@ -84,7 +85,7 @@ public class WallslideState : StateClass
 			
 			if(Vector3.Angle(_cc.wallFacing, _cc.targetDirection) < 60f)
 			{
-				_cc.jumping.jumpBoost = (90f - Vector3.Angle(_cc.wallFacing, _cc.targetDirection)) / 90f;
+				_cc.jumping.jumpBoost = (90f - Vector3.Angle(_cc.wallFacing, _cc.targetDirection)) / 180f;
 			}
 		}
 		
@@ -105,9 +106,8 @@ public class WallslideState : StateClass
 		_cc.inputMoveDirection = transform.forward * _cc.moveSpeed;
 		_cc.setRotationModiferAndBuild( walljumpRotationModifier, walljumpRotModBuildTime );
 		_cc.jumping.lastButtonDownTime = Time.time;
-		_cc.jumping.doubleJumping = true;
 		_cc.movement.updateVelocity = _cc.ApplyInputVelocityChange( _cc.movement.updateVelocity );
-		_cc.movement.updateVelocity = _cc.ApplyJumping( _cc.movement.updateVelocity, _cc.doubleJumpHeight );
+		_cc.movement.updateVelocity = _cc.ApplyJumping( _cc.movement.updateVelocity, _cc.jumping.baseHeight );
 		_cc.wallSlideDirection = (int)WallDirections.neither;
 		stateChange("double_jump");
 		_cc.aimEnabled = false;

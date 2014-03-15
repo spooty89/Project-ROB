@@ -37,7 +37,7 @@ public class GroundedState : StateClass
 	{
 		if( enabled )
 		{
-			if( _cc.getInput )
+			if( _cc.getInput && _cc.canControl )
 				InputHandler();
 			if( enabled )				// Check again, in case input disabled this script
 				MovementHandler();
@@ -180,7 +180,7 @@ public class GroundedState : StateClass
 				_cc.setRotationModiferAndBuild( slopeJumpRotationModifier, slopeJumpRotModBuildTime );
 				//transform.forward = new Vector3( _cc.groundNormal.x, 0, _cc.groundNormal.z );
 				_cc.jumping.actualJumpSpeedBuffer = .0f;
-				_cc.movement.updateVelocity = _cc.ApplyJumping( _cc.groundNormal * _cc.moveSpeed/2, _cc.doubleJumpHeight/2 );
+				_cc.movement.updateVelocity = _cc.ApplyJumping( _cc.groundNormal * _cc.moveSpeed/2, _cc.jumping.doubleJumpBaseHeight/2 );
 				stateChange("double_jump");
 				_cc.jumping.doubleJumping = true;
 			}

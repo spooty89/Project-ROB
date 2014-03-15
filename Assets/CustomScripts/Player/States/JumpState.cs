@@ -20,7 +20,8 @@ public class JumpState : StateClass
 
 	public override void Run()
 	{
-		InputHandler();
+		if( _cc.canControl )
+			InputHandler();
 		MovementHandler();
 	}
 	
@@ -99,10 +100,10 @@ public class JumpState : StateClass
 	
 	private void ApplyJump ()
 	{
-		if( !_cc.jumping.doubleJumping )
+		if( !_cc.jumping.doubleJumping && _cc.jumping.doubleJumpEnabled )
 		{
 			_cc.jumping.lastButtonDownTime = Time.time;
-			_cc.movement.velocity = _cc.ApplyJumping( _cc.movement.velocity, _cc.doubleJumpHeight );
+			_cc.movement.velocity = _cc.ApplyJumping( _cc.movement.velocity, _cc.jumping.doubleJumpBaseHeight );
 			_cc.SetCurrentState("double_jump");
 			_cc.jumpingReachedApex = false;
 			_cc.jumping.doubleJumping = true;

@@ -200,7 +200,7 @@ ModelImporter:
     400192: transform8
     400194: transform9
     4300000: pav
-    7400000: Take 001
+    7400000: roll
     9500000: //RootNode
     11100000: //RootNode
     13700000: pav
@@ -212,13 +212,235 @@ ModelImporter:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
     optimizeGameObjects: 0
-    animationCompression: 1
+    animationCompression: 0
     animationRotationError: .5
     animationPositionError: .5
     animationScaleError: .5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: roll
+      takeName: Take 001
+      firstFrame: 0
+      lastFrame: 54
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: pav
+        weight: 1
+      - path: Pav_Ctrl_Reference
+        weight: 1
+      - path: Pav_Reference
+        weight: 1
+      - path: Pav_Reference/Pav_Hips
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_LeftUpLeg
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_LeftUpLeg/Pav_LeftLeg
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_LeftUpLeg/Pav_LeftLeg/Pav_LeftFoot
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_LeftUpLeg/Pav_LeftLeg/Pav_LeftFoot/Pav_LeftToeBase
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_RightUpLeg
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_RightUpLeg/Pav_RightLeg
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_RightUpLeg/Pav_RightLeg/Pav_RightFoot
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_RightUpLeg/Pav_RightLeg/Pav_RightFoot/Pav_RightToeBase
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_LeftShoulder
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_LeftShoulder/Pav_LeftArm
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_LeftShoulder/Pav_LeftArm/Pav_LeftForeArm
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_LeftShoulder/Pav_LeftArm/Pav_LeftForeArm/Pav_LeftHand
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_LeftShoulder/Pav_LeftArm/Pav_LeftForeArm/Pav_LeftHand/Pav_LeftHandIndex1
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_LeftShoulder/Pav_LeftArm/Pav_LeftForeArm/Pav_LeftHand/Pav_LeftHandIndex1/Pav_LeftHandIndex2
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_LeftShoulder/Pav_LeftArm/Pav_LeftForeArm/Pav_LeftHand/Pav_LeftHandIndex1/Pav_LeftHandIndex2/Pav_LeftHandIndex3
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_LeftShoulder/Pav_LeftArm/Pav_LeftForeArm/Pav_LeftHand/Pav_LeftHandIndex1/Pav_LeftHandIndex2/Pav_LeftHandIndex3/Pav_LeftHandIndex4
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_LeftShoulder/Pav_LeftArm/Pav_LeftForeArm/Pav_LeftHand/Pav_LeftHandMiddle1
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_LeftShoulder/Pav_LeftArm/Pav_LeftForeArm/Pav_LeftHand/Pav_LeftHandMiddle1/Pav_LeftHandMiddle2
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_LeftShoulder/Pav_LeftArm/Pav_LeftForeArm/Pav_LeftHand/Pav_LeftHandMiddle1/Pav_LeftHandMiddle2/Pav_LeftHandMiddle3
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_LeftShoulder/Pav_LeftArm/Pav_LeftForeArm/Pav_LeftHand/Pav_LeftHandMiddle1/Pav_LeftHandMiddle2/Pav_LeftHandMiddle3/Pav_LeftHandMiddle4
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_LeftShoulder/Pav_LeftArm/Pav_LeftForeArm/Pav_LeftHand/Pav_LeftHandPinky1
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_LeftShoulder/Pav_LeftArm/Pav_LeftForeArm/Pav_LeftHand/Pav_LeftHandPinky1/Pav_LeftHandPinky2
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_LeftShoulder/Pav_LeftArm/Pav_LeftForeArm/Pav_LeftHand/Pav_LeftHandPinky1/Pav_LeftHandPinky2/Pav_LeftHandPinky3
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_LeftShoulder/Pav_LeftArm/Pav_LeftForeArm/Pav_LeftHand/Pav_LeftHandPinky1/Pav_LeftHandPinky2/Pav_LeftHandPinky3/Pav_LeftHandPinky4
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_LeftShoulder/Pav_LeftArm/Pav_LeftForeArm/Pav_LeftHand/Pav_LeftHandThumb1
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_LeftShoulder/Pav_LeftArm/Pav_LeftForeArm/Pav_LeftHand/Pav_LeftHandThumb1/Pav_LeftHandThumb2
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_LeftShoulder/Pav_LeftArm/Pav_LeftForeArm/Pav_LeftHand/Pav_LeftHandThumb1/Pav_LeftHandThumb2/Pav_LeftHandThumb3
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_LeftShoulder/Pav_LeftArm/Pav_LeftForeArm/Pav_LeftHand/Pav_LeftHandThumb1/Pav_LeftHandThumb2/Pav_LeftHandThumb3/Pav_LeftHandThumb4
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/Pav_Head
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/Pav_Head/jaw
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/Pav_Head/jaw/joint2
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/Pav_Head/left_ear_base
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/Pav_Head/left_ear_base/left_ear_mid
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/Pav_Head/left_ear_base/left_ear_mid/left_ear_tip
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/Pav_Head/right_ear_base
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/Pav_Head/right_ear_base/right_ear_mid
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/Pav_Head/right_ear_base/right_ear_mid/right_ear_tip
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform1
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform1/left_brow_end_JNT
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform2
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform2/left_brow_outer_mid_JNT
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform3
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform3/left_brow_inner_mid_JNT
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform4
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform4/left_brow_base_JNT
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform5
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform5/right_brow_base_JNT
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform6
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform6/right_brow_inner_mid_JNT
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform7
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform7/right_brow_outer_mid_JNT
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform8
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform8/right_brow_end_JNT
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform9
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform9/mouth_outer_left_JNT
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform10
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform10/mouth_upper_left_JNT
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform11
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform11/mouth_lower_left_JNT
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform12
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform12/mouth_lower_center_JNT
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform13
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform13/mouth_upper_center_JNT
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform14
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform14/mouth_upper_right_JNT
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform15
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform15/mouth_outer_right_JNT
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform16
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_Neck/transform16/mouth_lower_right_JNT
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_RightShoulder
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_RightShoulder/Pav_RightArm
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_RightShoulder/Pav_RightArm/Pav_RightForeArm
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_RightShoulder/Pav_RightArm/Pav_RightForeArm/Pav_RightHand
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_RightShoulder/Pav_RightArm/Pav_RightForeArm/Pav_RightHand/Pav_RightHandIndex1
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_RightShoulder/Pav_RightArm/Pav_RightForeArm/Pav_RightHand/Pav_RightHandIndex1/Pav_RightHandIndex2
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_RightShoulder/Pav_RightArm/Pav_RightForeArm/Pav_RightHand/Pav_RightHandIndex1/Pav_RightHandIndex2/Pav_RightHandIndex3
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_RightShoulder/Pav_RightArm/Pav_RightForeArm/Pav_RightHand/Pav_RightHandIndex1/Pav_RightHandIndex2/Pav_RightHandIndex3/Pav_RightHandIndex4
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_RightShoulder/Pav_RightArm/Pav_RightForeArm/Pav_RightHand/Pav_RightHandMiddle1
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_RightShoulder/Pav_RightArm/Pav_RightForeArm/Pav_RightHand/Pav_RightHandMiddle1/Pav_RightHandMiddle2
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_RightShoulder/Pav_RightArm/Pav_RightForeArm/Pav_RightHand/Pav_RightHandMiddle1/Pav_RightHandMiddle2/Pav_RightHandMiddle3
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_RightShoulder/Pav_RightArm/Pav_RightForeArm/Pav_RightHand/Pav_RightHandMiddle1/Pav_RightHandMiddle2/Pav_RightHandMiddle3/Pav_RightHandMiddle4
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_RightShoulder/Pav_RightArm/Pav_RightForeArm/Pav_RightHand/Pav_RightHandPinky1
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_RightShoulder/Pav_RightArm/Pav_RightForeArm/Pav_RightHand/Pav_RightHandPinky1/Pav_RightHandPinky2
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_RightShoulder/Pav_RightArm/Pav_RightForeArm/Pav_RightHand/Pav_RightHandPinky1/Pav_RightHandPinky2/Pav_RightHandPinky3
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_RightShoulder/Pav_RightArm/Pav_RightForeArm/Pav_RightHand/Pav_RightHandPinky1/Pav_RightHandPinky2/Pav_RightHandPinky3/Pav_RightHandPinky4
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_RightShoulder/Pav_RightArm/Pav_RightForeArm/Pav_RightHand/Pav_RightHandThumb1
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_RightShoulder/Pav_RightArm/Pav_RightForeArm/Pav_RightHand/Pav_RightHandThumb1/Pav_RightHandThumb2
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_RightShoulder/Pav_RightArm/Pav_RightForeArm/Pav_RightHand/Pav_RightHandThumb1/Pav_RightHandThumb2/Pav_RightHandThumb3
+        weight: 1
+      - path: Pav_Reference/Pav_Hips/Pav_Spine/Pav_Spine1/Pav_Spine2/Pav_RightShoulder/Pav_RightArm/Pav_RightForeArm/Pav_RightHand/Pav_RightHandThumb1/Pav_RightHandThumb2/Pav_RightHandThumb3/Pav_RightHandThumb4
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
     isReadable: 1
   meshes:
     lODScreenPercentages: []

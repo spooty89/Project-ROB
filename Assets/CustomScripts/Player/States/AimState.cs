@@ -48,7 +48,8 @@ public class AimState : StateClass
 
 	public override void Run()
 	{
-		InputHandler();
+		if( _cc.canControl )
+			InputHandler();
 		if( enabled )
 		{
 			AimHandler();

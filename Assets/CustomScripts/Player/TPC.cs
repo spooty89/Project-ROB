@@ -112,6 +112,7 @@ public class TPC: MonoBehaviour
 	
 	public void OnTriggerEnter(Collider other)
 	{
+		other.SendMessage("triggerEnter", gameObject, SendMessageOptions.DontRequireReceiver );
 		if(other.gameObject.CompareTag("Climb")) {    	// If the triggerBox has a "Climb" tag
 			_cc.climbContact = true;						// Set climb contact to true
 			_cc.numClimbContacts += 1;						// Keep track of how many climb boxes player is currently in
@@ -136,6 +137,7 @@ public class TPC: MonoBehaviour
 
 	public void OnTriggerExit(Collider other)
 	{
+		other.SendMessage("triggerExit", gameObject, SendMessageOptions.DontRequireReceiver );
 		if(other.gameObject.CompareTag("Climb")) {    	// If the triggerBox has a "Climb" tag
 			_cc.numClimbContacts -= 1;						// Keep track of how many climb boxes player is currently in
 			if (_cc.numClimbContacts <= 0) {				// If the player is not in any climb boxes
