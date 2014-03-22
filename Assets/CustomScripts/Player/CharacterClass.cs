@@ -542,34 +542,34 @@ public class CharacterClass : MonoBehaviour
 	}
 	
 	void OnControllerColliderHit(ControllerColliderHit hit) {
-		if ((hit.normal.y > 0 && hit.normal.y > groundNormal.y && (hit.moveDirection.y < 0)) && !movingPlatform.overRide) {
-			//Debug.Log("-");
-			if ((hit.point - movement.lastHitPoint).sqrMagnitude > 0.001 || lastGroundNormal == Vector3.zero)
+		RaycastHit rcHit;
+		if( Physics.Raycast( transform.position, (hit.point - transform.position).normalized,
+		                    out rcHit, Vector3.Distance(hit.point, transform.position) + .5f, layerMask ) )
+		{
+			if( Mathf.Abs( rcHit.normal.y ) > 0.3f)
 			{
-				//Debug.Log("1");
-				groundNormal = hit.normal;
+				if ((hit.point - movement.lastHitPoint).sqrMagnitude > 0.001 || lastGroundNormal == Vector3.zero)
+				{
+					Debug.Log("1: " + rcHit.normal );
+					groundNormal = rcHit.normal;
+				}
+				else
+				{
+					Debug.Log("2: " + rcHit.normal);
+					groundNormal = lastGroundNormal;
+				}
 			}
 			else
-			{
-				//Debug.Log("2");
-				groundNormal = lastGroundNormal;
-			}
+				Debug.Log("3: " + rcHit.normal);
+
+			movement.hitPoint = rcHit.point;
 		}
-			
-			sliding.onSlideSurface = hit.collider.gameObject.CompareTag( "slide" );
-			movingPlatform.hitPlatform = hit.collider.transform;
+		else{
 			movement.hitPoint = hit.point;
-			movement.frameVelocity = Vector3.zero;
-		/*}
-		else if( hit.collider.gameObject != vCollider.gameObject ) {
-			Debug.Log("+");
-			if( movingPlatform.overRide )
-				movingPlatform.overRideTrigger = true;
-			sliding.onSlideSurface = hit.collider.gameObject.CompareTag( "slide" );
-			movingPlatform.hitPlatform = hit.collider.transform;
-			movement.hitPoint = hit.point;
-			movement.frameVelocity = Vector3.zero;
-		}*/
+		}
+		sliding.onSlideSurface = hit.collider.gameObject.CompareTag( "slide" );
+		movingPlatform.hitPlatform = hit.collider.transform;
+		movement.frameVelocity = Vector3.zero;
 	}
 	
 	IEnumerator SubtractNewPlatformVelocity () {
@@ -762,6 +762,14 @@ public class CharacterClass : MonoBehaviour
 		wallUp = Vector3.Cross( wallRight, wallFacing );		// Cross multiply wallFacing with wallLeft to get wallUp
 		wallBack = Vector3.Cross(wallRight, wallUp);		// Just look back from wallUp to get wallDown;
 		wallLeft = Vector3.Cross(wallBack, wallUp);		// Just look back from wallRight to get wallLeft;
+
+		if( obj != null )
+		{
+			Debug.Log( obj.name );
+			movingPlatform.hitPlatform = obj.collider.transform;
+			movement.hitPoint = point;
+			movement.frameVelocity = Vector3.zero;
+		}
 
 		surroundingCollision();
 	}
