@@ -64,7 +64,7 @@ public class GroundedState : StateClass
 				_cc.SetCurrentState( "roll" );
 				_cc.rolling = true;
 				float currentHeight = _cc.controller.height;
-				float duration = animation[ "roll" ].length/animation[ "roll" ].speed;
+				float duration = (animation[ "roll" ].length/animation[ "roll" ].speed) * .9f;
 				new CoRoutine( _cc.adjustControllerHeight( _cc.controller.height/2, duration/2 ), () =>
 					new CoRoutine(_cc.adjustControllerHeight( currentHeight, duration/2 )) );
 				CoRoutine.AfterWait( duration, () => _cc.rolling = false );

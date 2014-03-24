@@ -201,6 +201,7 @@ public class CharacterClass : MonoBehaviour
 
 	void Awake () {
 		controller = GetComponent<CharacterController>();
+		useController = Input.GetJoystickNames().Length != 0;
 		tr = transform;
 		vCollider = transform.GetComponentInChildren<verticalCollider>();
 		vCollider.wallNormal = wallNormalChangeHandler;
@@ -550,17 +551,17 @@ public class CharacterClass : MonoBehaviour
 			{
 				if ((hit.point - movement.lastHitPoint).sqrMagnitude > 0.001 || lastGroundNormal == Vector3.zero)
 				{
-					Debug.Log("1: " + rcHit.normal );
+					//Debug.Log("1: " + rcHit.normal );
 					groundNormal = rcHit.normal;
 				}
 				else
 				{
-					Debug.Log("2: " + rcHit.normal);
+					//Debug.Log("2: " + rcHit.normal);
 					groundNormal = lastGroundNormal;
 				}
 			}
-			else
-				Debug.Log("3: " + rcHit.normal);
+			//else
+				//Debug.Log("3: " + rcHit.normal);
 
 			movement.hitPoint = rcHit.point;
 		}
@@ -710,6 +711,7 @@ public class CharacterClass : MonoBehaviour
 	[HideInInspector]
 	public TransitionBox curTransitionBox;
 	public stateChangeEvent stateChange;
+	public statusChangeEvent healthChange;
 	[HideInInspector]
 	public verticalCollider vCollider;
 	public collisionEvent surroundingCollision;
@@ -812,6 +814,15 @@ public class CharacterClass : MonoBehaviour
 		{
 			canControl = false;
 		}
+		healthChange();
+	}
+
+	private void HealDamage(int amount)
+	{
+		status.health += amount;
+		if( status.health > status.maxHealth )
+			status.health = status.maxHealth;
+		healthChange();
 	}
 
 	private void SetNewCheckpoint( Transform checkpoint )
@@ -830,5 +841,15 @@ public class CharacterClass : MonoBehaviour
 	private void ShotDeactivated()
 	{
 		status.activeShots++;
+	}
+	
+	public int getMaxHealth()
+	{
+		return status.maxHealth;
+	}
+
+	public int getHealth()
+	{
+		return status.health;
 	}
 }

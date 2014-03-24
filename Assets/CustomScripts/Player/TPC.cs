@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Linq;
 
 public delegate void stateChangeEvent( string state );
+public delegate void statusChangeEvent();
 
 public class TPC: MonoBehaviour
 {

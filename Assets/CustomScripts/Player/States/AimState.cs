@@ -72,7 +72,7 @@ public class AimState : StateClass
 			animation[ "roll" ].time = 0f;
 			_cc.stateChange( "roll" );
 			float currentHeight = _cc.controller.height;
-			float duration = animation[ "roll" ].length/animation[ "roll" ].speed;
+			float duration = (animation[ "roll" ].length/animation[ "roll" ].speed) * .9f;
 			new CoRoutine( _cc.adjustControllerHeight( _cc.controller.height/2, duration/2 ), () =>
 			              new CoRoutine(_cc.adjustControllerHeight( currentHeight, duration/2 )) );
 			CoRoutine.AfterWait( animation[ "roll" ].length/animation[ "roll" ].speed, () => _cc.rolling = false );
