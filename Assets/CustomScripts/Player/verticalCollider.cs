@@ -73,11 +73,11 @@ public class verticalCollider : MonoBehaviour
 		}
 	}
 
-	void OnGUI()
+	/*void OnGUI()
 	{
 		#if UNITY_EDITOR
 		GUI.Box(new Rect(0,0,100,50), normal.ToString() + "\nNumContacts: " + printNum + "\nSleeping?: " + GetComponent<Rigidbody>().IsSleeping() );
 		#endif
-	}
+	}*/
 }
 

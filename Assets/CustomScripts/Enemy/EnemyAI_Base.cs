@@ -38,6 +38,7 @@ public class EnemyAI_Base : MonoBehaviour
 	[System.Serializable]
 	public class Attack {
 		public bool enabled,
+					attacking,
 					cooling,
 					defending,
 					stunned,
@@ -45,7 +46,7 @@ public class EnemyAI_Base : MonoBehaviour
 		public Transform target;
 		public Vector3 attackPoint;
 		public Range2D attackDistanceRange = new Range2D( 1f, 2f );
-		public float attackDamage = 1f;
+		public float attackDamage = 1f, attackDelay = .25f;
 		public Range2D cooldownTime = new Range2D( 2f, 4f );
 		[HideInInspector]
 		public float attackDistance,
@@ -112,7 +113,7 @@ public class EnemyAI_Base : MonoBehaviour
 	void Update()
 	{
 		if( attack.enabled )
-			attackFunction();
+			baseAttack();
 		if( movement.canMove )
 			moveFunction();
 	}
@@ -199,45 +200,44 @@ public class EnemyAI_Base : MonoBehaviour
 	}
 	
 	
-	void rangedAttack()
+	void baseAttack()
 	{
 		movement.destination = attack.target.transform.position + attack.target.GetComponent<CharacterController>().center;
-		if( !attack.cooling && Vector3.Distance( gameObject.transform.position, movement.destination ) > attack.attackDistance )
+		if( !attack.attacking )
 		{
-			movement.move = true;
-			movement.idle = false;
-		}
-		else
-		{
-			movement.move = false;
-			if( !attack.cooling )
+			if( !attack.cooling && Vector3.Distance( gameObject.transform.position, movement.destination ) > attack.attackDistance )
 			{
-				attack.cooling = true;
-				Debug.Log("i'm attacking you, asshole!");
-				CoRoutine.AfterWait( attack.coolDown, () => attack.cooling = false );
+				movement.move = true;
+				movement.idle = false;
+			}
+			else
+			{
+				movement.move = false;
+				if( !attack.cooling )
+				{
+					attack.attackPoint = movement.destination;
+					attack.attacking = true;
+					CoRoutine.AfterWait( attack.attackDelay, () =>
+						{
+							attackFunction();
+							attack.attacking = false;
+							attack.cooling = true;
+							Debug.Log("i attacked you!");
+							CoRoutine.AfterWait( attack.coolDown, () => attack.cooling = false );
+						} );
+				}
 			}
 		}
 	}
-	
-	
+
+	void rangedAttack()
+	{
+
+	}
+
 	void hitAttack()
 	{
-		movement.destination = attack.target.transform.position + attack.target.GetComponent<CharacterController>().center;
-		if( !attack.cooling && Vector3.Distance( gameObject.transform.position, movement.destination ) > attack.attackDistance )
-		{
-			movement.move = true;
-			movement.idle = false;
-		}
-		else
-		{
-			movement.move = false;
-			if( !attack.cooling )
-			{
-				attack.cooling = true;
-				Debug.Log("i'm attacking you, asshole!");
-				CoRoutine.AfterWait( attack.coolDown, () => attack.cooling = false );
-			}
-		}
+
 	}
 	
 	
